@@ -63,6 +63,10 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
     return fs.createReadStream(INDEX).pipe(res);
   }
+  if (req.method === 'GET' && p === '/shop.png') {
+    res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=86400' });
+    return fs.createReadStream(path.join(__dirname, 'public', 'shop.png')).pipe(res);
+  }
   if (req.method === 'GET' && p === '/health') return send(res, 200, { ok: true });
   send(res, 404, { error: 'not found' });
 });
