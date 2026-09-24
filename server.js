@@ -8,9 +8,15 @@ fs.mkdirSync(DATA_DIR, { recursive: true });
 const FILE = path.join(DATA_DIR, 'state.json');
 const INDEX = path.join(__dirname, 'public', 'index.html');
 
-const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 } });
+const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, prog: {}, open: [], cur: '', insight: [] });
 let state = empty();
-try { state = JSON.parse(fs.readFileSync(FILE, 'utf8')); } catch (e) { /* first run */ }
+try { state = Object.assign(empty(), JSON.parse(fs.readFileSync(FILE, 'utf8'))); } catch (e) { /* first run */ }
+const TEAM = /^team[1-6]$/;
+const UNIT = /^(w[0-9]{1,2}|g[1-5]|rfm)$/;
+const STATIC = {
+  '/shop.jpg': ['shop.jpg', 'image/jpeg'],
+  '/qrcode.js': ['qrcode.js', 'application/javascript; charset=utf-8'],
+};
 
 let timer = null;
 function persist() {
@@ -55,6 +61,36 @@ const server = http.createServer(async (req, res) => {
     state.v++; persist();
     return send(res, 200, { ok: true });
   }
+  if (req.method === 'POST' && p === '/api/team') {
+    const b = await readBody(req) || {};
+    if (!TEAM.test(b.team)) return send(res, 400, { error: 'bad request' });
+    state.names[b.team] = String(b.name ?? '').trim().slice(0, 16);
+    state.v++; persist();
+    return send(res, 200, { ok: true });
+  }
+  if (req.method === 'POST' && p === '/api/progress') {
+    const b = await readBody(req) || {};
+    if (!TEAM.test(b.team) || !/^g[1-5]$/.test(b.act || '')) return send(res, 400, { error: 'bad request' });
+    const pts = Math.max(0, Math.min(20, Math.round(Number(b.pts) || 0)));
+    const t = (state.prog[b.team] = state.prog[b.team] || {});
+    if (pts > (t[b.act] || 0)) { t[b.act] = pts; state.v++; persist(); }
+    return send(res, 200, { ok: true, pts: t[b.act] });
+  }
+  if (req.method === 'POST' && p === '/api/open') {
+    const b = await readBody(req) || {};
+    if (!Array.isArray(b.open)) return send(res, 400, { error: 'bad request' });
+    state.open = [...new Set(b.open.filter((x) => UNIT.test(x)))];
+    state.cur = UNIT.test(b.cur || '') ? b.cur : '';
+    state.v++; persist();
+    return send(res, 200, { ok: true });
+  }
+  if (req.method === 'POST' && p === '/api/insight') {
+    const b = await readBody(req) || {};
+    if (!Array.isArray(b.insight)) return send(res, 400, { error: 'bad request' });
+    state.insight = [...new Set(b.insight.filter((x) => /^g[1-5]$/.test(x)))];
+    state.v++; persist();
+    return send(res, 200, { ok: true });
+  }
   if (req.method === 'POST' && p === '/api/reset') {
     const v = state.v + 1; state = empty(); state.v = v; persist();
     return send(res, 200, { ok: true });
@@ -63,9 +99,9 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
     return fs.createReadStream(INDEX).pipe(res);
   }
-  if (req.method === 'GET' && p === '/shop.jpg') {
-    res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=86400' });
-    return fs.createReadStream(path.join(__dirname, 'public', 'shop.jpg')).pipe(res);
+  if (req.method === 'GET' && STATIC[p]) {
+    res.writeHead(200, { 'Content-Type': STATIC[p][1], 'Cache-Control': 'public, max-age=86400' });
+    return fs.createReadStream(path.join(__dirname, 'public', STATIC[p][0])).pipe(res);
   }
   if (req.method === 'GET' && p === '/health') return send(res, 200, { ok: true });
   send(res, 404, { error: 'not found' });

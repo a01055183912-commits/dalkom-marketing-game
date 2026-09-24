@@ -254,6 +254,63 @@ table.rt{min-width:620px;font-size:15.5px;table-layout:auto}
 .ro.ans{color:var(--ink)}
 @media (max-width:860px){.first{grid-template-columns:1fr}.sync{margin-left:0}}
 @media (max-width:860px){.hero-img{height:auto;width:100%;max-width:300px}.hero,.g1,.crm{grid-template-columns:1fr}.bins{position:static}.sl{grid-template-columns:1fr}.choices{grid-template-columns:1fr}}
+/* 인사이트 · 응원 */
+.ins-wait{border:1.5px dashed var(--line);border-radius:12px;padding:14px 16px;margin-top:12px;color:var(--muted);text-align:center}
+.ins-card{background:var(--lemon-soft);border-radius:14px;padding:16px 18px;margin-top:14px}
+.ins-card h4{margin:0 0 6px;font-size:19px;color:var(--choco)}
+.ins-card ol{margin:6px 0 0;padding-left:20px}.ins-card li{margin:5px 0}
+.ins-card .iq{margin:10px 0 0;padding-top:10px;border-top:1px dashed var(--muted);font-weight:700}
+.cheer{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));width:min(560px,calc(100% - 32px));background:var(--matcha-soft);color:var(--ink);border:1.5px solid var(--matcha);border-radius:14px;padding:10px 14px;font-size:14.5px;z-index:40;box-shadow:var(--shadow);transition:opacity .4s}
+.cheer b{color:var(--matcha)}
+.cheer.fade{opacity:0}
+.student .toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+.student main.wrap{padding-bottom:110px}
+.bt .insrow th{background:var(--bg);padding:4px 2px}
+.bt .insb{border:1px solid var(--line);border-radius:999px;background:var(--bg);font:inherit;font-size:11.5px;padding:3px 7px;cursor:pointer;white-space:nowrap}
+.bt .insb.on{background:var(--lemon);border-color:var(--lemon);font-weight:700;color:#2E1F1B}
+/* 조별 접속 · 강사 현황판 */
+.student .tbtn,.student #tcountWrap{display:none}
+.board-wrap{margin:6px 0 24px}
+.board-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.board-head h3{font-size:24px;margin:0}
+.board-head .bar{margin:0}
+table.bt{border-collapse:collapse;width:100%;font-size:14px;min-width:900px;background:var(--bg)}
+.bt th,.bt td{border:1px solid var(--line);padding:6px 3px;text-align:center;vertical-align:middle}
+.bt th{background:var(--surface)}
+.bt td.tnm{text-align:left;font-weight:700;white-space:nowrap;padding-inline:10px}
+.bt .uh{border:0;background:none;font:inherit;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;width:100%;color:var(--muted);padding:2px 0}
+.bt .uh small{font-weight:400;font-size:11px}
+.bt .uh.open{color:var(--ink)}.bt .uh.open small{color:var(--good);font-weight:700}
+.bt .uh.cur{color:var(--berry)}
+.bt th.curcol{background:var(--berry-soft)}
+.bt .ck{color:var(--good);font-weight:800;margin-right:3px}
+.bt .pt{font-family:var(--mono);font-weight:600}
+.bt .pt.part{color:var(--muted);font-weight:400}
+.bt td.tot{font-family:var(--mono);font-weight:800;font-size:17px;color:var(--berry)}
+@keyframes bump{0%{background:var(--lemon);}100%{background:transparent}}
+.bt td.bump{animation:bump 2.6s ease-out}
+.shome{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.shome h3{font-size:26px;margin:2px 0 0}
+.shome .sc{text-align:right}.shome .sc b{display:block;font-family:var(--mono);font-size:36px;color:var(--berry);line-height:1}
+.shome .sc span{font-size:13px;color:var(--muted)}
+.nameform{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.nameform input{flex:1;min-width:180px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;background:var(--bg);color:var(--ink)}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.unit{text-align:left;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--bg);display:flex;flex-direction:column;gap:6px;min-height:108px;font:inherit;color:inherit;cursor:pointer}
+.unit h4{margin:0;font-size:17px}
+.unit .us{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.unit .up{margin-top:auto;font-size:13px;color:var(--muted)}
+.unit .up b{color:var(--berry);font-family:var(--mono);font-size:15px}
+.unit.cur{border-color:var(--berry);background:var(--berry-soft)}
+.unit.cur .us::before{content:"지금 할 차례 · ";color:var(--berry);font-weight:700}
+.unit.done .us::after{content:" ✓ 완료";color:var(--good);font-weight:800}
+.unit.locked{opacity:.55;cursor:not-allowed;background:var(--surface2)}
+.qrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.qrcard{border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;background:#fff;color:#2E1F1B}
+.qrcard h3{margin:0 0 8px;font-size:22px}
+.qrcard svg{width:100%;height:auto;max-width:230px;display:block;margin:0 auto}
+.qrcard .url{font-family:var(--mono);font-size:11px;word-break:break-all;color:#7A6560;margin:8px 0 0}
+@media print{header.top,.screen-head,#ttabs,.noprint{display:none!important}.qrcard{break-inside:avoid;border-color:#999}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -264,7 +321,7 @@ table.rt{min-width:620px;font-size:15.5px;table-layout:auto}
     <button class="brand" id="homeBtn" aria-label="처음 화면으로"><h1>달콤상점</h1><small>3-3 고객 세그먼트 · 데이터 마케팅 게임</small></button>
     <button class="tbtn" onclick="go('teacher')">강사 화면</button>
     <div class="teams" id="teams"></div>
-    <label class="muted" style="font-size:13px">조 수
+    <label class="muted" id="tcountWrap" style="font-size:13px">조 수
       <select class="tcount" id="tcount"><option>3</option><option selected>4</option></select>
     </label>
   </div>
@@ -273,18 +330,59 @@ table.rt{min-width:620px;font-size:15.5px;table-layout:auto}
 <main class="wrap" id="app"></main>
 <div class="toast" id="toast" hidden></div>
 
+<script src="/qrcode.js"></script>
 <script>
 /* ---------------- state & teams ---------------- */
 const S={teams:4,scores:[0,0,0,0,0,0],cur:0};
 try{const s=JSON.parse(localStorage.getItem('dalkom-score4')||'null');if(s){Object.assign(S,s)}}catch(e){}
 function save(){try{localStorage.setItem('dalkom-score4',JSON.stringify(S))}catch(e){}}
 const $=s=>document.querySelector(s);
+/* 조별 QR로 들어오면 (?team=N) 교육생 화면, 그냥 들어오면 강사 · 프로젝터 화면 */
+const ME=(()=>{const n=parseInt(new URLSearchParams(location.search).get('team'),10);return n>=1&&n<=6?n-1:null})();
+const STUDENT=ME!==null;
+if(STUDENT)document.documentElement.classList.add('student');
+const R={names:{},prog:{},open:[],cur:'',insight:[],ready:false,offline:false};
+const UNITS=[
+ {id:'w01',s:'0-1',k:'ws'},{id:'w02',s:'0-2',k:'ws'},{id:'g2',s:'게임1',k:'game'},
+ {id:'w1',s:'①',k:'ws'},{id:'w2',s:'②',k:'ws'},{id:'rfm',s:'RFM',k:'read'},
+ {id:'g1',s:'게임2',k:'game'},{id:'w42',s:'④-2',k:'ws'},{id:'w5',s:'⑤',k:'ws'},
+ {id:'g4',s:'게임3',k:'game'},{id:'w6',s:'⑥',k:'ws'},{id:'g3',s:'게임4',k:'game'},
+ {id:'w7',s:'⑦',k:'ws'},{id:'g5',s:'게임5',k:'game'}];
+function unitName(id){const w=WS.find(x=>x.id===id);if(w)return `${w.no} · ${w.t}`;if(id==='rfm')return 'RFM 표 읽기';const g=GAMES.find(x=>x.id===id);return g?`${g.no} · ${g.t}`:id}
+const isOpen=id=>!STUDENT||R.offline||R.open.includes(id);
+function wsPts(t,w){const ks=keysOf(w);if(!ks.length)return 0;const f=ks.filter(k=>String(getV(t,w.id,k)).trim()).length;return f>=ks.length?3:f*2>=ks.length?2:f?1:0}
+function gamePts(t,g){return +((R.prog[teamKey(t)]||{})[g]||0)}
+function unitPts(t,id){const w=WS.find(x=>x.id===id);return w?wsPts(t,w):id[0]==='g'?gamePts(t,id):0}
+function unitDone(t,id){const w=WS.find(x=>x.id===id);return w?wsPts(t,w)===3:gamePts(t,id)>0}
+function autoPts(t){return UNITS.reduce((a,u)=>a+unitPts(t,u.id),0)}
+function total(t){return (S.scores[t]||0)+autoPts(t)}
+function teamName(t){return R.names[teamKey(t)]||''}
+function teamLabel(t){const n=teamName(t);return n?`${t+1}조 ${esc(n)}`:`${t+1}조`}
+/* 게임이 끝난 뒤 인사이트: 강사가 현황판에서 "공개"를 눌러야 교육생 화면에 뜹니다 */
+const INSIGHT={
+ g2:{t:'팔 사람을 먼저 정해야 광고비가 산다',p:['같은 100만 원이라도 그 손님 무리가 반응하는 채널에 실어야 손님이 옵니다.','디저트와 손님이 맞지 않으면 광고비를 늘려도 이익이 잘 나지 않습니다. 이것이 Targeting입니다.','단골 관리에 0원이면 한 번 온 손님이 다시 올 이유가 없습니다.'],q:'우리 조가 고른 손님 무리를 한 줄로 설명하면? 왜 그 무리였나요?'},
+ g1:{t:'합계보다 R을 먼저 본다',p:['상위 4명(20%)이 매출의 47%를 만듭니다. 모든 손님을 똑같이 대하면 안 됩니다.','합계 점수가 비슷해도 R이 떨어지는 손님(C11)은 떠나는 중입니다. 가장 먼저 연락할 사람입니다.','등급 이름보다 "이 손님에게 다음에 무엇을 할까"가 더 중요합니다.'],q:'우리 조가 가장 헷갈린 카드는 무엇이었나요? 왜 헷갈렸을까요?'},
+ g4:{t:'등급마다 목적이 다르다',p:['VIP는 지키고, 우수 단골은 올리고, 일반은 자주 오게, 이탈 위험은 되돌리고, 휴면은 비용을 줄입니다.','등급이 높을수록 할인보다 경험 · 우선권 · 전용 서비스가 통합니다.','전 등급에 똑같은 할인 문자는 가장 흔하고 가장 효과 없는 액션입니다.'],q:'우리 조 새 아이디어 중 내일 바로 해 볼 수 있는 것은 무엇인가요?'},
+ g3:{t:'예산은 LTV가 정한다',p:['매출의 47%를 만드는 VIP 4명에게 먼저 씁니다. 모범 배분은 400 · 120 · 60 · 40 · 4(만 원)입니다.','LTV 한도를 넘는 투자는 쓸수록 손해입니다.','똑같이 나누는 것은 공평해 보이지만 근거가 없습니다.'],q:'우리 조 배분이 모범 배분과 가장 다른 곳은? 그렇게 나눈 이유를 말해 보세요.'},
+ g5:{t:'오늘 배운 네 단어',p:['STP · 나누고(S) · 고르고(T) · 자리 잡기(P).','RFM · 언제 · 얼마나 자주 · 얼마나 많이. R만 방향이 반대입니다.','CRM과 LTV · 등급마다 다른 액션, 예산은 LTV의 10~20% 안에서.'],q:'오늘 배운 것 중 우리 회사 고객에게 바로 써 볼 한 가지는?'}};
+const insOpen=g=>!STUDENT||R.insight.includes(g);
+const INS_HTML={};
+function insCard(g){const x=INSIGHT[g];return `<div class="ins-card"><h4>💡 인사이트 · ${x.t}</h4><ol>${x.p.map(p=>`<li>${p}</li>`).join('')}</ol><p class="iq">함께 이야기해 보기 · ${x.q}</p></div>`}
+function insightBox(g,inner){INS_HTML[g]=inner;return insOpen(g)?`<div data-insg="${g}">${inner}${insCard(g)}</div>`:`<div data-insg="${g}" class="ins-wait">💡 이 게임의 인사이트는 강사님이 열면 여기에 나타납니다.<br>그동안 우리 조 결과를 보며 "왜 이렇게 나왔을까?"를 이야기해 보세요.</div>`}
+function fillInsights(){document.querySelectorAll('[data-insg].ins-wait').forEach(el=>{const g=el.dataset.insg;if(insOpen(g)&&INS_HTML[g]!==undefined){el.className='';el.innerHTML=INS_HTML[g]+insCard(g)}});
+  if($('#k3')&&$('#s3'))draw3k();if($('#g5s'))draw5s();if($('#segs4')&&G4.checked)draw4()}
+/* 교육생 화면 응원 멘트 */
+const CHEERS=['충분히 이야기 나눠 보세요. 정답보다 <b>우리 조의 근거</b>가 더 중요해요.','조원 모두의 생각을 한 번씩 들어 보세요. <b>조용한 한 명</b>의 의견이 답일 수 있어요.','막혀도 괜찮아요. <b>"왜 그렇게 생각해?"</b> 한 번만 물어보세요.','천천히 해도 됩니다. <b>함께 고민한 시간</b>이 오늘의 실력이 됩니다.','좋아요! 지금처럼 <b>숫자와 이유</b>를 같이 적어 보세요.','다른 의견이 나오면 기회예요. <b>둘 다 적어 두고</b> 비교해 보세요.','한 칸 한 칸 채울 때마다 우리 조 점수가 올라가요. <b>잘하고 있어요!</b>','"우리 가게라면?"을 떠올려 보세요. <b>현장 경험</b>이 최고의 근거예요.','틀려도 괜찮아요. <b>틀린 이유를 찾는 것</b>이 진짜 공부예요.','서로 칭찬 한 마디! <b>좋은 생각</b>은 크게 말해 주세요.','시간은 충분해요. <b>끝까지 적어 보는 것</b>이 가장 큰 점수예요.','지금 나눈 이야기가 원페이퍼의 재료가 됩니다. <b>메모해 두세요!</b>'];
+function startCheer(){if(!STUDENT)return;const el=document.createElement('div');el.className='cheer';el.id='cheer';el.setAttribute('role','status');document.body.appendChild(el);
+  let i=Math.floor(Math.random()*CHEERS.length);const show=()=>{el.innerHTML='🌱 '+CHEERS[i%CHEERS.length];i++};show();
+  setInterval(()=>{el.classList.add('fade');setTimeout(()=>{show();el.classList.remove('fade')},400)},14000)}
 function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,1800)}
 function renderTeams(){
   const box=$('#teams');box.innerHTML='';
+  if(STUDENT){box.innerHTML=`<div class="team on"><span class="tn">${teamLabel(ME)}</span><span class="ts num" title="우리 조 점수">${total(ME)}</span></div>`;return}
   for(let i=0;i<S.teams;i++){
     const d=document.createElement('div');d.className='team'+(i===S.cur?' on':'');
-    d.innerHTML=`<button class="tn" title="지금 차례인 조로 선택">${i+1}조</button><span class="ts num">${S.scores[i]}</span><button class="pm" aria-label="${i+1}조 1점 빼기">−</button><button class="pm" aria-label="${i+1}조 1점 더하기">+</button>`;
+    d.innerHTML=`<button class="tn" title="지금 차례인 조로 선택">${teamLabel(i)}</button><span class="ts num">${total(i)}</span><button class="pm" aria-label="${i+1}조 1점 빼기">−</button><button class="pm" aria-label="${i+1}조 1점 더하기">+</button>`;
     const [tn,,m,p]=d.children;
     tn.onclick=()=>{S.cur=i;save();renderTeams()};
     m.onclick=()=>{S.scores[i]--;save();renderTeams();pushScores()};
@@ -306,14 +404,21 @@ const GAMES=[
  {id:'g5',no:'게임 5',t:'마케팅 골든벨',d:'오늘 배운 STP · RFM · CRM · LTV를 12문제로 복습합니다. 맞힌 조를 눌러 점수를 줍니다.',tags:['복습','사후평가 대비','15분'],b:0},
 ];
 function home(){
+  if(STUDENT){studentHome();return}
   $('#app').innerHTML=`
   <section class="hero">
     <div>
       <p class="step">LOTTE LIFT · 3-3 실습</p>
       <h2>우리 가게 단골은<br><em>누구일까요?</em></h2>
-      <p>조별로 실습지를 먼저 쓰고, 다섯 개의 게임으로 확인합니다. 계산이 필요한 칸은 앱이 대신 채웁니다. 게임을 할 때는 위쪽 점수판에서 차례인 조를 먼저 누르세요.</p>
+      <p>조마다 QR로 접속해 실습지와 게임을 합니다. 강사가 여는 활동만 교육생 화면에 열리고, 점수는 활동한 만큼 아래 현황표에 자동으로 쌓입니다.</p>
     </div>
     <img class="hero-img" src="/shop.jpg" alt="달콤상점 와그작 케이크와 과일모찌" width="473" height="591">
+  </section>
+  <section class="board-wrap">
+    <div class="board-head"><div><p class="step">강사 · 실시간 조별 현황</p><h3>조별 진행 현황</h3></div>
+      <div class="bar"><button class="btn" id="nextBtn"></button><button class="btn ghost" id="qrBtn">조별 QR 코드</button></div></div>
+    <div class="tscroll" id="board"></div>
+    <p class="note" id="boardNote">열 제목을 누르면 그 활동을 교육생 화면에 열거나 닫습니다. 게임 아래 "공개"를 누르면 그 게임의 인사이트가 교육생 화면에 뜹니다(버튼에 마우스를 올리면 끝낸 조 수가 보입니다). ✓는 끝낸 활동이고 숫자는 받은 점수입니다. 실습지는 칸을 채운 만큼(조금 1점 · 절반 2점 · 전부 3점), 게임은 조가 받은 최고 점수가 자동으로 들어갑니다. 합계에는 위쪽 + / − 로 고친 점수도 더해집니다.</p>
   </section>
   <div class="first">
     <button class="big" onclick="go('ws')"><span class="gno">먼저 · 조별로 한 대씩</span><h3>실습지 쓰기</h3><p>실습 0-1부터 ⑦ 원페이퍼까지 8장을 조별로 채웁니다. 합계 · LTV 같은 계산은 앱이 하고, ⑦은 앞에서 쓴 내용을 불러옵니다.</p></button>
@@ -323,7 +428,7 @@ function home(){
   <p class="step" style="margin-top:26px">게임 · 실습지를 쓰기 전 몸풀기나 쓰고 난 뒤 확인용</p>
   <div class="games" id="games"></div>
   <div class="howto">
-    <div><b>진행 방법</b>강사 화면에 띄우고, 조가 돌아가며 선택합니다. 차례인 조를 점수판에서 먼저 누르세요.</div>
+    <div><b>진행 방법</b>"조별 QR 코드"를 띄워 조마다 한 대씩 접속하게 한 뒤, "다음 화면 열기"로 활동을 하나씩 엽니다. 열지 않은 활동은 교육생 화면에 잠겨 있습니다.</div>
     <div><b>점수</b>게임마다 "점수 넣기" 버튼이 차례인 조에 점수를 줍니다. + / − 로 직접 고칠 수도 있습니다.</div>
     <div><b>데이터</b>고객 20명 · 디저트 가게 숫자는 계산 연습용 가상 데이터입니다. 디저트 트렌드는 2026년 기사 기준입니다.</div>
   </div>`;
@@ -331,9 +436,103 @@ function home(){
   GAMES.forEach(x=>{const b=document.createElement('button');b.className='gcard';
     b.innerHTML=`<span class="gno">${x.no}</span><h3>${x.t}</h3><p>${x.d}</p><div class="tags">${x.tags.map((t,i)=>`<span class="tag ${i===0?'b':''}">${t}</span>`).join('')}</div>`;
     b.onclick=()=>go(x.id);g.appendChild(b)});
+  $('#qrBtn').onclick=()=>{TP.tab='qr';go('teacher')};
+  drawBoard();
+}
+
+/* ---------------- 강사 · 조별 진행 현황판 ---------------- */
+function drawBoard(){
+  const el=$('#board');if(!el)return;
+  const prev=drawBoard.prev||{},now={};
+  const cell=(key,v,cls,html)=>{now[key]=v;const up=prev[key]!==undefined&&v>prev[key];return `<td class="${cls}${up?' bump':''}">${html}</td>`};
+  let h=`<table class="bt"><thead><tr><th>조</th>${UNITS.map(u=>`<th class="${R.cur===u.id?'curcol':''}"><button class="uh ${R.open.includes(u.id)?'open':''} ${R.cur===u.id?'cur':''}" data-u="${u.id}" title="${esc(unitName(u.id))}">${u.s}<small>${R.open.includes(u.id)?'열림':'닫힘'}</small></button></th>`).join('')}<th>합계</th></tr>
+   <tr class="insrow"><th><span class="muted" style="font-size:12px;font-weight:400">인사이트</span></th>${UNITS.map(u=>u.k!=='game'?'<th></th>':`<th><button class="insb ${R.insight.includes(u.id)?'on':''}" data-ins="${u.id}" title="끝낸 조 ${[...Array(S.teams).keys()].filter(t=>gamePts(t,u.id)>0).length} / ${S.teams}">${R.insight.includes(u.id)?'💡 공개됨':'공개'}</button></th>`).join('')}<th></th></tr></thead><tbody>`;
+  for(let t=0;t<S.teams;t++){
+    h+=`<tr><td class="tnm">${teamLabel(t)}</td>`+UNITS.map(u=>{const p=unitPts(t,u.id);if(u.k==='read')return '<td><span class="muted">—</span></td>';
+      return cell(t+u.id,p,'',unitDone(t,u.id)?`<span class="ck">✓</span><span class="pt">${p}</span>`:p?`<span class="pt part">${p}</span>`:'<span class="muted">·</span>')}).join('')
+      +cell(t+'tot',total(t),'tot',total(t))+'</tr>';
+  }
+  el.innerHTML=h+'</tbody></table>';
+  drawBoard.prev=now;
+  el.querySelectorAll('[data-ins]').forEach(b=>b.onclick=()=>{const g=b.dataset.ins;const on=R.insight.includes(g);setInsight(on?R.insight.filter(x=>x!==g):[...R.insight,g],on?'':g)});
+  el.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{const id=b.dataset.u;const on=R.open.includes(id);
+    setOpen(on?R.open.filter(x=>x!==id):[...R.open,id],on?(R.cur===id?'':R.cur):id)});
+  const nx=UNITS.find(u=>!R.open.includes(u.id));
+  const nb=$('#nextBtn');
+  if(nb){nb.textContent=nx?`다음 화면 열기 ▶ ${unitName(nx.id)}`:'모든 활동이 열렸습니다';nb.disabled=!nx;nb.onclick=()=>{if(nx)setOpen([...R.open,nx.id],nx.id)}}
+  const note=$('#boardNote');if(note&&R.offline&&!note.dataset.off){note.dataset.off=1;note.insertAdjacentHTML('afterbegin','<b style="color:var(--bad)">서버에 연결되지 않아 열기 · 닫기가 교육생 화면에 전달되지 않습니다.</b> ')}
+}
+async function setInsight(list,shown){
+  R.insight=list;drawBoard();toast(shown?`교육생 화면에 인사이트를 열었습니다 · ${unitName(shown)}`:'인사이트를 다시 닫았습니다');
+  if(W.mode==='server'){try{await fetch('/api/insight',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({insight:list})})}catch(e){toast('저장에 실패했습니다')}}
+}
+async function setOpen(open,cur){
+  R.open=UNITS.map(u=>u.id).filter(id=>open.includes(id));R.cur=cur||'';drawBoard();
+  if(cur)toast(`교육생 화면에 열었습니다 · ${unitName(cur)}`);
+  if(W.mode==='server'){try{await fetch('/api/open',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({open:R.open,cur:R.cur})})}catch(e){toast('열기 저장에 실패했습니다')}}
+}
+
+/* ---------------- 교육생 (조별 기기) 첫 화면 ---------------- */
+function studentHome(){
+  const nm=teamName(ME);
+  $('#app').innerHTML=`
+  <section class="hero">
+    <div>
+      <p class="step">LOTTE LIFT · 3-3 실습 · ${ME+1}조 기기</p>
+      <h2>우리 가게 단골은<br><em>누구일까요?</em></h2>
+      <p>강사님이 여는 순서대로 활동합니다. 실습지는 칸을 채운 만큼, 게임은 결과만큼 우리 조 점수가 자동으로 올라갑니다.</p>
+    </div>
+    <img class="hero-img" src="/shop.jpg" alt="달콤상점 와그작 케이크와 과일모찌" width="473" height="591">
+  </section>
+  <div class="panel" id="shome" style="margin-bottom:22px">
+    <div class="shome"><div><p class="step">우리 조</p><h3 id="sName">${teamLabel(ME)}</h3></div><div class="sc"><span>우리 조 점수</span><b id="sScore">${total(ME)}</b></div></div>
+    <div class="nameform"><input id="tname" maxlength="16" placeholder="우리 조 이름 (예: 딸기모찌단)" value="${esc(nm)}" aria-label="우리 조 이름"><button class="btn" id="tnameBtn">${nm?'이름 바꾸기':'이름 정하기'}</button></div>
+  </div>
+  <p class="step">오늘 활동 · 강사님이 열어 주면 누를 수 있습니다</p>
+  <div class="units" id="units"></div>`;
+  $('#tnameBtn').onclick=saveName;$('#tname').onkeydown=e=>{if(e.key==='Enter')saveName()};
+  drawUnits();
+}
+async function saveName(){
+  const v=$('#tname').value.trim().slice(0,16);if(!v){toast('조 이름을 적어 주세요');return}
+  R.names[teamKey(ME)]=v;renderTeams();studentHome();toast(`${ME+1}조 이름: ${v}`);
+  if(W.mode==='server'){try{await fetch('/api/team',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:teamKey(ME),name:v})})}catch(e){toast('이름 저장에 실패했습니다')}}
+}
+function drawUnits(){
+  const box=$('#units');if(!box)return;
+  const sc=$('#sScore');if(sc)sc.textContent=total(ME);const sn=$('#sName');if(sn)sn.innerHTML=teamLabel(ME);
+  if(!R.ready&&!R.offline){box.innerHTML='<p class="note">서버에 연결하는 중입니다…</p>';return}
+  const needName=!teamName(ME)&&W.mode==='server';
+  box.innerHTML='';
+  UNITS.forEach(u=>{const open=isOpen(u.id);const b=document.createElement('button');
+    const p=unitPts(ME,u.id);const w=WS.find(x=>x.id===u.id);
+    const prog=w?(()=>{const ks=keysOf(w);const f=ks.filter(k=>String(getV(ME,w.id,k)).trim()).length;return `${f}/${ks.length}칸 · <b>${p}점</b>`})():u.k==='game'?(p?`최고 <b>${p}점</b>`:'아직 안 함'):'점수 없음 · 읽기 자료';
+    b.className='unit'+(open?'':' locked')+(open&&R.cur===u.id?' cur':'')+(open&&u.k!=='read'&&unitDone(ME,u.id)?' done':'');
+    b.innerHTML=`<span class="us">${u.s}</span><h4>${esc(unitName(u.id))}</h4><span class="up">${open?prog:'🔒 강사님이 열면 시작합니다'}</span>`;
+    b.onclick=()=>{if(!open){toast('아직 열리지 않은 활동입니다');return}if(needName){toast('먼저 우리 조 이름을 정해 주세요');$('#tname').focus();return}
+      if(w){W.cur=u.id;go('ws')}else go(u.id)};
+    box.appendChild(b)});
+}
+function studentAward(id,g,pts){
+  if(!STUDENT)return false;const b=document.getElementById(id);if(!b)return true;
+  if(g==='g3'){b.textContent=`이 배분으로 제출하기 · ${pts}점`;b.onclick=()=>{reportGame(g,pts);b.disabled=true;b.textContent='제출했습니다 · 우리 조 점수에 반영'};return true}
+  const best=gamePts(ME,g);reportGame(g,pts);b.disabled=true;
+  b.textContent=pts>best?`우리 조 점수에 자동 반영 · ${pts}점`:`이번 ${pts}점 · 최고 ${best}점이 유지됩니다`;return true;
+}
+async function reportGame(g,pts,quiet){
+  const tk=teamKey(ME);R.prog[tk]=R.prog[tk]||{};const before=R.prog[tk][g]||0;
+  if(pts>before)R.prog[tk][g]=pts;renderTeams();drawUnits();
+  if(!quiet)toast(pts>before?`우리 조 +${pts-before}점 · 자동 반영`:`최고 점수 ${before}점이 유지됩니다`);
+  if(W.mode==='server'&&pts>before){try{await fetch('/api/progress',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:tk,act:g,pts})})}catch(e){}}
 }
 function head(t,sub,step){return `<div class="screen-head"><button class="back" onclick="go('home')">← 게임 목록</button><div><p class="step">${step}</p><h2>${t}</h2></div><p class="sub">${sub}</p></div>`}
-function go(id){({home,g1,g2,g3,g4,g5,ws:wsPage,cmp:comparePage,rfm:rfmPage,teacher:teacherPage})[id]();if(GGUIDE[id]){const sh=document.querySelector('.screen-head');if(sh)sh.insertAdjacentHTML('afterend',guideHTML(GGUIDE[id],false))}window.scrollTo(0,0)}
+function go(id){
+  if(STUDENT){
+    if(id==='teacher'||id==='cmp')id='home';
+    else if(id==='ws'){if(!isOpen(W.cur)){const f=UNITS.find(u=>u.k==='ws'&&isOpen(u.id));if(f)W.cur=f.id;else{toast('아직 열린 실습지가 없습니다');id='home'}}}
+    else if(id!=='home'&&!isOpen(id)){toast('강사님이 아직 열지 않은 활동입니다');id='home'}
+  }
+  ({home,g1,g2,g3,g4,g5,ws:wsPage,cmp:comparePage,rfm:rfmPage,teacher:teacherPage})[id]();if(GGUIDE[id]){const sh=document.querySelector('.screen-head');if(sh)sh.insertAdjacentHTML('afterend',guideHTML(GGUIDE[id],false))}window.scrollTo(0,0)}
 $('#homeBtn').onclick=()=>go('home');
 
 /* ---------------- game 1 : RFM ---------------- */
@@ -390,15 +589,15 @@ function check1(){
   const sh=$('#share');sh.hidden=false;
   sh.innerHTML=`<h3 style="font-size:24px">${ok} / 20 정답</h3>
    <p class="muted" style="margin:4px 0 10px">틀린 카드는 빨간 테두리로 표시됩니다. 초록은 정답입니다.</p>
-   <b>등급별 매출 비중 · 전체 ${won(tot)}만 원</b>
+   ${insightBox('g1',`<b>등급별 매출 비중 · 전체 ${won(tot)}만 원</b>
    ${segSum.map((s,i)=>`<div class="srow"><span>${s.n}</span><div class="strack"><div class="sfill ${i>=3?'low':''}" style="width:${(s.v/tot*100).toFixed(1)}%"></div></div><span class="num">${(s.v/tot*100).toFixed(1)}%</span></div>`).join('')}
    <ul class="fb">
     <li><b>상위 4명(20%)이 매출의 47.0%</b>를 만들고, 휴면 4명은 3.5%입니다. 약 13.6배 차이, 예산을 등급별로 다르게 써야 하는 이유입니다.</li>
     <li><b>C11(합계 8점)</b>은 R이 2로 떨어진 이탈 위험, <b>C15(합계 10점)</b>는 R이 4로 살아 있는 성장 후보입니다. 합계보다 R을 먼저 봅니다.</li>
     <li>가장 먼저 연락할 사람은 C11입니다. 복귀 쿠폰보다 마지막 구매 카테고리와 불만 기록부터 확인합니다.</li>
-   </ul>
+   </ul>`)}
    <div class="bar"><button class="btn green" id="aw1">${S.cur+1}조에 ${pts}점 넣기</button></div>`;
-  $('#aw1').onclick=e=>{award(pts,`카드 ${ok}장 정답`);e.target.disabled=true};
+  if(!studentAward('aw1','g1',pts))$('#aw1').onclick=e=>{award(pts,`카드 ${ok}장 정답`);e.target.disabled=true};
 }
 
 /* ---------------- game 2 : dessert shop ---------------- */
@@ -465,10 +664,10 @@ function run2(){
     <div class="kpi"><div class="k">다시 온 비율</div><div class="v">${Math.round(r.rev*100)}%</div></div>
     <div class="kpi"><div class="k">한 달 매출</div><div class="v">${won(r.sales/10000)}만</div></div>
     <div class="kpi hl"><div class="k">남은 돈 (이익 30% − 광고비)</div><div class="v">${won(r.profit/10000)}만</div></div></div>
-    <ul class="fb">${fb.map(x=>`<li>${x}</li>`).join('')}</ul>
-    <p class="note">같은 디저트 · 같은 손님으로 낼 수 있는 최고 이익은 약 ${won(best.profit/10000)}만 원 (${best.b.map((x,i)=>CH[i].n.split(' ')[0]+' '+x).join(' · ')}). 우리 조는 그 ${Math.max(0,Math.round(ratio*100))}% 수준입니다.</p>
+    ${insightBox('g2',`<ul class="fb">${fb.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <p class="note">같은 디저트 · 같은 손님으로 낼 수 있는 최고 이익은 약 ${won(best.profit/10000)}만 원 (${best.b.map((x,i)=>CH[i].n.split(' ')[0]+' '+x).join(' · ')}). 우리 조는 그 ${Math.max(0,Math.round(ratio*100))}% 수준입니다.</p>`)}
     <div class="bar"><button class="btn green" id="aw2">${S.cur+1}조에 ${pts}점 넣기</button></div>`;
-  $('#aw2').onclick=e=>{award(pts,'디저트 가게 결과');e.target.disabled=true};
+  if(!studentAward('aw2','g2',pts))$('#aw2').onclick=e=>{award(pts,'디저트 가게 결과');e.target.disabled=true};
 }
 
 /* ---------------- game 3 : CRM budget ---------------- */
@@ -504,11 +703,12 @@ function draw3k(){
   const tot=B3.reduce((a,c)=>a+c,0);const e=eff(B3);const net=e-tot;const mNet=eff(MODEL)-624;
   $('#k3').innerHTML=`<div class="kpi"><div class="k">쓴 예산</div><div class="v" style="${tot!==624?'color:var(--bad)':''}">${tot}만</div></div><div class="kpi"><div class="k">1년 기대 효과</div><div class="v">${won(e)}만</div></div><div class="kpi hl"><div class="k">효과 − 예산</div><div class="v">${won(net)}만</div></div>`;
   const pts=net>=6000?3:net>=5600?2:1;
-  $('#c3').innerHTML=`<p style="margin:0">${tot!==624?`<b style="color:var(--bad)">예산을 정확히 624만 원에 맞춰 주세요 (지금 ${tot>624?tot-624+'만 원 초과':624-tot+'만 원 남음'})</b>`:`모범 배분(400 · 120 · 60 · 40 · 4)의 결과는 <b>${won(mNet)}만 원</b>입니다.`}</p>
-   <div class="bar"><button class="btn ghost" id="mdl">모범 배분 보기</button><button class="btn green" id="aw3" ${tot!==624?'disabled':''}>${S.cur+1}조에 ${pts}점 넣기</button></div>
-   <p class="note">똑같이 나누면(124만 원씩) 약 ${won(eff([124.8,124.8,124.8,124.8,124.8])-624)}만 원, 휴면에 몰아주면 훨씬 낮아집니다. 매출의 47%를 만드는 4명에게 먼저 씁니다.</p>`;
-  $('#mdl').onclick=()=>{B3=[...MODEL];B3[4]=624-400-120-60-40;draw3()};
-  $('#aw3').onclick=e=>{award(pts,'예산 배분');e.target.disabled=true};
+  const io=insOpen('g3');
+  $('#c3').innerHTML=`<p style="margin:0">${tot!==624?`<b style="color:var(--bad)">예산을 정확히 624만 원에 맞춰 주세요 (지금 ${tot>624?tot-624+'만 원 초과':624-tot+'만 원 남음'})</b>`:io?`모범 배분(400 · 120 · 60 · 40 · 4)의 결과는 <b>${won(mNet)}만 원</b>입니다.`:'예산을 딱 맞췄습니다. 우리 조 배분의 이유를 이야기해 보고 제출하세요.'}</p>
+   <div class="bar">${io?'<button class="btn ghost" id="mdl">모범 배분 보기</button>':''}<button class="btn green" id="aw3" ${tot!==624?'disabled':''}>${S.cur+1}조에 ${pts}점 넣기</button></div>
+   ${io?`<p class="note">똑같이 나누면(124만 원씩) 약 ${won(eff([124.8,124.8,124.8,124.8,124.8])-624)}만 원, 휴면에 몰아주면 훨씬 낮아집니다. 매출의 47%를 만드는 4명에게 먼저 씁니다.</p>${insCard('g3')}`:insightBox('g3','')}`;
+  if($('#mdl'))$('#mdl').onclick=()=>{B3=[...MODEL];B3[4]=624-400-120-60-40;draw3()};
+  if(!studentAward('aw3','g3',pts))$('#aw3').onclick=e=>{award(pts,'예산 배분');e.target.disabled=true};
 }
 
 /* ---------------- game 4 : action matching ---------------- */
@@ -535,7 +735,7 @@ function draw4(){
   const s=$('#segs4');s.innerHTML='';
   SEG4.forEach(g=>{const d=document.createElement('div');d.className='s4'+(g.k==='trash'?' trash':'')+(G4.sel!==null?' ready':'');d.tabIndex=0;d.setAttribute('role','button');
     const items=Object.keys(G4.place).filter(i=>G4.place[i]===g.k);
-    d.innerHTML=`<h4>${g.n}</h4><span class="goal">${G4.checked?GOAL[g.k]:'&nbsp;'}</span>${items.map(i=>`<span class="in ${G4.checked?(ACTS[i].a===g.k?'ok':'no'):''}" data-i="${i}">${ACTS[i].t}</span>`).join('')}${g.k!=='trash'?`<input id="idea-${g.k}" placeholder="우리 조 새 아이디어 (할인 · 쿠폰 말고)" value="${(G4.ideas[g.k]||'').replace(/"/g,'&quot;')}">`:''}`;
+    d.innerHTML=`<h4>${g.n}</h4><span class="goal">${G4.checked&&insOpen('g4')?GOAL[g.k]:'&nbsp;'}</span>${items.map(i=>`<span class="in ${G4.checked?(ACTS[i].a===g.k?'ok':'no'):''}" data-i="${i}">${ACTS[i].t}</span>`).join('')}${g.k!=='trash'?`<input id="idea-${g.k}" placeholder="우리 조 새 아이디어 (할인 · 쿠폰 말고)" value="${(G4.ideas[g.k]||'').replace(/"/g,'&quot;')}">`:''}`;
     const put=()=>{if(G4.sel===null||G4.checked)return;G4.place[G4.sel]=g.k;G4.sel=null;draw4()};
     d.onclick=e=>{if(e.target.tagName==='INPUT')return;if(e.target.classList.contains('in')&&!G4.checked){delete G4.place[e.target.dataset.i];draw4();return}put()};
     d.onkeydown=e=>{if(e.key==='Enter'&&e.target===d)put()};
@@ -550,12 +750,12 @@ function check4(){
   const fresh=ideas.filter(([k,v])=>!/할인|쿠폰|적립|%/.test(v));
   const pts=(ok>=12?3:ok>=9?2:1)+fresh.length;
   $('#o4').innerHTML=`<div class="panel"><h3 style="font-size:24px">카드 ${ok} / ${ACTS.length} 정답 · 새 아이디어 ${fresh.length}개</h3>
-   <ul class="fb"><li>등급이 올라갈수록 혜택이 <b>할인 → 경험 · 우선권 · 전용 서비스</b>로 바뀌어야 합니다. VIP는 가격에 반응하지 않습니다.</li>
+   ${insightBox('g4',`<ul class="fb"><li>등급이 올라갈수록 혜택이 <b>할인 → 경험 · 우선권 · 전용 서비스</b>로 바뀌어야 합니다. VIP는 가격에 반응하지 않습니다.</li>
    <li>전 등급 똑같은 할인 문자는 VIP에게는 격이 떨어지고, 휴면에게는 돈만 듭니다.</li>
-   <li>휴면 고객은 버리는 것이 아니라 <b>비싼 채널에서 자동 채널로</b> 옮기는 것입니다.</li></ul>
+   <li>휴면 고객은 버리는 것이 아니라 <b>비싼 채널에서 자동 채널로</b> 옮기는 것입니다.</li></ul>`)}
    ${ideas.length?`<b>우리 조 아이디어</b><ul class="fb">${ideas.map(([k,v])=>`<li>${SEG4.find(x=>x.k===k).n} · ${v.replace(/</g,'&lt;')} ${/할인|쿠폰|적립|%/.test(v)?'<span class="muted">(할인 · 쿠폰 계열 → 보너스 없음)</span>':'<b style="color:var(--good)">+1</b>'}</li>`).join('')}</ul>`:''}
    <div class="bar"><button class="btn green" id="aw4">${S.cur+1}조에 ${pts}점 넣기</button></div></div>`;
-  $('#aw4').onclick=e=>{award(pts,'CRM 액션');e.target.disabled=true};
+  if(!studentAward('aw4','g4',pts))$('#aw4').onclick=e=>{award(pts,'CRM 액션');e.target.disabled=true};
 }
 
 /* ---------------- game 5 : quiz ---------------- */
@@ -574,7 +774,22 @@ const QZ=[
  {q:'휴면 고객에게 광고 문자를 보낼 때 꼭 지킬 것은?',c:['최대한 자주 보낸다','수신 동의자만, 밤 9시~아침 8시는 피한다','회원가입만 했으면 누구에게나 보낸다','데이터는 무기한 보관한다'],a:1,e:'광고성 수신 동의는 회원가입 동의와 별개입니다. 교육용 개괄 안내이며 법률 자문이 아닙니다.'}];
 const G5={i:0,shown:false,got:new Set()};
 function g5(){G5.i=0;G5.shown=false;G5.got=new Set();draw5()}
+const G5S={ans:{}};try{if(STUDENT)G5S.ans=JSON.parse(localStorage.getItem('dalkom-g5-'+ME)||'{}')}catch(e){}
+function draw5s(){
+  const q=QZ[G5.i];const a=G5S.ans[G5.i];const done=a!==undefined;
+  const right=Object.keys(G5S.ans).filter(i=>G5S.ans[i]===QZ[i].a).length;const answered=Object.keys(G5S.ans).length;
+  $('#app').innerHTML=head('마케팅 골든벨','우리 조 기기로 푸는 골든벨입니다. 문제마다 한 번만 고를 수 있고, 맞힌 개수만큼 점수가 자동으로 올라갑니다.','게임 5 · 복습 · 사후평가 대비')+`
+  <div class="quiz"><span class="qnum">Q${G5.i+1} / ${QZ.length} · 맞힘 ${right} / 푼 문제 ${answered}</span><div class="q">${q.q}</div>
+   <div class="choices">${q.c.map((c,i)=>`<button class="choice ${done?(i===q.a?'ok':i===a?'no':''):''}" data-i="${i}" ${done?'disabled':''}><span class="num">${'①②③④'[i]}</span> ${c}</button>`).join('')}</div>
+   ${done?`<div class="explain"><b>${a===q.a?'정답입니다!':'아쉽습니다'} · 정답 ${'①②③④'[q.a]}</b>${insOpen('g5')?` · ${q.e}`:' · 해설은 강사님이 인사이트를 열면 보입니다. 왜 이 답인지 먼저 이야기해 보세요.'}</div>`:''}
+   <div class="bar" id="g5s"><button class="btn ghost" id="prev" ${G5.i===0?'disabled':''}>이전 문제</button><button class="btn ghost" id="next" ${G5.i===QZ.length-1?'disabled':''}>다음 문제</button><span class="note">12문제 모두 맞히면 5점</span></div>
+   ${answered===QZ.length?insightBox('g5',`<p style="margin:0"><b>${QZ.length}문제 중 ${right}문제를 맞혔습니다.</b></p>`):''}</div>`;
+  document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{if(done)return;G5S.ans[G5.i]=+b.dataset.i;try{localStorage.setItem('dalkom-g5-'+ME,JSON.stringify(G5S.ans))}catch(e){}
+    const r=Object.keys(G5S.ans).filter(i=>G5S.ans[i]===QZ[i].a).length;reportGame('g5',Math.round(r*5/QZ.length),true);toast(+b.dataset.i===q.a?'정답입니다!':'아쉽습니다');draw5s()});
+  $('#prev').onclick=()=>{G5.i--;draw5s()};$('#next').onclick=()=>{G5.i++;draw5s()};
+}
 function draw5(){
+  if(STUDENT){draw5s();return}
   const q=QZ[G5.i];
   $('#app').innerHTML=head('마케팅 골든벨','문제를 크게 띄우고 조별로 보드에 답을 씁니다. "정답 보기"를 누른 뒤 맞힌 조를 모두 눌러 주세요.','게임 5 · 복습 · 사후평가 대비')+`
   <div class="quiz"><span class="qnum">Q${G5.i+1} / ${QZ.length}</span><div class="q">${q.q}</div>
@@ -604,16 +819,23 @@ function teacherPage(){
   $('#app').innerHTML=`<div class="screen-head"><button class="back" onclick="go('home')">← 처음 화면</button><div><p class="step">강사 전용 · 교육생 화면에 띄우지 마세요</p><h2>강사 화면</h2></div>
    <p class="sub">하루 진행 순서, 실습별 예시 답안과 해설, 조별로 쓴 내용, 게임 정답을 한곳에 모았습니다.</p></div>
    <nav class="wstabs" id="ttabs"></nav><section id="tbody"></section>`;
-  const tabs=[['flow','① 오늘 진행 순서'],['ans','② 실습 예시 답안 · 해설'],['cmp','③ 조별 모아보기'],['game','④ 게임 정답']];
+  const tabs=[['flow','① 오늘 진행 순서'],['ans','② 실습 예시 답안 · 해설'],['cmp','③ 조별 모아보기'],['game','④ 게임 정답'],['qr','⑤ 조별 QR 코드']];
   const n=$('#ttabs');tabs.forEach(([k,t])=>{const b=document.createElement('button');b.className='wtab'+(TP.tab===k?' on':'');b.textContent=t;b.onclick=()=>{if(k==='cmp'){go('cmp');return}TP.tab=k;teacherPage()};n.appendChild(b)});
-  ({flow:tFlow,ans:tAns,game:tGame})[TP.tab]();
+  ({flow:tFlow,ans:tAns,game:tGame,qr:tQr})[TP.tab]();
+}
+function qrSvg(u){try{const q=qrcode(0,'M');q.addData(u);q.make();return q.createSvgTag({cellSize:6,margin:2,scalable:true,alt:'QR'})}catch(e){return '<p class="note">QR을 만들 수 없습니다. 아래 주소를 직접 입력하세요.</p>'}}
+function tQr(){
+  const base=location.origin+location.pathname;
+  $('#tbody').innerHTML=`<div class="bar noprint"><button class="btn" id="qrPrint">QR 인쇄하기</button><span class="note">조마다 기기 한 대로 자기 조 QR을 찍으면 그 조 화면이 열립니다. 첫 화면에서 조 이름을 정하고 시작합니다. 조 수는 위쪽 "조 수"에서 바꿉니다.</span></div>
+   <div class="qrgrid" id="qrgrid">${[...Array(S.teams).keys()].map(i=>{const u=`${base}?team=${i+1}`;return `<div class="qrcard"><h3>${teamLabel(i)}</h3>${qrSvg(u)}<p class="url">${esc(u)}</p></div>`}).join('')}</div>`;
+  $('#qrPrint').onclick=()=>window.print();
 }
 function tFlow(){
   $('#tbody').innerHTML=`<div class="tscroll"><table class="wt rt"><thead><tr><th>시간</th><th>단계</th><th>강사가 할 일 · 누를 곳</th><th>확인 방법</th></tr></thead><tbody>
    ${FLOW.map(r=>`<tr><td class="num c">${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table></div>
    <div class="calcbox"><b>수업 전 체크</b>
     <div class="calcrow"><span>1. 페이지 공유 메뉴에서 교육생에게 "사용 가능(Can interact)" 권한 주기</span></div>
-    <div class="calcrow"><span>2. 교육생 기기 4대에서 링크 열고 "실습지 쓰기" → 우리 조 번호 누르기</span></div>
+    <div class="calcrow"><span>2. ⑤ 조별 QR 코드를 띄우고 조별 기기 한 대씩 자기 조 QR 찍기 → 조 이름 정하기</span></div>
     <div class="calcrow"><span>3. 강사 화면(이 화면)은 강사 노트북에서만. 프로젝터에는 게임 · 조별 모아보기만 띄우기</span></div>
     <div class="calcrow"><span>4. 담당자 방침: RFM 계산은 시범 + 3~4명, 발표 없음, 원페이퍼까지</span></div></div>
    ${W.mode==='server'?`<div class="panel" style="margin-top:12px"><b>수업 데이터 초기화</b><p class="note">다음 반 수업 전에 모든 조의 실습지와 점수를 지웁니다. 지운 기록은 되돌릴 수 없습니다.</p><div class="bar"><button class="btn ghost" id="rbtn">모두 지우기</button></div></div>`:''}`;
@@ -933,7 +1155,7 @@ function setSync(t){W.sync=t;const el=document.getElementById('syncState');if(el
 (async()=>{
   let db=null;try{db=await window.claude?.use?.('db')}catch(e){}
   if(!db){startServerSync();return}
-  W.db=db;W.mode='db';setSync('모든 조와 실시간 공유 중');
+  W.db=db;W.mode='db';goOffline();setSync('모든 조와 실시간 공유 중');
   db.collection('sheets').onSnapshot(snap=>{
     snap.docs.forEach(d=>{if(d.exists){const incoming=d.data();const tk=d.id;W.vals[tk]=W.vals[tk]||{};
       for(const ws in incoming){W.vals[tk][ws]=Object.assign({},W.vals[tk][ws]||{},incoming[ws])}}});
@@ -943,16 +1165,26 @@ function setSync(t){W.sync=t;const el=document.getElementById('syncState');if(el
 })();
 W.pending=new Set();W.ver=-1;
 async function startServerSync(){
-  try{const r=await fetch('/api/state');if(!r.ok)return;W.mode='server';setSync('모든 조와 실시간 공유 중');applyServer(await r.json())}catch(e){return}
+  try{const r=await fetch('/api/state');if(!r.ok){goOffline();return}W.mode='server';setSync('모든 조와 실시간 공유 중');applyServer(await r.json())}catch(e){goOffline();return}
   setInterval(async()=>{try{const r=await fetch('/api/state?v='+W.ver);if(r.status===204)return;if(!r.ok)throw 0;applyServer(await r.json());setSync('모든 조와 실시간 공유 중')}catch(e){setSync('서버 연결이 끊겼습니다 · 이 기기에만 저장 중')}},2500);
 }
+function goOffline(){R.offline=true;R.ready=true;liveRefresh()}
+function liveRefresh(){renderTeams();drawBoard();drawUnits()}
 function applyServer(st){
   if(!st||st.v===W.ver)return;W.ver=st.v;
+  const was=R.ready,before=R.open.slice();
+  R.names=st.names||{};R.prog=st.prog||{};R.open=Array.isArray(st.open)?st.open:[];R.cur=st.cur||'';R.ready=true;
+  const insBefore=R.insight.slice();R.insight=Array.isArray(st.insight)?st.insight:[];
+  if(STUDENT&&was){const ni=R.insight.filter(x=>!insBefore.includes(x));if(ni.length)toast(`💡 인사이트가 열렸습니다 · ${unitName(ni[ni.length-1])}`)}
+  if(STUDENT&&R.insight.join()!==insBefore.join())fillInsights();
+  if(STUDENT&&was){const added=R.open.filter(x=>!before.includes(x));if(added.length)toast(`새 활동이 열렸습니다 · ${unitName(added[added.length-1])}`);
+    if(added.length||R.open.length!==before.length){if($('#wstabs')&&$('#wsbody'))drawTabs(false)}}
   const sh=st.sheets||{};
   for(const tk in sh){const ti=+tk.replace('team','')-1;W.vals[tk]=W.vals[tk]||{};
     for(const ws in sh[tk]){W.vals[tk][ws]=W.vals[tk][ws]||{};for(const k in sh[tk][ws]){if(W.pending.has(ti+'|'+ws+'|'+k))continue;W.vals[tk][ws][k]=sh[tk][ws][k]}}}
   localSave();refreshWsView(true);
-  if(st.scores&&Array.isArray(st.scores.s)&&!W.scorePending){S.scores=[...st.scores.s];if(st.scores.teams)S.teams=st.scores.teams;save();renderTeams()}
+  if(st.scores&&Array.isArray(st.scores.s)&&!W.scorePending){S.scores=[...st.scores.s];if(st.scores.teams)S.teams=st.scores.teams;save()}
+  liveRefresh();
 }
 async function pushScores(){if(W.mode==='server'){W.scorePending=true;try{await fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({s:S.scores,teams:S.teams})})}catch(e){}W.scorePending=false;return}
   if(!W.db)return;try{await W.db.doc('board/scores').set({s:S.scores,teams:S.teams})}catch(e){}}
@@ -1012,12 +1244,13 @@ function wsPage(){
    <p class="sub">우리 조를 고르고 칸을 채우세요. 쓰는 즉시 저장되고, 강사 화면의 "조별 모아보기"에 바로 뜹니다. 합계 · LTV 같은 계산은 앱이 합니다.</p></div>
    <div class="wsbar"><span class="lab">우리 조</span><div class="seg" id="myteam"></div><span class="sync" id="syncState">${W.sync}</span></div>
    <nav class="wstabs" id="wstabs"></nav><section id="wsbody"></section>`;
+  if(STUDENT){W.myteam=ME;W.showEx=false;$('#myteam').innerHTML=`<span class="sopt on">${teamLabel(ME)}</span>`;drawTabs(false);drawWs(false);return}
   const mt=$('#myteam');for(let i=0;i<S.teams;i++){const b=document.createElement('button');b.className='sopt'+(W.myteam===i?' on':'');b.textContent=(i+1)+'조';b.onclick=()=>{W.myteam=i;try{localStorage.setItem('dalkom-myteam',i)}catch(e){}wsPage()};mt.appendChild(b)}
   drawTabs(false);drawWs(false);
 }
 function drawTabs(ro){
   const n=$('#wstabs');n.innerHTML='';
-  WS.forEach(w=>{const b=document.createElement('button');b.className='wtab'+(W.cur===w.id?' on':'');
+  WS.forEach(w=>{if(!ro&&STUDENT&&!isOpen(w.id))return;const b=document.createElement('button');b.className='wtab'+(W.cur===w.id?' on':'');b.dataset.ws=w.id;
     const filled=ro?'':progress(W.myteam,w);b.innerHTML=`<span class="num">${w.no}</span> ${w.t}${filled}`;b.onclick=()=>{W.cur=w.id;ro?compareDraw():(drawTabs(false),drawWs(false))};n.appendChild(b)});
 }
 function keysOf(w){const ks=[];w.blocks.forEach(b=>{if(b.rows)b.rows.forEach(r=>r.forEach(c=>{if(c&&c.k)ks.push(c.k)}));if(b.k&&b.type!=='calc')ks.push(b.k)});return ks}
@@ -1027,17 +1260,18 @@ function drawWs(){
   const body=$('#wsbody');
   body.innerHTML=`<div class="wshead"><div><h3>${w.no} · ${w.t}</h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>
    ${guideHTML(GUIDE[w.id],true)}
-   <div class="exbar"><label class="tog"><input type="checkbox" id="exTog" ${W.showEx?'checked':''}> 칸마다 예시 답 보기</label><button class="btn ghost" id="fillEx">예시로 빈칸 채우기 (강사 시연용)</button><span class="note">예시는 참고용입니다. 우리 조 생각으로 바꿔 쓰세요.</span></div>
+   ${STUDENT?'':`<div class="exbar"><label class="tog"><input type="checkbox" id="exTog" ${W.showEx?'checked':''}> 칸마다 예시 답 보기</label><button class="btn ghost" id="fillEx">예시로 빈칸 채우기 (강사 시연용)</button><span class="note">예시는 참고용입니다. 우리 조 생각으로 바꿔 쓰세요.</span></div>`}
    ${w.tip?`<p class="tipline">${w.tip}</p>`:''}${w.blocks.map(b=>renderBlock(w,b,t,false)).join('')}`;
   body.dataset.ro='0';
-  body.querySelectorAll('.wi').forEach(el=>el.addEventListener('input',e=>{setV(t,w.id,e.target.dataset.k,e.target.value);computeCalcs(body,w,t);drawTabsSoft()}));
-  body.querySelectorAll('[data-choice]').forEach(el=>el.onclick=()=>{setV(t,w.id,el.dataset.choice,el.dataset.v);body.querySelectorAll(`[data-choice="${el.dataset.choice}"]`).forEach(x=>x.classList.toggle('on',x===el))});
+  body.querySelectorAll('.wi').forEach(el=>el.addEventListener('input',e=>{setV(t,w.id,e.target.dataset.k,e.target.value);computeCalcs(body,w,t);drawTabsSoft();renderTeams()}));
+  body.querySelectorAll('[data-choice]').forEach(el=>el.onclick=()=>{setV(t,w.id,el.dataset.choice,el.dataset.v);renderTeams();body.querySelectorAll(`[data-choice="${el.dataset.choice}"]`).forEach(x=>x.classList.toggle('on',x===el))});
   const ib=$('#importBtn');if(ib)ib.onclick=()=>doImport(t);
+  if(STUDENT){computeCalcs(body,w,t);return}
   $('#exTog').onchange=e=>{W.showEx=e.target.checked;const op=body.querySelector('details.guide')?.open;drawWs();const d=$('#wsbody details.guide');if(d&&op===false)d.open=false};
   $('#fillEx').onclick=()=>{let n=0;w.blocks.forEach(b=>{if(b.rows)b.rows.forEach(r=>r.forEach(c=>{if(c&&c.k&&c.a&&!String(getV(t,w.id,c.k)).trim()){setV(t,w.id,c.k,c.a);n++}}));if((b.type==='field'||b.type==='choice')&&!String(getV(t,w.id,b.k)).trim()){setV(t,w.id,b.k,b.a);n++}});drawWs();toast(n?`${t+1}조 실습지에 예시 ${n}칸을 채웠습니다`:'빈칸이 없습니다')};
   computeCalcs(body,w,t);
 }
-function drawTabsSoft(){document.querySelectorAll('#wstabs .wtab').forEach((b,i)=>{const p=b.querySelector('.prog');if(p){const w=WS[i];const tmp=document.createElement('span');tmp.innerHTML=progress(W.myteam,w);p.replaceWith(tmp.firstElementChild)}})}
+function drawTabsSoft(){document.querySelectorAll('#wstabs .wtab').forEach(b=>{const p=b.querySelector('.prog');if(p){const w=WS.find(x=>x.id===b.dataset.ws);const tmp=document.createElement('span');tmp.innerHTML=progress(W.myteam,w);p.replaceWith(tmp.firstElementChild)}})}
 function refreshWsView(fromRemote){
   if($('#compareBody'))compareDraw();
   const body=$('#wsbody');if(!body||!fromRemote)return;
@@ -1074,7 +1308,7 @@ function comparePage(){
 }
 function compareDraw(){
   const w=WS.find(x=>x.id===W.cur);const box=$('#compareBody');if(!box)return;
-  document.querySelectorAll('#wstabs .wtab').forEach((b,i)=>b.classList.toggle('on',WS[i].id===W.cur));
+  document.querySelectorAll('#wstabs .wtab').forEach(b=>b.classList.toggle('on',b.dataset.ws===W.cur));
   const rows=[];
   w.blocks.forEach(b=>{
     if(b.type==='table')b.rows.forEach(r=>r.forEach((c,ci)=>{if(c&&c.k)rows.push({label:`${typeof r[0]==='string'?r[0]:''} · ${b.head[ci]}`,k:c.k,a:c.a,num:c.t==='num'})}));
@@ -1086,7 +1320,7 @@ function compareDraw(){
   box.innerHTML=`<div class="wshead"><div><h3>${w.no} · ${w.t}</h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>`+h+'</tbody></table></div>';
 }
 
-renderTeams();home();
+renderTeams();home();startCheer();
 </script>
 
 </body>
