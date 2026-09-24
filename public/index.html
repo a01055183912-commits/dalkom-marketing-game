@@ -254,6 +254,17 @@ table.rt{min-width:620px;font-size:15.5px;table-layout:auto}
 .ro.ans{color:var(--ink)}
 @media (max-width:860px){.first{grid-template-columns:1fr}.sync{margin-left:0}}
 @media (max-width:860px){.hero-img{height:auto;width:100%;max-width:300px}.hero,.g1,.crm{grid-template-columns:1fr}.bins{position:static}.sl{grid-template-columns:1fr}.choices{grid-template-columns:1fr}}
+/* 교육생 단계 흐름 */
+.flow4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 18px}
+.flow4 span{background:var(--surface);border-radius:12px;padding:10px 12px;font-weight:700;font-size:14px;text-align:center;position:relative}
+.flow4 small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.flow4 span:first-child{background:var(--matcha-soft)}.flow4 span:last-child{background:var(--berry-soft)}
+.stepbox{margin-bottom:20px}
+.stepbox .step{margin-bottom:8px}
+.sguide{background:var(--surface);border-radius:14px;padding:14px 18px;margin:12px 0}
+.sguide b{color:var(--choco)}
+.sguide ol{margin:8px 0 0;padding-left:20px}.sguide li{margin:4px 0}
+@media (max-width:860px){.flow4{grid-template-columns:1fr 1fr}}
 /* 인사이트 · 응원 */
 .ins-wait{border:1.5px dashed var(--line);border-radius:12px;padding:14px 16px;margin-top:12px;color:var(--muted);text-align:center}
 .ins-card{background:var(--lemon-soft);border-radius:14px;padding:16px 18px;margin-top:14px}
@@ -343,13 +354,23 @@ const STUDENT=ME!==null;
 if(STUDENT)document.documentElement.classList.add('student');
 const R={names:{},prog:{},open:[],cur:'',insight:[],ready:false,offline:false};
 const UNITS=[
- {id:'w01',s:'0-1',k:'ws'},{id:'w02',s:'0-2',k:'ws'},{id:'g2',s:'게임1',k:'game'},
- {id:'w1',s:'①',k:'ws'},{id:'w2',s:'②',k:'ws'},{id:'rfm',s:'RFM',k:'read'},
- {id:'g1',s:'게임2',k:'game'},{id:'w42',s:'④-2',k:'ws'},{id:'w5',s:'⑤',k:'ws'},
- {id:'g4',s:'게임3',k:'game'},{id:'w6',s:'⑥',k:'ws'},{id:'g3',s:'게임4',k:'game'},
- {id:'w7',s:'⑦',k:'ws'},{id:'g5',s:'게임5',k:'game'}];
+ {id:'g2',s:'게임1',k:'game'},{id:'w01',s:'0-1',k:'ws'},{id:'w02',s:'0-2',k:'ws'},
+ {id:'w1',s:'①',k:'ws'},{id:'w2',s:'②',k:'ws'},
+ {id:'g1',s:'게임2',k:'game'},{id:'rfm',s:'RFM',k:'read'},{id:'w42',s:'④-2',k:'ws'},
+ {id:'g4',s:'게임3',k:'game'},{id:'w5',s:'⑤',k:'ws'},
+ {id:'g3',s:'게임4',k:'game'},{id:'w6',s:'⑥',k:'ws'},
+ {id:'g5',s:'게임5',k:'game'},{id:'w7',s:'⑦',k:'ws'}];
+/* 교육생 흐름: 워밍업 게임(언제든 자유) → 강사 설명 → 조별 토론 · 검색 → 활동지(강사가 열면) */
+const STEPS=[
+ {t:'디저트 가게로 STP 감 잡기',g:'g2',ws:['w01','w02']},
+ {t:'고객 세분화와 표적 선정',g:null,ws:['w1','w2']},
+ {t:'RFM으로 우리 단골 찾기',g:'g1',ws:['rfm','w42']},
+ {t:'등급별 CRM 액션 설계',g:'g4',ws:['w5']},
+ {t:'LTV로 예산 나누기',g:'g3',ws:['w6']},
+ {t:'복습하고 원페이퍼 완성',g:'g5',ws:['w7']}];
+const warmOf=id=>{const s=STEPS.find(x=>x.ws.includes(id));return s&&s.g};
 function unitName(id){const w=WS.find(x=>x.id===id);if(w)return `${w.no} · ${w.t}`;if(id==='rfm')return 'RFM 표 읽기';const g=GAMES.find(x=>x.id===id);return g?`${g.no} · ${g.t}`:id}
-const isOpen=id=>!STUDENT||R.offline||R.open.includes(id);
+const isOpen=id=>!STUDENT||R.offline||id[0]==='g'||R.open.includes(id);
 function wsPts(t,w){const ks=keysOf(w);if(!ks.length)return 0;const f=ks.filter(k=>String(getV(t,w.id,k)).trim()).length;return f>=ks.length?3:f*2>=ks.length?2:f?1:0}
 function gamePts(t,g){return +((R.prog[teamKey(t)]||{})[g]||0)}
 function unitPts(t,id){const w=WS.find(x=>x.id===id);return w?wsPts(t,w):id[0]==='g'?gamePts(t,id):0}
@@ -418,14 +439,14 @@ function home(){
     <div class="board-head"><div><p class="step">강사 · 실시간 조별 현황</p><h3>조별 진행 현황</h3></div>
       <div class="bar"><button class="btn" id="nextBtn"></button><button class="btn ghost" id="qrBtn">조별 QR 코드</button></div></div>
     <div class="tscroll" id="board"></div>
-    <p class="note" id="boardNote">열 제목을 누르면 그 활동을 교육생 화면에 열거나 닫습니다. 게임 아래 "공개"를 누르면 그 게임의 인사이트가 교육생 화면에 뜹니다(버튼에 마우스를 올리면 끝낸 조 수가 보입니다). ✓는 끝낸 활동이고 숫자는 받은 점수입니다. 실습지는 칸을 채운 만큼(조금 1점 · 절반 2점 · 전부 3점), 게임은 조가 받은 최고 점수가 자동으로 들어갑니다. 합계에는 위쪽 + / − 로 고친 점수도 더해집니다.</p>
+    <p class="note" id="boardNote">워밍업 게임은 교육생이 언제든 자유롭게 할 수 있습니다. 활동지는 강사가 설명한 뒤 "다음 화면 열기"나 열 제목을 눌러 열어 주세요. 게임 아래 "공개"를 누르면 그 게임의 인사이트가 교육생 화면에 뜹니다(버튼에 마우스를 올리면 끝낸 조 수가 보입니다). ✓는 끝낸 활동이고 숫자는 받은 점수입니다. 실습지는 칸을 채운 만큼(조금 1점 · 절반 2점 · 전부 3점), 게임은 조가 받은 최고 점수가 자동으로 들어갑니다. 합계에는 위쪽 + / − 로 고친 점수도 더해집니다.</p>
   </section>
   <div class="first">
     <button class="big" onclick="go('ws')"><span class="gno">먼저 · 조별로 한 대씩</span><h3>실습지 쓰기</h3><p>실습 0-1부터 ⑦ 원페이퍼까지 8장을 조별로 채웁니다. 합계 · LTV 같은 계산은 앱이 하고, ⑦은 앞에서 쓴 내용을 불러옵니다.</p></button>
     <button class="big mid" onclick="go('rfm')"><span class="gno">실습 ④ 준비</span><h3>RFM 표 읽기</h3><p>C01~C20이 무엇인지, 숫자를 점수로 바꾸는 법, 20명 한눈에 보기. 손님을 누르면 따라가기만 하면 됩니다.</p></button>
     <button class="big alt" onclick="go('teacher')"><span class="gno">강사 전용</span><h3>강사 화면</h3><p>오늘 진행 순서 · 실습별 예시 답안과 해설 · 조별 모아보기 · 게임 정답을 한곳에서 봅니다.</p></button>
   </div>
-  <p class="step" style="margin-top:26px">게임 · 실습지를 쓰기 전 몸풀기나 쓰고 난 뒤 확인용</p>
+  <p class="step" style="margin-top:26px">워밍업 게임 · 교육생은 언제든 자유롭게 할 수 있습니다. 게임 → 강사 설명 → 토론 · 검색 → 활동지 순서로 진행합니다</p>
   <div class="games" id="games"></div>
   <div class="howto">
     <div><b>진행 방법</b>"조별 QR 코드"를 띄워 조마다 한 대씩 접속하게 한 뒤, "다음 화면 열기"로 활동을 하나씩 엽니다. 열지 않은 활동은 교육생 화면에 잠겨 있습니다.</div>
@@ -445,7 +466,7 @@ function drawBoard(){
   const el=$('#board');if(!el)return;
   const prev=drawBoard.prev||{},now={};
   const cell=(key,v,cls,html)=>{now[key]=v;const up=prev[key]!==undefined&&v>prev[key];return `<td class="${cls}${up?' bump':''}">${html}</td>`};
-  let h=`<table class="bt"><thead><tr><th>조</th>${UNITS.map(u=>`<th class="${R.cur===u.id?'curcol':''}"><button class="uh ${R.open.includes(u.id)?'open':''} ${R.cur===u.id?'cur':''}" data-u="${u.id}" title="${esc(unitName(u.id))}">${u.s}<small>${R.open.includes(u.id)?'열림':'닫힘'}</small></button></th>`).join('')}<th>합계</th></tr>
+  let h=`<table class="bt"><thead><tr><th>조</th>${UNITS.map(u=>`<th class="${R.cur===u.id?'curcol':''}">${u.k==='game'?`<span class="uh open" title="${esc(unitName(u.id))} · 워밍업 게임은 언제든 자유롭게 열려 있습니다">${u.s}<small>자유</small></span>`:`<button class="uh ${R.open.includes(u.id)?'open':''} ${R.cur===u.id?'cur':''}" data-u="${u.id}" title="${esc(unitName(u.id))}">${u.s}<small>${R.open.includes(u.id)?'열림':'닫힘'}</small></button>`}</th>`).join('')}<th>합계</th></tr>
    <tr class="insrow"><th><span class="muted" style="font-size:12px;font-weight:400">인사이트</span></th>${UNITS.map(u=>u.k!=='game'?'<th></th>':`<th><button class="insb ${R.insight.includes(u.id)?'on':''}" data-ins="${u.id}" title="끝낸 조 ${[...Array(S.teams).keys()].filter(t=>gamePts(t,u.id)>0).length} / ${S.teams}">${R.insight.includes(u.id)?'💡 공개됨':'공개'}</button></th>`).join('')}<th></th></tr></thead><tbody>`;
   for(let t=0;t<S.teams;t++){
     h+=`<tr><td class="tnm">${teamLabel(t)}</td>`+UNITS.map(u=>{const p=unitPts(t,u.id);if(u.k==='read')return '<td><span class="muted">—</span></td>';
@@ -457,7 +478,7 @@ function drawBoard(){
   el.querySelectorAll('[data-ins]').forEach(b=>b.onclick=()=>{const g=b.dataset.ins;const on=R.insight.includes(g);setInsight(on?R.insight.filter(x=>x!==g):[...R.insight,g],on?'':g)});
   el.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{const id=b.dataset.u;const on=R.open.includes(id);
     setOpen(on?R.open.filter(x=>x!==id):[...R.open,id],on?(R.cur===id?'':R.cur):id)});
-  const nx=UNITS.find(u=>!R.open.includes(u.id));
+  const nx=UNITS.find(u=>u.k!=='game'&&!R.open.includes(u.id));
   const nb=$('#nextBtn');
   if(nb){nb.textContent=nx?`다음 화면 열기 ▶ ${unitName(nx.id)}`:'모든 활동이 열렸습니다';nb.disabled=!nx;nb.onclick=()=>{if(nx)setOpen([...R.open,nx.id],nx.id)}}
   const note=$('#boardNote');if(note&&R.offline&&!note.dataset.off){note.dataset.off=1;note.insertAdjacentHTML('afterbegin','<b style="color:var(--bad)">서버에 연결되지 않아 열기 · 닫기가 교육생 화면에 전달되지 않습니다.</b> ')}
@@ -480,7 +501,7 @@ function studentHome(){
     <div>
       <p class="step">LOTTE LIFT · 3-3 실습 · ${ME+1}조 기기</p>
       <h2>우리 가게 단골은<br><em>누구일까요?</em></h2>
-      <p>강사님이 여는 순서대로 활동합니다. 실습지는 칸을 채운 만큼, 게임은 결과만큼 우리 조 점수가 자동으로 올라갑니다.</p>
+      <p>워밍업 게임은 언제든 자유롭게 해 보세요. 활동지는 강사님 설명을 들은 뒤 열립니다. 조원과 토론하고 검색해서 채운 만큼 우리 조 점수가 자동으로 올라갑니다.</p>
     </div>
     <img class="hero-img" src="/shop.jpg" alt="달콤상점 와그작 케이크와 과일모찌" width="473" height="591">
   </section>
@@ -488,8 +509,8 @@ function studentHome(){
     <div class="shome"><div><p class="step">우리 조</p><h3 id="sName">${teamLabel(ME)}</h3></div><div class="sc"><span>우리 조 점수</span><b id="sScore">${total(ME)}</b></div></div>
     <div class="nameform"><input id="tname" maxlength="16" placeholder="우리 조 이름 (예: 딸기모찌단)" value="${esc(nm)}" aria-label="우리 조 이름"><button class="btn" id="tnameBtn">${nm?'이름 바꾸기':'이름 정하기'}</button></div>
   </div>
-  <p class="step">오늘 활동 · 강사님이 열어 주면 누를 수 있습니다</p>
-  <div class="units" id="units"></div>`;
+  <div class="flow4"><span>① 워밍업 게임<small>언제든 자유롭게</small></span><span>② 강사님 설명 듣기</span><span>③ 조원과 토론 · 검색</span><span>④ 활동지 쓰기<small>강사님이 열면 시작</small></span></div>
+  <div id="units"></div>`;
   $('#tnameBtn').onclick=saveName;$('#tname').onkeydown=e=>{if(e.key==='Enter')saveName()};
   drawUnits();
 }
@@ -504,14 +525,17 @@ function drawUnits(){
   if(!R.ready&&!R.offline){box.innerHTML='<p class="note">서버에 연결하는 중입니다…</p>';return}
   const needName=!teamName(ME)&&W.mode==='server';
   box.innerHTML='';
-  UNITS.forEach(u=>{const open=isOpen(u.id);const b=document.createElement('button');
+  const card=u=>{const open=isOpen(u.id);const b=document.createElement('button');
     const p=unitPts(ME,u.id);const w=WS.find(x=>x.id===u.id);
     const prog=w?(()=>{const ks=keysOf(w);const f=ks.filter(k=>String(getV(ME,w.id,k)).trim()).length;return `${f}/${ks.length}칸 · <b>${p}점</b>`})():u.k==='game'?(p?`최고 <b>${p}점</b>`:'아직 안 함'):'점수 없음 · 읽기 자료';
     b.className='unit'+(open?'':' locked')+(open&&R.cur===u.id?' cur':'')+(open&&u.k!=='read'&&unitDone(ME,u.id)?' done':'');
-    b.innerHTML=`<span class="us">${u.s}</span><h4>${esc(unitName(u.id))}</h4><span class="up">${open?prog:'🔒 강사님이 열면 시작합니다'}</span>`;
-    b.onclick=()=>{if(!open){toast('아직 열리지 않은 활동입니다');return}if(needName){toast('먼저 우리 조 이름을 정해 주세요');$('#tname').focus();return}
+    b.innerHTML=`<span class="us">${u.k==='game'?'워밍업 · 자유':u.k==='read'?'읽기 자료':'활동지 '+u.s}</span><h4>${esc(unitName(u.id))}</h4><span class="up">${open?prog:'🔒 강사님 설명 뒤에 열립니다'}</span>`;
+    b.onclick=()=>{if(!open){toast('강사님 설명을 들은 뒤에 열립니다');return}if(needName){toast('먼저 우리 조 이름을 정해 주세요');$('#tname').focus();return}
       if(w){W.cur=u.id;go('ws')}else go(u.id)};
-    box.appendChild(b)});
+    return b};
+  STEPS.forEach((s,i)=>{const sec=document.createElement('section');sec.className='stepbox';
+    sec.innerHTML=`<p class="step">STEP ${i+1} · ${s.t}</p><div class="units"></div>`;const g=sec.querySelector('.units');
+    [s.g,...s.ws].filter(Boolean).forEach(id=>g.appendChild(card(UNITS.find(u=>u.id===id))));box.appendChild(sec)});
 }
 function studentAward(id,g,pts){
   if(!STUDENT)return false;const b=document.getElementById(id);if(!b)return true;
@@ -805,16 +829,17 @@ function draw5(){
 /* ================= 강사 화면 ================= */
 const TP={tab:'flow',ws:'w01'};
 const FLOW=[
- ['09:00','도입','PPT 3~11쪽 디저트로 쉽게 이해하기','—'],
- ['09:30','실습 0-1 · 0-2','조별 기기에서 "실습지 쓰기" → 0-1, 0-2','게임 1 사장 되기로 확인'],
- ['10:10','STP 이론 → 실습 ①','세분화 이론 후 실습지 ①','조별 모아보기로 비교'],
- ['11:00','표적화 → 실습 ②','DART 근거 안내 후 실습지 ②','조별 모아보기'],
- ['13:00','데이터 · RFM 이론','"RFM 표 읽기" ①→②(C01·C05·C11·C15만)','게임 2 손님 카드'],
- ['14:00','실습 ④-2','실습지 ④-2 해석','조별 모아보기'],
- ['14:50','CRM → 실습 ⑤','"할인·쿠폰 말고" 질문 후 실습지 ⑤','게임 3 누구에게 무엇을'],
- ['15:40','LTV → 실습 ⑥','계산법 보여 주고 실습지 ⑥','게임 4 예산 나누기'],
- ['16:30','실습 ⑦ 원페이퍼','"불러오기" 후 7번 칸만 새로 쓰기 (발표 없음)','조별 모아보기'],
- ['17:30','마무리','골든벨 12문제','게임 5 골든벨']];
+ ['09:00','도입 · QR 접속','PPT 3~11쪽 디저트로 쉽게 이해하기. 조별 QR 찍고 조 이름 정하기','현황표에 조 이름'],
+ ['09:20','워밍업 게임 1','조별 기기로 "디저트 가게 사장 되기" (자유) → 인사이트 공개','현황표 게임1 ✓'],
+ ['09:40','설명 → 실습 0-1 · 0-2','강사 설명 후 0-1 · 0-2 열기 → 조별 토론 · 검색 후 작성','조별 모아보기'],
+ ['10:30','STP 이론 → 실습 ①','세분화 이론 설명 후 실습지 ① 열기','조별 모아보기로 비교'],
+ ['11:10','표적화 → 실습 ②','DART 근거 찾는 법 설명 후 실습지 ② 열기','조별 모아보기'],
+ ['13:00','워밍업 게임 2 → RFM','"손님 카드 분류" 후 인사이트 공개, RFM 이론 · "RFM 표 읽기" 열기','현황표 게임2 ✓'],
+ ['14:00','실습 ④-2','해석 방법 설명 후 실습지 ④-2 열기','조별 모아보기'],
+ ['14:40','워밍업 게임 3 → 실습 ⑤','"누구에게 무엇을?" 후 인사이트 공개, CRM 설명 후 ⑤ 열기','현황표 게임3 ✓'],
+ ['15:40','워밍업 게임 4 → 실습 ⑥','"CRM 예산 나누기" 후 인사이트 공개, LTV 계산법 설명 후 ⑥ 열기','현황표 게임4 ✓'],
+ ['16:40','골든벨 → 실습 ⑦','골든벨로 복습 · 인사이트 공개 후 원페이퍼 ⑦ 열기 (발표 없음)','현황표 · 조별 모아보기'],
+ ['17:40','마무리','현황표 합계로 우수 조 시상','현황표 합계']];
 function teacherPage(){
   $('#app').innerHTML=`<div class="screen-head"><button class="back" onclick="go('home')">← 처음 화면</button><div><p class="step">강사 전용 · 교육생 화면에 띄우지 마세요</p><h2>강사 화면</h2></div>
    <p class="sub">하루 진행 순서, 실습별 예시 답안과 해설, 조별로 쓴 내용, 게임 정답을 한곳에 모았습니다.</p></div>
@@ -1029,8 +1054,18 @@ const GGUIDE={
   worked:[['진행 멘트 예','"6번 문제입니다. R 점수는 어떻게 매길까요? 10초 드립니다… 보드 들어 주세요. 정답은 ②, 지난 날이 짧을수록 5점입니다. 오늘 가장 많이 틀린 곳이죠. 맞힌 조 1점!"']],
   mistakes:[]}
 };
+function studentWsGuide(w){
+  const g=warmOf(w.id);
+  return `<div class="sguide"><b>이렇게 활동합니다</b><ol>
+   <li><b>강사님 설명</b>을 먼저 듣습니다.</li>
+   <li>조원 모두 한 번씩 의견을 말하고 <b>충분히 토론</b>합니다.</li>
+   <li>근거가 필요하면 <b>검색</b>합니다. (기사 · 회사 홈페이지 · DART 공시 · 매장 경험)</li>
+   <li>정답보다 <b>우리 조의 생각과 근거</b>로 칸을 채웁니다. 채운 만큼 점수가 올라갑니다.</li></ol>
+   ${g?`<div class="bar" style="margin-top:10px"><button class="btn ghost" onclick="go('${g}')">워밍업 · ${esc(unitName(g))} 먼저 해 보기</button></div>`:''}</div>`;
+}
 function guideHTML(g,open){
   if(!g)return '';
+  if(STUDENT)return `<details class="guide" ${open?'open':''}><summary>게임 방법</summary><p class="ggoal">${g.goal}</p><ol>${g.steps.map(s=>`<li>${s}</li>`).join('')}</ol></details>`;
   const t=g.table?`<table class="gt"><thead><tr>${(g.tableHead||['이런 손님','이름','장부의 누구'] ).map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${g.table.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`:'';
   return `<details class="guide" ${open?'open':''}><summary>처음이라면 · 예시로 이해하기</summary>
    <p class="ggoal">${g.goal}</p>
@@ -1259,9 +1294,9 @@ function drawWs(){
   const w=WS.find(x=>x.id===W.cur);const t=W.myteam;
   const body=$('#wsbody');
   body.innerHTML=`<div class="wshead"><div><h3>${w.no} · ${w.t}</h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>
-   ${guideHTML(GUIDE[w.id],true)}
+   ${STUDENT?studentWsGuide(w):guideHTML(GUIDE[w.id],true)}
    ${STUDENT?'':`<div class="exbar"><label class="tog"><input type="checkbox" id="exTog" ${W.showEx?'checked':''}> 칸마다 예시 답 보기</label><button class="btn ghost" id="fillEx">예시로 빈칸 채우기 (강사 시연용)</button><span class="note">예시는 참고용입니다. 우리 조 생각으로 바꿔 쓰세요.</span></div>`}
-   ${w.tip?`<p class="tipline">${w.tip}</p>`:''}${w.blocks.map(b=>renderBlock(w,b,t,false)).join('')}`;
+   ${w.tip&&!STUDENT?`<p class="tipline">${w.tip}</p>`:''}${w.blocks.map(b=>renderBlock(w,b,t,false)).join('')}`;
   body.dataset.ro='0';
   body.querySelectorAll('.wi').forEach(el=>el.addEventListener('input',e=>{setV(t,w.id,e.target.dataset.k,e.target.value);computeCalcs(body,w,t);drawTabsSoft();renderTeams()}));
   body.querySelectorAll('[data-choice]').forEach(el=>el.onclick=()=>{setV(t,w.id,el.dataset.choice,el.dataset.v);renderTeams();body.querySelectorAll(`[data-choice="${el.dataset.choice}"]`).forEach(x=>x.classList.toggle('on',x===el))});
