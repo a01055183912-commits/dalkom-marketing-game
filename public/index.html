@@ -1,0 +1,1105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}html{-webkit-text-size-adjust:100%}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>달콤상점 마케팅 게임</title>
+<meta name="description" content="롯데 LIFT 3-3 고객 세그먼트 및 데이터 마케팅 실습 게임">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#FFFFFF; --surface:#FFF4F3; --surface2:#F7EEEC; --ink:#2E1F1B; --muted:#7A6560; --line:#EADBD8;
+  --berry:#D8394A; --berry-soft:#FBE3E5; --choco:#5A3A31; --matcha:#5E8C3A; --matcha-soft:#E6F0DC;
+  --lemon:#E9B21F; --lemon-soft:#FBF1D2; --bad:#C2410C; --good:#3F7D2C;
+  --shadow:0 1px 2px rgba(46,31,27,.08),0 6px 18px rgba(46,31,27,.06);
+  --display:"Do Hyeon","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#1C1412; --surface:#2A1E1B; --surface2:#33241F; --ink:#F6ECE9; --muted:#BCA7A1; --line:#4A3631;
+    --berry:#F0626F; --berry-soft:#4A2328; --choco:#E3C3B8; --matcha:#9CC877; --matcha-soft:#2C3A22;
+    --lemon:#F2C94C; --lemon-soft:#3F3417; --bad:#FB923C; --good:#9CC877; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#1C1412; --surface:#2A1E1B; --surface2:#33241F; --ink:#F6ECE9; --muted:#BCA7A1; --line:#4A3631;
+  --berry:#F0626F; --berry-soft:#4A2328; --choco:#E3C3B8; --matcha:#9CC877; --matcha-soft:#2C3A22;
+  --lemon:#F2C94C; --lemon-soft:#3F3417; --bad:#FB923C; --good:#9CC877; --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;margin:0;word-break:keep-all;overflow-wrap:break-word}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:20px;padding-block:0 60px}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.2px;text-wrap:balance;margin:0}
+button{font-family:var(--body);font-size:15px;cursor:pointer;color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--lemon);outline-offset:2px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top-in{max-width:1200px;margin:0 auto;padding:10px 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer;background:none;border:0;padding:0}
+.brand h1{font-size:26px;color:var(--berry)}
+.brand small{font-size:12px;color:var(--muted);font-family:var(--body)}
+.teams{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto;align-items:center}
+.team{display:flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:4px 6px 4px 12px;background:var(--bg)}
+.team.on{border-color:var(--berry);background:var(--berry-soft)}
+.team .tn{font-weight:700;font-size:14px;background:none;border:0;padding:0}
+.team .ts{font-family:var(--mono);font-weight:600;min-width:28px;text-align:right}
+.team .pm{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--surface);line-height:1;padding:0}
+.tcount{border:1px solid var(--line);border-radius:8px;padding:5px;background:var(--bg);color:var(--ink);font-family:var(--body)}
+/* home */
+.hero{padding-block:36px 18px;display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:end}
+.hero h2{font-size:clamp(34px,5vw,54px);line-height:1.1}
+.hero h2 em{font-style:normal;color:var(--berry)}
+.hero p{font-size:18px;color:var(--muted);max-width:60ch;margin:14px 0 0}
+.receipt{background:var(--surface);border-radius:4px;padding:18px 20px;font-family:var(--mono);font-size:13px;position:relative;box-shadow:var(--shadow)}
+.receipt:before,.receipt:after{content:"";position:absolute;left:0;right:0;height:8px;background:radial-gradient(circle at 6px -2px,var(--bg) 6px,transparent 6.5px) repeat-x;background-size:12px 8px}
+.receipt:before{top:-1px}.receipt:after{bottom:-1px;transform:rotate(180deg)}
+.receipt .row{display:flex;justify-content:space-between;gap:10px;padding:3px 0}
+.receipt .tot{border-top:1px dashed var(--muted);margin-top:8px;padding-top:8px;font-weight:600;color:var(--berry)}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:22px}
+.gcard{text-align:left;background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px;transition:transform .15s,border-color .15s}
+.gcard:hover{transform:translateY(-2px);border-color:var(--berry)}
+.gcard .gno{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.gcard h3{font-size:22px}
+.gcard p{margin:0;color:var(--muted);font-size:14.5px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+.tag{font-size:12px;border-radius:999px;padding:3px 10px;background:var(--surface2);color:var(--choco);font-weight:500}
+.tag.b{background:var(--berry-soft);color:var(--berry)}
+.howto{margin-top:26px;border-top:1px solid var(--line);padding-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;font-size:14.5px}
+.howto b{display:block;font-family:var(--display);font-weight:400;font-size:19px;color:var(--choco)}
+/* screen */
+.screen-head{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding-block:22px 8px}
+.screen-head h2{font-size:clamp(28px,4vw,40px)}
+.screen-head .sub{color:var(--muted);flex-basis:100%;margin:0;font-size:16px;max-width:80ch}
+.back{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 12px;font-size:14px}
+.btn{border:0;border-radius:10px;padding:10px 16px;font-weight:700;background:var(--berry);color:#fff}
+.btn.ghost{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
+.btn.green{background:var(--matcha)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-block:12px}
+.step{font-family:var(--mono);font-size:12px;color:var(--berry);letter-spacing:.8px}
+.panel{background:var(--surface);border-radius:14px;padding:16px}
+.note{font-size:13px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;z-index:50}
+/* game1 */
+.g1{display:grid;grid-template-columns:1fr 330px;gap:18px;align-items:start}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.ccard{background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:2px;min-height:112px}
+.ccard .id{font-family:var(--display);font-size:22px;color:var(--choco)}
+.ccard .d{font-size:13px;display:flex;justify-content:space-between;gap:6px}
+.ccard .d span:last-child{font-family:var(--mono)}
+.ccard .sc{font-family:var(--mono);font-size:12px;color:var(--berry);margin-top:4px}
+.ccard.sel{border-color:var(--berry);box-shadow:0 0 0 3px var(--berry-soft)}
+.ccard.placed{opacity:.35}
+.ccard.ok{border-color:var(--good);background:var(--matcha-soft);opacity:1}
+.ccard.no{border-color:var(--bad);opacity:1;animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.bins{display:flex;flex-direction:column;gap:8px;position:sticky;top:90px}
+.bin{border:2px dashed var(--line);border-radius:12px;padding:10px;background:var(--bg);text-align:left;min-height:64px}
+.bin.ready{border-color:var(--berry);border-style:solid}
+.bin h4{margin:0;font-family:var(--display);font-weight:400;font-size:19px;display:flex;justify-content:space-between}
+.bin .hint{font-size:12px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.chip{font-family:var(--mono);font-size:12px;border-radius:6px;padding:2px 7px;background:var(--surface2)}
+.chip.ok{background:var(--matcha-soft);color:var(--good)}.chip.no{background:#FDE2D4;color:var(--bad)}
+.share{margin-top:16px}
+.srow{display:grid;grid-template-columns:110px 1fr 70px;gap:10px;align-items:center;margin:6px 0;font-size:14px}
+.strack{height:22px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.sfill{height:100%;background:var(--berry);border-radius:4px 0 0 4px;transition:width .6s}
+.sfill.low{background:var(--muted)}
+/* game2 */
+.picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.opt{background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:14px;text-align:left}
+.opt.on{border-color:var(--berry);background:var(--berry-soft)}
+.opt h4{margin:0 0 4px;font-family:var(--display);font-weight:400;font-size:22px}
+.opt p{margin:0;font-size:13.5px;color:var(--muted)}
+.sl{display:grid;grid-template-columns:170px 1fr 80px;gap:12px;align-items:center;margin:10px 0}
+.sl label{font-weight:700;font-size:15px}
+.sl label small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+input[type=range]{width:100%;accent-color:var(--berry)}
+.budget{font-family:var(--mono);font-size:15px}
+.budget.over{color:var(--bad);font-weight:600}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px}
+.kpi .k{font-size:13px;color:var(--muted)}
+.kpi .v{font-family:var(--mono);font-size:26px;font-weight:600}
+.kpi.hl .v{color:var(--berry)}
+.fb{margin:12px 0 0;padding-left:20px}
+.fb li{margin:5px 0}
+/* game3 */
+.crm{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;align-items:start}
+.seg3{border-bottom:1px solid var(--line);padding:10px 0}
+.seg3 .h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.seg3 .h b{font-family:var(--display);font-weight:400;font-size:21px}
+.seg3 .cap{font-size:12.5px;color:var(--muted)}
+.seg3 .cap.over{color:var(--bad);font-weight:700}
+.seg3 input{margin-top:4px}
+.seg3 .val{font-family:var(--mono)}
+.gauge{height:14px;background:var(--surface2);border-radius:999px;overflow:hidden;margin-top:6px}
+.gauge div{height:100%;background:var(--matcha)}
+table.t{border-collapse:collapse;width:100%;font-size:14px}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left}
+table.t td.n,table.t th.n{text-align:right;font-family:var(--mono)}
+/* game4 */
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.act{background:var(--bg);border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;font-size:14.5px}
+.act.sel{border-color:var(--berry);background:var(--berry-soft)}
+.act.placed{opacity:.3}
+.segs4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:14px}
+.s4{border:2px dashed var(--line);border-radius:12px;padding:10px;background:var(--bg);text-align:left;min-height:150px;display:flex;flex-direction:column;gap:6px}
+.s4.ready{border-color:var(--berry);border-style:solid}
+.s4 h4{margin:0;font-family:var(--display);font-weight:400;font-size:20px}
+.s4 .goal{font-size:12.5px;color:var(--muted)}
+.s4 .in{font-size:13.5px;border-radius:8px;padding:5px 8px;background:var(--surface2)}
+.s4 .in.ok{background:var(--matcha-soft);color:var(--good)}.s4 .in.no{background:#FDE2D4;color:var(--bad);text-decoration:line-through}
+.s4 input{width:100%;border:1px solid var(--line);border-radius:8px;padding:7px 8px;font-family:var(--body);font-size:13.5px;background:var(--bg);color:var(--ink)}
+.trash{border-color:var(--muted)}
+/* game5 */
+.quiz{display:grid;grid-template-columns:1fr;gap:14px;max-width:900px}
+.qnum{font-family:var(--mono);color:var(--berry)}
+.q{font-family:var(--display);font-size:clamp(26px,3.6vw,38px);line-height:1.25}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice{background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:14px 16px;text-align:left;font-size:17px}
+.choice.ok{border-color:var(--good);background:var(--matcha-soft)}
+.choice.no{opacity:.5}
+.explain{background:var(--lemon-soft);border-radius:12px;padding:14px 16px;font-size:16px}
+.who{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.who button{border:1.5px solid var(--line);border-radius:999px;padding:6px 14px;background:var(--bg)}
+.who button.on{background:var(--matcha);color:#fff;border-color:var(--matcha)}
+.first{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px;margin-top:10px}
+.big{text-align:left;border:0;border-radius:16px;padding:22px;background:var(--berry);color:#fff;display:flex;flex-direction:column;gap:8px}
+.big.alt{background:var(--choco);color:var(--bg)}
+.big h3{font-size:34px}.big p{margin:0;opacity:.92;font-size:15px}.big .gno{font-family:var(--mono);font-size:12px;opacity:.85}
+.wsbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-block:6px 10px}
+.lab{font-weight:700;font-size:14px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.sopt{border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:7px 14px;font-weight:700}
+.sopt.on{background:var(--berry);border-color:var(--berry);color:#fff}
+.sync{font-size:13px;color:var(--good);margin-left:auto}
+.wstabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:14px}
+.wtab{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 11px;font-size:14px}
+.wtab.on{border-color:var(--berry);background:var(--berry-soft);font-weight:700}
+.prog{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:4px}.prog.full{color:var(--good)}
+.wshead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:8px}
+.wshead h3{font-size:28px}.wshead p{margin:4px 0 0;max-width:80ch}
+.pill{background:var(--berry);color:#fff;border-radius:999px;padding:5px 16px;font-weight:700;white-space:nowrap}
+.tipline{background:var(--surface);border-radius:8px;padding:9px 12px;font-size:14px;margin:6px 0 12px}
+.tscroll{overflow-x:auto;margin-bottom:14px}
+table.wt,table.ct{border-collapse:collapse;width:100%;min-width:760px;font-size:14px;table-layout:fixed}
+.wt th,.ct th{background:var(--berry-soft);text-align:left;padding:8px;border:1px solid var(--line);font-weight:700;font-size:13.5px}
+.wt td,.ct td{border:1px solid var(--line);padding:4px;vertical-align:top}
+.ct td{padding:8px;white-space:pre-wrap}
+.wt td.fx,.ct td.fx{background:var(--surface);font-weight:700;padding:8px;font-size:13.5px}
+.wt td.cv{background:var(--lemon-soft);padding:8px;font-weight:600}
+.wt tr.tot td{border-top:2px solid var(--ink)}
+.wi{width:100%;border:0;background:transparent;font-family:var(--body);font-size:14px;color:var(--ink);padding:6px;resize:vertical;line-height:1.45}
+.wi:focus{background:var(--lemon-soft);outline:2px solid var(--lemon)}
+.wi.num{text-align:center;font-family:var(--mono)}
+.wf{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.wf label{font-weight:700;font-size:14px}
+.wf .wi{border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.calcbox{background:var(--lemon-soft);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:14px}
+.calcrow{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:4px 0;border-bottom:1px dashed var(--line)}
+.warn{color:var(--bad);font-weight:700}
+.tog{display:flex;gap:6px;align-items:center;font-weight:700;font-size:14px}
+.ansh,.ansc{background:var(--matcha-soft)!important}
+.ro{padding:6px;white-space:pre-wrap}
+.guide{background:var(--surface);border-radius:14px;padding:4px 18px;margin:10px 0 16px;border:1.5px solid var(--line)}
+.guide[open]{padding-bottom:14px}
+.guide summary{cursor:pointer;font-family:var(--display);font-size:21px;color:var(--berry);padding:10px 0;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:before{content:"＋ ";color:var(--muted)}.guide[open] summary:before{content:"－ "}
+.ggoal{margin:0 0 12px;font-size:16px;font-weight:500}
+.gcols{display:grid;grid-template-columns:1fr 1.15fr;gap:22px}
+.gh{display:block;font-size:14px;color:var(--choco);margin:6px 0 6px;letter-spacing:.3px}
+.guide ol,.guide ul{margin:0 0 8px;padding-left:20px;font-size:14.5px}.guide li{margin:5px 0}
+.gform{background:var(--lemon-soft);border-radius:8px;padding:9px 12px;font-size:14px;font-weight:500;margin:8px 0 0}
+.gex{background:var(--bg);border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1px solid var(--line)}
+.gex b{font-size:14px;color:var(--berry)}.gex p{margin:4px 0 0;font-size:14.5px}
+table.gt{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0 12px;background:var(--bg)}
+.gt th{background:var(--berry-soft);text-align:left;padding:7px 9px;border:1px solid var(--line)}
+.gt td{border:1px solid var(--line);padding:7px 9px}
+.exbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.exa{font-size:12.5px;color:var(--good);background:var(--matcha-soft);border-radius:6px;padding:4px 7px;margin:3px 2px 2px;line-height:1.4}
+@media (max-width:860px){.gcols{grid-template-columns:1fr}}
+.big.mid{background:var(--matcha);color:#fff}
+.rwrap{max-width:1100px}
+.rlead{font-size:17px;margin:4px 0 14px}
+.rh{font-size:24px;margin:22px 0 8px}
+.rsteps{font-size:17px;margin:0 0 10px;padding-left:22px}.rsteps li{margin:4px 0}
+.rwarn{background:var(--berry-soft);color:var(--berry);border-radius:10px;padding:10px 14px;font-size:16px}
+table.rt{min-width:620px;font-size:15.5px;table-layout:auto}
+.rt td{padding:10px}.rt td.c{text-align:center}
+.rt.all td.sc{background:var(--berry-soft);text-align:center;font-weight:600}
+.rt.all tr{cursor:pointer}.rt.all tr:hover td{background:var(--lemon-soft)}
+.rt tr.rowpick td{outline:2px solid var(--berry);outline-offset:-2px}
+.sv{color:var(--berry)}.sr{color:var(--bad)}
+.pickrow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.pickrow .sopt{padding:6px 11px;font-family:var(--mono);font-size:14px}
+.pickrow .sopt.star:not(.on){border-color:var(--berry)}
+.rcols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rcol h4{margin:0 0 6px;font-family:var(--display);font-weight:400;font-size:19px}
+.rgrp{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:7px 9px;margin-bottom:6px;background:var(--bg)}
+.rgrp.hit{border-color:var(--berry);background:var(--berry-soft)}
+.rpt{font-family:var(--mono);font-weight:600;min-width:26px;color:var(--muted)}.rgrp.hit .rpt{color:var(--berry)}
+.rids{display:flex;flex-wrap:wrap;gap:4px 10px;font-family:var(--mono);font-size:13.5px}
+.rids small{color:var(--muted);margin-left:1px}
+.rids .me{color:var(--berry);font-weight:600;text-decoration:underline}
+.rresult{display:grid;grid-template-columns:repeat(3,auto);gap:10px 26px;align-items:end;background:var(--surface);border-radius:12px;padding:14px 18px;margin-top:10px}
+.rresult div{display:flex;flex-direction:column;gap:2px}.rresult .rbig{font-size:26px}
+.rresult p{grid-column:1/-1;margin:0;font-size:16px}
+@media (max-width:860px){.rcols{grid-template-columns:1fr}.rresult{grid-template-columns:1fr}}
+.tbtn{border:0;background:var(--choco);color:var(--bg);border-radius:999px;padding:7px 14px;font-weight:700;font-size:14px}
+.anspill{font-family:var(--body);font-size:13px;background:var(--matcha);color:#fff;border-radius:999px;padding:3px 10px;vertical-align:middle;margin-left:6px}
+.ro.ans{color:var(--ink)}
+@media (max-width:860px){.first{grid-template-columns:1fr}.sync{margin-left:0}}
+@media (max-width:860px){.hero,.g1,.crm{grid-template-columns:1fr}.bins{position:static}.sl{grid-template-columns:1fr}.choices{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <button class="brand" id="homeBtn" aria-label="처음 화면으로"><h1>달콤상점</h1><small>3-3 고객 세그먼트 · 데이터 마케팅 게임</small></button>
+    <button class="tbtn" onclick="go('teacher')">강사 화면</button>
+    <div class="teams" id="teams"></div>
+    <label class="muted" style="font-size:13px">조 수
+      <select class="tcount" id="tcount"><option>3</option><option selected>4</option></select>
+    </label>
+  </div>
+</header>
+
+<main class="wrap" id="app"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ---------------- state & teams ---------------- */
+const S={teams:4,scores:[0,0,0,0,0,0],cur:0};
+try{const s=JSON.parse(localStorage.getItem('dalkom-score4')||'null');if(s){Object.assign(S,s)}}catch(e){}
+function save(){try{localStorage.setItem('dalkom-score4',JSON.stringify(S))}catch(e){}}
+const $=s=>document.querySelector(s);
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,1800)}
+function renderTeams(){
+  const box=$('#teams');box.innerHTML='';
+  for(let i=0;i<S.teams;i++){
+    const d=document.createElement('div');d.className='team'+(i===S.cur?' on':'');
+    d.innerHTML=`<button class="tn" title="지금 차례인 조로 선택">${i+1}조</button><span class="ts num">${S.scores[i]}</span><button class="pm" aria-label="${i+1}조 1점 빼기">−</button><button class="pm" aria-label="${i+1}조 1점 더하기">+</button>`;
+    const [tn,,m,p]=d.children;
+    tn.onclick=()=>{S.cur=i;save();renderTeams()};
+    m.onclick=()=>{S.scores[i]--;save();renderTeams();pushScores()};
+    p.onclick=()=>{S.scores[i]++;save();renderTeams();pushScores()};
+    box.appendChild(d);
+  }
+  $('#tcount').value=S.teams;
+}
+$('#tcount').onchange=e=>{S.teams=+e.target.value;if(S.cur>=S.teams)S.cur=0;save();renderTeams();pushScores();if($('#compareBody'))comparePage();if($('#wsbody'))wsPage()};
+function award(n,why){S.scores[S.cur]+=n;save();renderTeams();pushScores();toast(`${S.cur+1}조 +${n}점 · ${why}`)}
+const won=n=>Math.round(n).toLocaleString('ko-KR');
+
+/* ---------------- home ---------------- */
+const GAMES=[
+ {id:'g2',no:'게임 1',t:'디저트 가게 사장 되기',d:'와그작 케이크 또는 과일모찌 가게를 골라 손님 무리를 정하고, 광고비 100만 원을 나눠 써 봅니다. 한 달 뒤 손님 수와 매출은 앱이 계산합니다.',tags:['STP','실습 0-1 대신','15분'],b:0},
+ {id:'g1',no:'게임 2',t:'손님 카드 분류',d:'고객 20명 카드를 다섯 바구니에 나눠 담습니다. R·F·M 점수 계산은 앱이 해 주고, 조는 "이 손님은 누구인가"만 판단합니다.',tags:['RFM','실습 ④ · ④-2 대신','25분'],b:1},
+ {id:'g4',no:'게임 3',t:'누구에게 무엇을?',d:'CRM 액션 카드를 알맞은 등급에 붙이고, 할인 쿠폰 말고 우리 조만의 새 아이디어를 한 줄씩 적습니다.',tags:['CRM 액션','실습 ⑤ 대신','15분'],b:0},
+ {id:'g3',no:'게임 4',t:'CRM 예산 나누기',d:'624만 원을 다섯 등급에 슬라이더로 나눕니다. LTV 한도를 넘으면 경고가 뜨고, 1년 뒤 기대 효과가 바로 계산됩니다.',tags:['LTV','실습 ⑥ 대신','15분'],b:0},
+ {id:'g5',no:'게임 5',t:'마케팅 골든벨',d:'오늘 배운 STP · RFM · CRM · LTV를 12문제로 복습합니다. 맞힌 조를 눌러 점수를 줍니다.',tags:['복습','사후평가 대비','15분'],b:0},
+];
+function home(){
+  $('#app').innerHTML=`
+  <section class="hero">
+    <div>
+      <p class="step">LOTTE LIFT · 3-3 실습</p>
+      <h2>계산은 앱이 합니다.<br><em>판단은 여러분이 합니다.</em></h2>
+      <p>조별로 실습지를 먼저 쓰고, 다섯 개의 게임으로 확인합니다. 계산이 필요한 칸은 앱이 대신 채웁니다. 게임을 할 때는 위쪽 점수판에서 차례인 조를 먼저 누르세요.</p>
+    </div>
+    <div class="receipt" aria-label="오늘의 게임 순서">
+      <div class="row"><span>달콤상점 영수증</span><span>2026.09.30</span></div>
+      <div class="row"><span>1 사장 되기 (STP)</span><span>15분</span></div>
+      <div class="row"><span>2 손님 카드 (RFM)</span><span>25분</span></div>
+      <div class="row"><span>3 누구에게 무엇을 (CRM)</span><span>15분</span></div>
+      <div class="row"><span>4 예산 나누기 (LTV)</span><span>15분</span></div>
+      <div class="row"><span>5 골든벨 (복습)</span><span>15분</span></div>
+      <div class="row tot"><span>합계</span><span>85분</span></div>
+    </div>
+  </section>
+  <div class="first">
+    <button class="big" onclick="go('ws')"><span class="gno">먼저 · 조별로 한 대씩</span><h3>실습지 쓰기</h3><p>실습 0-1부터 ⑦ 원페이퍼까지 8장을 조별로 채웁니다. 합계 · LTV 같은 계산은 앱이 하고, ⑦은 앞에서 쓴 내용을 불러옵니다.</p></button>
+    <button class="big mid" onclick="go('rfm')"><span class="gno">실습 ④ 준비</span><h3>RFM 표 읽기</h3><p>C01~C20이 무엇인지, 숫자를 점수로 바꾸는 법, 20명 한눈에 보기. 손님을 누르면 따라가기만 하면 됩니다.</p></button>
+    <button class="big alt" onclick="go('teacher')"><span class="gno">강사 전용</span><h3>강사 화면</h3><p>오늘 진행 순서 · 실습별 예시 답안과 해설 · 조별 모아보기 · 게임 정답을 한곳에서 봅니다.</p></button>
+  </div>
+  <p class="step" style="margin-top:26px">게임 · 실습지를 쓰기 전 몸풀기나 쓰고 난 뒤 확인용</p>
+  <div class="games" id="games"></div>
+  <div class="howto">
+    <div><b>진행 방법</b>강사 화면에 띄우고, 조가 돌아가며 선택합니다. 차례인 조를 점수판에서 먼저 누르세요.</div>
+    <div><b>점수</b>게임마다 "점수 넣기" 버튼이 차례인 조에 점수를 줍니다. + / − 로 직접 고칠 수도 있습니다.</div>
+    <div><b>데이터</b>고객 20명 · 디저트 가게 숫자는 계산 연습용 가상 데이터입니다. 디저트 트렌드는 2026년 기사 기준입니다.</div>
+  </div>`;
+  const g=$('#games');
+  GAMES.forEach(x=>{const b=document.createElement('button');b.className='gcard';
+    b.innerHTML=`<span class="gno">${x.no}</span><h3>${x.t}</h3><p>${x.d}</p><div class="tags">${x.tags.map((t,i)=>`<span class="tag ${i===0?'b':''}">${t}</span>`).join('')}</div>`;
+    b.onclick=()=>go(x.id);g.appendChild(b)});
+}
+function head(t,sub,step){return `<div class="screen-head"><button class="back" onclick="go('home')">← 게임 목록</button><div><p class="step">${step}</p><h2>${t}</h2></div><p class="sub">${sub}</p></div>`}
+function go(id){({home,g1,g2,g3,g4,g5,ws:wsPage,cmp:comparePage,rfm:rfmPage,teacher:teacherPage})[id]();if(GGUIDE[id]){const sh=document.querySelector('.screen-head');if(sh)sh.insertAdjacentHTML('afterend',guideHTML(GGUIDE[id],false))}window.scrollTo(0,0)}
+$('#homeBtn').onclick=()=>go('home');
+
+/* ---------------- game 1 : RFM ---------------- */
+const CUST=[["C01",12,18,4200],["C02",25,14,3100],["C03",8,22,5600],["C04",45,9,1800],["C05",120,3,620],["C06",15,11,2400],["C07",210,2,380],["C08",33,7,1250],["C09",5,16,3800],["C10",95,4,850],["C11",60,6,1100],["C12",18,13,2900],["C13",300,1,150],["C14",40,5,700],["C15",22,8,1600],["C16",150,2,300],["C17",10,20,4800],["C18",75,5,950],["C19",28,10,2100],["C20",180,3,520]];
+const SEGS=[
+ {k:'vip',n:'최우수 (VIP)',h:'최근에 · 자주 · 많이'},
+ {k:'good',n:'우수 단골',h:'활발하지만 아직 최상위는 아님'},
+ {k:'grow',n:'일반 (성장 여지)',h:'최근에 왔지만 빈도 · 금액이 낮음'},
+ {k:'risk',n:'이탈 위험',h:'예전엔 괜찮았는데 발길이 끊김'},
+ {k:'sleep',n:'휴면',h:'오래 안 오고, 적게 샀음'}];
+const ANS={C01:'vip',C03:'vip',C09:'vip',C17:'vip',C02:'good',C06:'good',C12:'good',C19:'good',C04:'grow',C08:'grow',C14:'grow',C15:'grow',C05:'risk',C10:'risk',C11:'risk',C18:'risk',C07:'sleep',C13:'sleep',C16:'sleep',C20:'sleep'};
+function quintile(){ // 5분위: 4명씩
+  const sc={};CUST.forEach(c=>sc[c[0]]={});
+  const rank=(key,cmp)=>{const a=[...CUST].sort(cmp);a.forEach((c,i)=>sc[c[0]][key]=5-Math.floor(i/4))};
+  rank('R',(a,b)=>a[1]-b[1]);
+  rank('F',(a,b)=>b[2]-a[2]||b[3]-a[3]);
+  rank('M',(a,b)=>b[3]-a[3]);
+  return sc;
+}
+const G1={sel:null,place:{},showScore:false,checked:false};
+function g1(){
+  G1.sel=null;G1.place={};G1.showScore=false;G1.checked=false;
+  $('#app').innerHTML=head('손님 카드 분류','카드를 누르고 → 바구니를 누르면 들어갑니다. 한 조가 5장씩 돌아가며 넣어도 좋습니다. 막히면 "앱이 점수 계산" 버튼을 누르세요.','게임 2 · RFM · 실습 ④ · ④-2')+`
+  <div class="bar"><button class="btn ghost" id="scoreBtn">앱이 R·F·M 점수 계산하기</button><button class="btn" id="checkBtn">채점하기</button><button class="btn ghost" id="resetBtn">다시 하기</button><button class="btn ghost" onclick="go('rfm')">표 읽는 법 보기</button><span class="note">경과일 = 마지막 구매 후 지난 날 · 금액 단위 만원 · 계산 연습용 가상 데이터</span></div>
+  <div class="g1"><div><div class="cards" id="cards"></div><div class="share panel" id="share" hidden></div></div><div class="bins" id="bins"></div></div>`;
+  $('#scoreBtn').onclick=()=>{G1.showScore=!G1.showScore;$('#scoreBtn').textContent=G1.showScore?'점수 숨기기':'앱이 R·F·M 점수 계산하기';draw1()};
+  $('#checkBtn').onclick=check1;$('#resetBtn').onclick=g1;
+  draw1();
+}
+function draw1(){
+  const sc=quintile();const cards=$('#cards');cards.innerHTML='';
+  CUST.forEach(([id,d,f,m])=>{
+    const b=document.createElement('button');const p=G1.place[id];
+    b.className='ccard'+(G1.sel===id?' sel':'')+(p&&!G1.checked?' placed':'')+(G1.checked&&p?(ANS[id]===p?' ok':' no'):'');
+    b.innerHTML=`<span class="id">${id}</span><span class="d"><span>최근 구매</span><span>${d}일 전</span></span><span class="d"><span>구매 횟수</span><span>${f}회</span></span><span class="d"><span>구매 금액</span><span>${won(m)}</span></span>${G1.showScore?`<span class="sc">R${sc[id].R} · F${sc[id].F} · M${sc[id].M}</span>`:''}`;
+    b.onclick=()=>{if(G1.checked)return;G1.sel=G1.sel===id?null:id;draw1()};
+    cards.appendChild(b);
+  });
+  const bins=$('#bins');bins.innerHTML='';
+  SEGS.forEach(s=>{const b=document.createElement('button');b.className='bin'+(G1.sel?' ready':'');
+    const ids=Object.keys(G1.place).filter(k=>G1.place[k]===s.k);
+    b.innerHTML=`<h4><span>${s.n}</span><span class="num" style="font-size:14px">${ids.length}명</span></h4><span class="hint">${s.h}</span><div class="chips">${ids.map(i=>`<span class="chip ${G1.checked?(ANS[i]===s.k?'ok':'no'):''}">${i}</span>`).join('')}</div>`;
+    b.onclick=()=>{if(!G1.sel||G1.checked)return;G1.place[G1.sel]=s.k;G1.sel=null;draw1()};
+    bins.appendChild(b)});
+}
+function check1(){
+  const n=Object.keys(G1.place).length;
+  if(n<20){toast(`아직 ${20-n}장이 남았습니다`);return}
+  G1.checked=true;G1.showScore=true;draw1();
+  const ok=CUST.filter(c=>ANS[c[0]]===G1.place[c[0]]).length;
+  const pts=ok>=18?5:ok>=15?3:ok>=10?2:1;
+  const tot=CUST.reduce((a,c)=>a+c[3],0);
+  const segSum=SEGS.map(s=>({n:s.n,v:CUST.filter(c=>ANS[c[0]]===s.k).reduce((a,c)=>a+c[3],0)}));
+  const sh=$('#share');sh.hidden=false;
+  sh.innerHTML=`<h3 style="font-size:24px">${ok} / 20 정답</h3>
+   <p class="muted" style="margin:4px 0 10px">틀린 카드는 빨간 테두리로 표시됩니다. 초록은 정답입니다.</p>
+   <b>등급별 매출 비중 · 전체 ${won(tot)}만 원</b>
+   ${segSum.map((s,i)=>`<div class="srow"><span>${s.n}</span><div class="strack"><div class="sfill ${i>=3?'low':''}" style="width:${(s.v/tot*100).toFixed(1)}%"></div></div><span class="num">${(s.v/tot*100).toFixed(1)}%</span></div>`).join('')}
+   <ul class="fb">
+    <li><b>상위 4명(20%)이 매출의 47.0%</b>를 만들고, 휴면 4명은 3.5%입니다. 약 13.6배 차이, 예산을 등급별로 다르게 써야 하는 이유입니다.</li>
+    <li><b>C11(합계 8점)</b>은 R이 2로 떨어진 이탈 위험, <b>C15(합계 10점)</b>는 R이 4로 살아 있는 성장 후보입니다. 합계보다 R을 먼저 봅니다.</li>
+    <li>가장 먼저 연락할 사람은 C11입니다. 복귀 쿠폰보다 마지막 구매 카테고리와 불만 기록부터 확인합니다.</li>
+   </ul>
+   <div class="bar"><button class="btn green" id="aw1">${S.cur+1}조에 ${pts}점 넣기</button></div>`;
+  $('#aw1').onclick=e=>{award(pts,`카드 ${ok}장 정답`);e.target.disabled=true};
+}
+
+/* ---------------- game 2 : dessert shop ---------------- */
+const DESS=[
+ {k:'wag',n:'와그작 케이크',p:'과일 모양 초콜릿 껍질을 깨면 무스와 과일이 나오는 케이크',fact:'뚜레쥬르 "아그작" 오픈런, CU "깨먹는" 빵 3개월 110만 개 (2026)'},
+ {k:'mochi',n:'과일모찌',p:'찹쌀떡 안에 크림과 제철 생과일을 통째로 넣은 디저트',fact:'신세계 센텀시티 "모찌모찌" 팝업 웨이팅 (2026.7)'}];
+const TGT=[
+ {k:'shot',n:'20대 인증샷 손님',p:'친구와 주말 나들이 · 찍어서 올릴 장면을 찾음'},
+ {k:'teen',n:'10대 학생',p:'방과 후 · 친구들 사이 화제가 되는 것'},
+ {k:'gift',n:'40·50대 선물 손님',p:'명절 · 방문 인사 · 포장과 격을 봄'},
+ {k:'kid',n:'30·40대 부모',p:'아이 생일 · 간식 · 안심하고 먹일 것'}];
+const CH=[
+ {k:'reels',n:'인스타 릴스 광고',s:'짧은 영상 · SNS'},
+ {k:'event',n:'체험 · 시식 이벤트',s:'직접 깨 보기 · 맛보기'},
+ {k:'pack',n:'선물 포장 고급화',s:'박스 · 보자기 · 메시지 카드'},
+ {k:'local',n:'맘카페 · 지역 커뮤니티',s:'동네 입소문'},
+ {k:'crm',n:'단골 문자 · 적립',s:'재방문 관리'}];
+const FIT={wag:{shot:1,teen:.8,gift:.4,kid:.7},mochi:{shot:.6,teen:.4,gift:1,kid:.7}};
+const SPEND={wag:{shot:12000,teen:8000,gift:20000,kid:18000},mochi:{shot:10000,teen:6000,gift:35000,kid:15000}};
+const AFF={shot:[1,.8,.2,.1,.3],teen:[.9,.6,0,.1,.1],gift:[.2,.3,1,.5,.7],kid:[.3,.7,.3,1,.5]};
+const G2={d:null,t:null,b:[20,20,20,20,20],done:false};
+function g2(){
+  G2.d=null;G2.t=null;G2.b=[20,20,20,20,20];G2.done=false;
+  $('#app').innerHTML=head('디저트 가게 사장 되기','① 디저트를 고르고 ② 손님 무리 하나를 고른 뒤 ③ 광고비 100만 원을 나눠 쓰세요. 한 달 뒤 결과는 앱이 계산합니다.','게임 1 · STP · 실습 0-1')+`
+  <p class="step" style="margin-top:14px">① 우리 가게 디저트</p><div class="picker" id="pd"></div>
+  <p class="step" style="margin-top:18px">② 우리가 고를 손님 무리 (Targeting)</p><div class="picker" id="pt"></div>
+  <p class="step" style="margin-top:18px">③ 광고비 100만 원 나누기</p>
+  <div class="panel"><div id="sls"></div><div class="bar"><span class="budget num" id="bud"></span><button class="btn" id="run">한 달 영업해 보기</button></div><div id="out"></div></div>
+  <p class="note" style="margin-top:10px">결과 숫자는 교육용 가상 모델로 계산합니다. 손님 무리마다 잘 반응하는 채널이 다르고, 디저트와 손님이 잘 맞을수록 효과가 큽니다.</p>`;
+  const pd=$('#pd');DESS.forEach(x=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<h4>${x.n}</h4><p>${x.p}</p><p style="margin-top:6px">${x.fact}</p>`;b.onclick=()=>{G2.d=x.k;[...pd.children].forEach(c=>c.classList.remove('on'));b.classList.add('on')};pd.appendChild(b)});
+  const pt=$('#pt');TGT.forEach(x=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<h4>${x.n}</h4><p>${x.p}</p>`;b.onclick=()=>{G2.t=x.k;[...pt.children].forEach(c=>c.classList.remove('on'));b.classList.add('on')};pt.appendChild(b)});
+  const sls=$('#sls');CH.forEach((c,i)=>{const d=document.createElement('div');d.className='sl';
+    d.innerHTML=`<label for="ch${i}">${c.n}<small>${c.s}</small></label><input type="range" id="ch${i}" min="0" max="100" step="5" value="${G2.b[i]}"><span class="num" id="cv${i}">${G2.b[i]}만 원</span>`;
+    sls.appendChild(d);d.querySelector('input').oninput=e=>{G2.b[i]=+e.target.value;$('#cv'+i).textContent=G2.b[i]+'만 원';bud()}});
+  bud();$('#run').onclick=run2;
+}
+function bud(){const s=G2.b.reduce((a,c)=>a+c,0);const el=$('#bud');el.textContent=`쓴 돈 ${s} / 100만 원`+(s>100?' · 예산 초과!':s<100?` · ${100-s}만 원 남음`:'');el.className='budget num'+(s>100?' over':'');$('#run').disabled=s>100}
+function sim(d,t,b){
+  const fit=FIT[d][t],aff=AFF[t];
+  let reach=0;b.forEach((x,i)=>reach+=40*Math.sqrt(x)*aff[i]);
+  const visitors=Math.round(300+reach*fit*(d==='mochi'&&b[2]>0&&t==='gift'?1.15:1));
+  const rev=.15+.2*Math.sqrt(b[4]/100)*aff[4]+.1*Math.sqrt(b[1]/100)*aff[1];
+  const sales=visitors*SPEND[d][t]*(1+rev);
+  const profit=sales*.3-b.reduce((a,c)=>a+c,0)*10000;
+  return {visitors,rev,sales,profit,fit};
+}
+function run2(){
+  if(!G2.d||!G2.t){toast('디저트와 손님 무리를 먼저 고르세요');return}
+  const r=sim(G2.d,G2.t,G2.b);const aff=AFF[G2.t];
+  // best possible for comparison (simple search)
+  let best=null;for(let a=0;a<=100;a+=10)for(let b=0;b<=100-a;b+=10)for(let c=0;c<=100-a-b;c+=10)for(let d=0;d<=100-a-b-c;d+=10){const e=100-a-b-c-d;const x=sim(G2.d,G2.t,[a,b,c,d,e]);if(!best||x.profit>best.profit)best={...x,b:[a,b,c,d,e]}}
+  const fb=[];
+  const maxI=G2.b.indexOf(Math.max(...G2.b));
+  if(aff[maxI]<.4)fb.push(`<b>${CH[maxI].n}</b>에 가장 많이 썼는데, ${TGT.find(x=>x.k===G2.t).n}은 여기에 잘 반응하지 않습니다.`);
+  const topI=aff.indexOf(Math.max(...aff));
+  if(G2.b[topI]<30)fb.push(`이 손님이 가장 잘 반응하는 곳은 <b>${CH[topI].n}</b>입니다. 여기에 더 실어 보세요.`);
+  if(r.fit<.6)fb.push(`디저트와 손님이 잘 안 맞습니다. ${DESS.find(x=>x.k===G2.d).n}을 이 손님이 살 이유를 한 줄로 말할 수 있나요?`);
+  if(G2.b[4]===0)fb.push('단골 관리에 0원을 썼습니다. 한 번 온 손님이 다시 올 이유가 없습니다.');
+  if(!fb.length)fb.push('타깃 · 디저트 · 채널이 잘 맞습니다. 이 조합을 한 줄 포지셔닝으로 적어 보세요.');
+  const ratio=best.profit>0?r.profit/best.profit:0;
+  const pts=ratio>=.9?3:ratio>=.7?2:1;
+  $('#out').innerHTML=`<div class="res">
+    <div class="kpi"><div class="k">한 달 손님 수</div><div class="v">${won(r.visitors)}명</div></div>
+    <div class="kpi"><div class="k">다시 온 비율</div><div class="v">${Math.round(r.rev*100)}%</div></div>
+    <div class="kpi"><div class="k">한 달 매출</div><div class="v">${won(r.sales/10000)}만</div></div>
+    <div class="kpi hl"><div class="k">남은 돈 (이익 30% − 광고비)</div><div class="v">${won(r.profit/10000)}만</div></div></div>
+    <ul class="fb">${fb.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <p class="note">같은 디저트 · 같은 손님으로 낼 수 있는 최고 이익은 약 ${won(best.profit/10000)}만 원 (${best.b.map((x,i)=>CH[i].n.split(' ')[0]+' '+x).join(' · ')}). 우리 조는 그 ${Math.max(0,Math.round(ratio*100))}% 수준입니다.</p>
+    <div class="bar"><button class="btn green" id="aw2">${S.cur+1}조에 ${pts}점 넣기</button></div>`;
+  $('#aw2').onclick=e=>{award(pts,'디저트 가게 결과');e.target.disabled=true};
+}
+
+/* ---------------- game 3 : CRM budget ---------------- */
+const SEG3=[
+ {n:'최우수 (VIP)',who:'C01 · C03 · C09 · C17',cap:460,f:b=>4600*.25*4*(1-Math.exp(-b/250)),why:'이탈을 막으면 지키는 매출'},
+ {n:'우수 단골',who:'C02 · C06 · C12 · C19',cap:394,f:b=>4*2000*.4*(1-Math.exp(-b/180)),why:'VIP로 올라가면 늘어나는 매출'},
+ {n:'이탈 위험',who:'C05 · C10 · C11 · C18',cap:176,f:b=>3520*.5*(1-Math.exp(-b/70)),why:'되돌리면 살아나는 매출'},
+ {n:'일반 (성장 여지)',who:'C04 · C08 · C14 · C15',cap:133,f:b=>5350*.2*(1-Math.exp(-b/60)),why:'자주 오게 하면 늘어나는 매출'},
+ {n:'휴면',who:'C07 · C13 · C16 · C20',cap:32,f:b=>1350*.1*(1-Math.exp(-b/15)),why:'돌아오면 생기는 매출'}];
+const MODEL=[400,120,60,40,4];
+let B3=[124,124,124,124,128];
+function g3(){
+  B3=[124,124,124,124,128];
+  $('#app').innerHTML=head('CRM 예산 나누기','624만 원을 다섯 등급에 나눕니다. 처음에는 똑같이 나눠 두었습니다. 등급마다 1년 쓸 수 있는 한도(LTV 기준)를 넘으면 빨갛게 표시됩니다.','게임 4 · LTV · 실습 ⑤ · ⑥')+`
+  <div class="crm"><div class="panel" id="s3"></div><div><div class="panel"><div class="res" id="k3"></div><div id="c3" style="margin-top:12px"></div></div>
+  <div class="panel" style="margin-top:12px"><b>LTV로 정한 1년 한도 (4명 기준)</b>
+  <table class="t" style="margin-top:6px"><tr><th>등급</th><th class="n">1인 LTV</th><th class="n">1년 한도</th></tr>
+  <tr><td>최우수</td><td class="n">5,750만</td><td class="n">460만</td></tr><tr><td>우수 단골</td><td class="n">2,625만</td><td class="n">394만</td></tr>
+  <tr><td>이탈 위험</td><td class="n">440만</td><td class="n">176만</td></tr><tr><td>일반</td><td class="n">1,003만</td><td class="n">133만</td></tr><tr><td>휴면</td><td class="n">85만</td><td class="n">32만</td></tr></table>
+  <p class="note">LTV = 연간 구매금액 × GP율 25% × 예상 유지 연수. 한도 = LTV의 10~20%를 유지 연수로 나눈 1년치 × 4명.</p></div></div></div>`;
+  draw3();
+}
+function draw3(){
+  const s=$('#s3');s.innerHTML='';
+  SEG3.forEach((g,i)=>{const d=document.createElement('div');d.className='seg3';const over=B3[i]>g.cap;
+    d.innerHTML=`<div class="h"><b>${g.n}</b><span class="val num">${B3[i]}만 원</span></div><div class="cap ${over?'over':''}">${g.who} · 한도 ${g.cap}만 원${over?' · 한도 초과! 손해가 날 수 있습니다':''}</div><input type="range" min="0" max="624" step="4" value="${B3[i]}" aria-label="${g.n} 예산"><div class="gauge"><div style="width:${Math.min(100,B3[i]/g.cap*100)}%;${over?'background:var(--bad)':''}"></div></div>`;
+    d.querySelector('input').oninput=e=>{B3[i]=+e.target.value;draw3k();const v=d.querySelector('.val');v.textContent=B3[i]+'만 원';const o=B3[i]>g.cap;const c=d.querySelector('.cap');c.className='cap'+(o?' over':'');c.textContent=`${g.who} · 한도 ${g.cap}만 원${o?' · 한도 초과! 손해가 날 수 있습니다':''}`;const gg=d.querySelector('.gauge div');gg.style.width=Math.min(100,B3[i]/g.cap*100)+'%';gg.style.background=o?'var(--bad)':''};
+    s.appendChild(d)});
+  draw3k();
+}
+function eff(b){return SEG3.reduce((a,g,i)=>a+g.f(b[i]),0)}
+function draw3k(){
+  const tot=B3.reduce((a,c)=>a+c,0);const e=eff(B3);const net=e-tot;const mNet=eff(MODEL)-624;
+  $('#k3').innerHTML=`<div class="kpi"><div class="k">쓴 예산</div><div class="v" style="${tot!==624?'color:var(--bad)':''}">${tot}만</div></div><div class="kpi"><div class="k">1년 기대 효과</div><div class="v">${won(e)}만</div></div><div class="kpi hl"><div class="k">효과 − 예산</div><div class="v">${won(net)}만</div></div>`;
+  const pts=net>=6000?3:net>=5600?2:1;
+  $('#c3').innerHTML=`<p style="margin:0">${tot!==624?`<b style="color:var(--bad)">예산을 정확히 624만 원에 맞춰 주세요 (지금 ${tot>624?tot-624+'만 원 초과':624-tot+'만 원 남음'})</b>`:`모범 배분(400 · 120 · 60 · 40 · 4)의 결과는 <b>${won(mNet)}만 원</b>입니다.`}</p>
+   <div class="bar"><button class="btn ghost" id="mdl">모범 배분 보기</button><button class="btn green" id="aw3" ${tot!==624?'disabled':''}>${S.cur+1}조에 ${pts}점 넣기</button></div>
+   <p class="note">똑같이 나누면(124만 원씩) 약 ${won(eff([124.8,124.8,124.8,124.8,124.8])-624)}만 원, 휴면에 몰아주면 훨씬 낮아집니다. 매출의 47%를 만드는 4명에게 먼저 씁니다.</p>`;
+  $('#mdl').onclick=()=>{B3=[...MODEL];B3[4]=624-400-120-60-40;draw3()};
+  $('#aw3').onclick=e=>{award(pts,'예산 배분');e.target.disabled=true};
+}
+
+/* ---------------- game 4 : action matching ---------------- */
+const ACTS=[
+ {t:'전담 어드바이저 1:1 배정',a:'vip'},{t:'신상품 · 한정판 우선 구매권',a:'vip'},{t:'연 2회 초청 문화행사',a:'vip'},
+ {t:'"VIP까지 남은 금액" 안내',a:'good'},{t:'승급 혜택 미리 체험',a:'good'},
+ {t:'월 2회 방문 시 사은품',a:'grow'},{t:'안 사 본 카테고리 체험 쿠폰',a:'grow'},
+ {t:'이탈 원인 조회 후 개별 전화',a:'risk'},{t:'30일 한정 복귀 혜택',a:'risk'},
+ {t:'뉴스레터 · 앱 푸시 자동 발송만',a:'sleep'},
+ {t:'전 등급에 똑같은 20% 할인 문자',a:'trash'},{t:'휴면 고객에 유료 광고 집중',a:'trash'},{t:'VIP에게 할인 쿠폰 문자',a:'trash'}];
+const SEG4=[...SEGS.map(s=>({k:s.k,n:s.n})),{k:'trash',n:'쓰지 않을 액션'}];
+const GOAL={vip:'목적 · 지키기',good:'목적 · 올리기',grow:'목적 · 빈도 늘리기',risk:'목적 · 되돌리기',sleep:'목적 · 비용 줄이기',trash:'효과 없거나 역효과'};
+const G4={sel:null,place:{},ideas:{},checked:false};
+function g4(){
+  G4.sel=null;G4.place={};G4.ideas={};G4.checked=false;
+  $('#app').innerHTML=head('누구에게 무엇을?','액션 카드를 누르고 → 등급 칸을 누르세요. 쓰면 안 되는 액션은 "쓰지 않을 액션"에 넣습니다. 마지막으로 등급마다 할인 · 쿠폰이 아닌 새 아이디어를 한 줄씩 적으세요.','게임 3 · CRM 액션 · 실습 ⑤')+`
+  <div class="acts" id="acts"></div><div class="segs4" id="segs4"></div>
+  <div class="bar"><button class="btn" id="ck4">채점하기</button><button class="btn ghost" onclick="g4()">다시 하기</button></div><div id="o4"></div>`;
+  $('#ck4').onclick=check4;draw4();
+}
+function draw4(){
+  const a=$('#acts');a.innerHTML='';
+  ACTS.forEach((x,i)=>{const b=document.createElement('button');b.className='act'+(G4.sel===i?' sel':'')+(G4.place[i]&&!G4.checked?' placed':'');b.textContent=x.t;b.onclick=()=>{if(G4.checked||G4.place[i])return;G4.sel=G4.sel===i?null:i;draw4()};a.appendChild(b)});
+  const s=$('#segs4');s.innerHTML='';
+  SEG4.forEach(g=>{const d=document.createElement('div');d.className='s4'+(g.k==='trash'?' trash':'')+(G4.sel!==null?' ready':'');d.tabIndex=0;d.setAttribute('role','button');
+    const items=Object.keys(G4.place).filter(i=>G4.place[i]===g.k);
+    d.innerHTML=`<h4>${g.n}</h4><span class="goal">${G4.checked?GOAL[g.k]:'&nbsp;'}</span>${items.map(i=>`<span class="in ${G4.checked?(ACTS[i].a===g.k?'ok':'no'):''}" data-i="${i}">${ACTS[i].t}</span>`).join('')}${g.k!=='trash'?`<input id="idea-${g.k}" placeholder="우리 조 새 아이디어 (할인 · 쿠폰 말고)" value="${(G4.ideas[g.k]||'').replace(/"/g,'&quot;')}">`:''}`;
+    const put=()=>{if(G4.sel===null||G4.checked)return;G4.place[G4.sel]=g.k;G4.sel=null;draw4()};
+    d.onclick=e=>{if(e.target.tagName==='INPUT')return;if(e.target.classList.contains('in')&&!G4.checked){delete G4.place[e.target.dataset.i];draw4();return}put()};
+    d.onkeydown=e=>{if(e.key==='Enter'&&e.target===d)put()};
+    const inp=d.querySelector('input');if(inp)inp.oninput=e=>G4.ideas[g.k]=e.target.value;
+    s.appendChild(d)});
+}
+function check4(){
+  if(Object.keys(G4.place).length<ACTS.length){toast(`카드 ${ACTS.length-Object.keys(G4.place).length}장이 남았습니다`);return}
+  G4.checked=true;draw4();
+  const ok=ACTS.filter((x,i)=>G4.place[i]===x.a).length;
+  const ideas=Object.entries(G4.ideas).filter(([k,v])=>v.trim().length>=4);
+  const fresh=ideas.filter(([k,v])=>!/할인|쿠폰|적립|%/.test(v));
+  const pts=(ok>=12?3:ok>=9?2:1)+fresh.length;
+  $('#o4').innerHTML=`<div class="panel"><h3 style="font-size:24px">카드 ${ok} / ${ACTS.length} 정답 · 새 아이디어 ${fresh.length}개</h3>
+   <ul class="fb"><li>등급이 올라갈수록 혜택이 <b>할인 → 경험 · 우선권 · 전용 서비스</b>로 바뀌어야 합니다. VIP는 가격에 반응하지 않습니다.</li>
+   <li>전 등급 똑같은 할인 문자는 VIP에게는 격이 떨어지고, 휴면에게는 돈만 듭니다.</li>
+   <li>휴면 고객은 버리는 것이 아니라 <b>비싼 채널에서 자동 채널로</b> 옮기는 것입니다.</li></ul>
+   ${ideas.length?`<b>우리 조 아이디어</b><ul class="fb">${ideas.map(([k,v])=>`<li>${SEG4.find(x=>x.k===k).n} · ${v.replace(/</g,'&lt;')} ${/할인|쿠폰|적립|%/.test(v)?'<span class="muted">(할인 · 쿠폰 계열 → 보너스 없음)</span>':'<b style="color:var(--good)">+1</b>'}</li>`).join('')}</ul>`:''}
+   <div class="bar"><button class="btn green" id="aw4">${S.cur+1}조에 ${pts}점 넣기</button></div></div>`;
+  $('#aw4').onclick=e=>{award(pts,'CRM 액션');e.target.disabled=true};
+}
+
+/* ---------------- game 5 : quiz ---------------- */
+const QZ=[
+ {q:'STP에서 T(Targeting)에 해당하는 활동은?',c:['시장을 여러 무리로 나눈다','나눈 무리 중 공략할 무리를 고른다','고객 머릿속 자리를 정한다','상품 원가를 계산한다'],a:1,e:'S는 나누기, T는 고르기, P는 자리 잡기입니다.'},
+ {q:'좋은 세분화의 3조건이 아닌 것은?',c:['집단 안은 비슷하다','집단 사이는 다르다','각 집단에 다르게 접근할 수 있다','모든 집단의 크기가 똑같다'],a:3,e:'크기는 달라도 됩니다. 동질성 · 이질성 · 접근 가능성이 조건입니다.'},
+ {q:'캐롯 퍼마일 자동차보험(탄 만큼 내는 보험)은 어떤 표적화 전략의 예일까요?',c:['무차별 마케팅','차별 마케팅','집중 마케팅','매스 마케팅'],a:2,e:'"적게 타는 운전자" 한 무리에 집중한 상품입니다.'},
+ {q:'같은 5,000원 커피가 어떤 가게에선 "그럴 만하다", 어떤 가게에선 "비싸다"가 되는 이유는?',c:['원두가 달라서','포지셔닝(고객 머릿속 자리)이 달라서','매장 크기가 달라서','직원 수가 달라서'],a:1,e:'포지셔닝은 가격이 아니라 인식입니다.'},
+ {q:'RFM의 세 가지는?',c:['원가 · 판매가 · 할인율','최근성 · 빈도 · 금액','방문객 · 임대료 · 인건비','광고비 · 채널 · 노출'],a:1,e:'Recency 언제, Frequency 얼마나 자주, Monetary 얼마나 많이.'},
+ {q:'R(최근성) 점수는 어떻게 매길까요?',c:['마지막 구매 후 지난 날이 길수록 5점','지난 날이 짧을수록 5점','구매 횟수가 많을수록 5점','금액이 클수록 5점'],a:1,e:'R만 정렬 방향이 반대입니다. 가장 많이 틀리는 곳입니다.'},
+ {q:'합계 8점인 C11(R2)과 합계 10점인 C15(R4) 중 더 급하게 챙길 손님은?',c:['C15, 합계가 더 높으니까','C11, R이 떨어지고 있으니까','둘 다 똑같다','둘 다 챙길 필요 없다'],a:1,e:'합계보다 R을 먼저 봅니다. C11은 떠나는 중입니다.'},
+ {q:'고객 20명 중 상위 4명(20%)이 만든 매출 비중은?',c:['약 20%','약 35%','약 47%','약 80%'],a:2,e:'18,400 ÷ 39,120 = 47.0%. 파레토 법칙에 가깝습니다.'},
+ {q:'VIP 고객에게 가장 알맞은 CRM 액션은?',c:['20% 할인 쿠폰 문자','전담 어드바이저와 우선 구매권','뉴스레터 자동 발송','전 고객과 같은 사은품'],a:1,e:'등급이 올라갈수록 할인보다 경험 · 우선권 · 전용 서비스입니다.'},
+ {q:'LTV(고객 생애가치) 공식으로 맞는 것은?',c:['연간 구매금액 × 방문 횟수','연간 구매금액 × GP율 × 예상 유지 연수','한 번 구매 금액 × 12','광고비 ÷ 방문객 수'],a:1,e:'LTV는 매출이 아니라 이익 기준입니다. GP율을 곱하는 걸 잊지 마세요.'},
+ {q:'마케팅 비용 상한을 LTV와 똑같이 잡으면?',c:['이익이 최대가 된다','이익이 0이 된다','손님이 두 배가 된다','아무 영향이 없다'],a:1,e:'상한은 보통 LTV의 10~20%입니다.'},
+ {q:'휴면 고객에게 광고 문자를 보낼 때 꼭 지킬 것은?',c:['최대한 자주 보낸다','수신 동의자만, 밤 9시~아침 8시는 피한다','회원가입만 했으면 누구에게나 보낸다','데이터는 무기한 보관한다'],a:1,e:'광고성 수신 동의는 회원가입 동의와 별개입니다. 교육용 개괄 안내이며 법률 자문이 아닙니다.'}];
+const G5={i:0,shown:false,got:new Set()};
+function g5(){G5.i=0;G5.shown=false;G5.got=new Set();draw5()}
+function draw5(){
+  const q=QZ[G5.i];
+  $('#app').innerHTML=head('마케팅 골든벨','문제를 크게 띄우고 조별로 보드에 답을 씁니다. "정답 보기"를 누른 뒤 맞힌 조를 모두 눌러 주세요.','게임 5 · 복습 · 사후평가 대비')+`
+  <div class="quiz"><span class="qnum">Q${G5.i+1} / ${QZ.length}</span><div class="q">${q.q}</div>
+   <div class="choices">${q.c.map((c,i)=>`<button class="choice ${G5.shown?(i===q.a?'ok':'no'):''}" data-i="${i}"><span class="num">${'①②③④'[i]}</span> ${c}</button>`).join('')}</div>
+   ${G5.shown?`<div class="explain"><b>정답 ${'①②③④'[q.a]}</b> · ${q.e}</div><div class="who"><span class="muted">맞힌 조 누르기 (+1점)</span>${Array.from({length:S.teams},(_,i)=>`<button data-t="${i}" class="${G5.got.has(i)?'on':''}">${i+1}조</button>`).join('')}</div>`:''}
+   <div class="bar"><button class="btn ghost" id="prev" ${G5.i===0?'disabled':''}>이전 문제</button>${G5.shown?'':'<button class="btn" id="show">정답 보기</button>'}<button class="btn ghost" id="next" ${G5.i===QZ.length-1?'disabled':''}>다음 문제</button></div></div>`;
+  const sh=$('#show');if(sh)sh.onclick=()=>{G5.shown=true;draw5()};
+  $('#prev').onclick=()=>{G5.i--;G5.shown=false;G5.got=new Set();draw5()};
+  $('#next').onclick=()=>{G5.i++;G5.shown=false;G5.got=new Set();draw5()};
+  document.querySelectorAll('.who button').forEach(b=>b.onclick=()=>{const t=+b.dataset.t;if(G5.got.has(t)){G5.got.delete(t);S.scores[t]--}else{G5.got.add(t);S.scores[t]++}save();renderTeams();pushScores();b.classList.toggle('on')});
+}
+
+/* ================= 강사 화면 ================= */
+const TP={tab:'flow',ws:'w01'};
+const FLOW=[
+ ['09:00','도입','PPT 3~11쪽 디저트로 쉽게 이해하기','—'],
+ ['09:30','실습 0-1 · 0-2','조별 기기에서 "실습지 쓰기" → 0-1, 0-2','게임 1 사장 되기로 확인'],
+ ['10:10','STP 이론 → 실습 ①','세분화 이론 후 실습지 ①','조별 모아보기로 비교'],
+ ['11:00','표적화 → 실습 ②','DART 근거 안내 후 실습지 ②','조별 모아보기'],
+ ['13:00','데이터 · RFM 이론','"RFM 표 읽기" ①→②(C01·C05·C11·C15만)','게임 2 손님 카드'],
+ ['14:00','실습 ④-2','실습지 ④-2 해석','조별 모아보기'],
+ ['14:50','CRM → 실습 ⑤','"할인·쿠폰 말고" 질문 후 실습지 ⑤','게임 3 누구에게 무엇을'],
+ ['15:40','LTV → 실습 ⑥','계산법 보여 주고 실습지 ⑥','게임 4 예산 나누기'],
+ ['16:30','실습 ⑦ 원페이퍼','"불러오기" 후 7번 칸만 새로 쓰기 (발표 없음)','조별 모아보기'],
+ ['17:30','마무리','골든벨 12문제','게임 5 골든벨']];
+function teacherPage(){
+  $('#app').innerHTML=`<div class="screen-head"><button class="back" onclick="go('home')">← 처음 화면</button><div><p class="step">강사 전용 · 교육생 화면에 띄우지 마세요</p><h2>강사 화면</h2></div>
+   <p class="sub">하루 진행 순서, 실습별 예시 답안과 해설, 조별로 쓴 내용, 게임 정답을 한곳에 모았습니다.</p></div>
+   <nav class="wstabs" id="ttabs"></nav><section id="tbody"></section>`;
+  const tabs=[['flow','① 오늘 진행 순서'],['ans','② 실습 예시 답안 · 해설'],['cmp','③ 조별 모아보기'],['game','④ 게임 정답']];
+  const n=$('#ttabs');tabs.forEach(([k,t])=>{const b=document.createElement('button');b.className='wtab'+(TP.tab===k?' on':'');b.textContent=t;b.onclick=()=>{if(k==='cmp'){go('cmp');return}TP.tab=k;teacherPage()};n.appendChild(b)});
+  ({flow:tFlow,ans:tAns,game:tGame})[TP.tab]();
+}
+function tFlow(){
+  $('#tbody').innerHTML=`<div class="tscroll"><table class="wt rt"><thead><tr><th>시간</th><th>단계</th><th>강사가 할 일 · 누를 곳</th><th>확인 방법</th></tr></thead><tbody>
+   ${FLOW.map(r=>`<tr><td class="num c">${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table></div>
+   <div class="calcbox"><b>수업 전 체크</b>
+    <div class="calcrow"><span>1. 페이지 공유 메뉴에서 교육생에게 "사용 가능(Can interact)" 권한 주기</span></div>
+    <div class="calcrow"><span>2. 교육생 기기 4대에서 링크 열고 "실습지 쓰기" → 우리 조 번호 누르기</span></div>
+    <div class="calcrow"><span>3. 강사 화면(이 화면)은 강사 노트북에서만. 프로젝터에는 게임 · 조별 모아보기만 띄우기</span></div>
+    <div class="calcrow"><span>4. 담당자 방침: RFM 계산은 시범 + 3~4명, 발표 없음, 원페이퍼까지</span></div></div>
+   ${W.mode==='server'?`<div class="panel" style="margin-top:12px"><b>수업 데이터 초기화</b><p class="note">다음 반 수업 전에 모든 조의 실습지와 점수를 지웁니다. 지운 기록은 되돌릴 수 없습니다.</p><div class="bar"><button class="btn ghost" id="rbtn">모두 지우기</button></div></div>`:''}`;
+  const rb=document.getElementById('rbtn');if(rb)rb.onclick=async()=>{if(!confirm('모든 조의 실습지와 점수를 지울까요? 되돌릴 수 없습니다.'))return;const r=await fetch('/api/reset',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(r.ok){W.vals={};localSave();S.scores=[0,0,0,0,0,0];save();renderTeams();toast('모두 지웠습니다')}else toast('초기화에 실패했습니다')};
+}
+function tAns(){
+  const prev=W.showAns;W.showAns=true;
+  const w=WS.find(x=>x.id===TP.ws);
+  const tabs=WS.map(x=>`<button class="sopt ${x.id===TP.ws?'on':''}" data-ws="${x.id}">${x.no}</button>`).join('');
+  $('#tbody').innerHTML=`<div class="seg" style="margin-bottom:14px">${tabs}</div>
+   <div class="wshead"><div><h3>${w.no} · ${w.t} <span class="anspill">예시 답안</span></h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>
+   ${guideHTML(GUIDE[w.id],true)}
+   ${w.tip?`<p class="tipline">${w.tip}</p>`:''}
+   <div id="tansBody" data-ro="1">${w.blocks.map(b=>b.type==='import'?'':renderBlock(w,b,0,true)).join('')}</div>`;
+  const body=$('#tansBody');computeCalcs(body,w,0);
+  W.showAns=prev;
+  document.querySelectorAll('[data-ws]').forEach(b=>b.onclick=()=>{TP.ws=b.dataset.ws;tAns()});
+}
+function tGame(){
+  $('#tbody').innerHTML=`<h3 class="rh" style="margin-top:4px">게임 2 · 손님 카드 분류 정답</h3>
+   <div class="tscroll"><table class="wt rt"><thead><tr><th>등급</th><th>정답 카드</th><th>점수 모양</th></tr></thead><tbody>
+    <tr><td><b class="sv">최우수 (VIP)</b></td><td class="num">C01 · C03 · C09 · C17</td><td>R5 F5 M5</td></tr>
+    <tr><td><b>우수 단골</b></td><td class="num">C02 · C06 · C12 · C19</td><td>R3~4 F4 M4</td></tr>
+    <tr><td><b>일반 (성장 여지)</b></td><td class="num">C04 · C08 · C14 · C15</td><td>R3~4 F2~3 M2~3</td></tr>
+    <tr><td><b class="sr">이탈 위험</b></td><td class="num">C05 · C10 · C11 · C18</td><td>R2 F2~3 M2~3</td></tr>
+    <tr><td><b>휴면</b></td><td class="num">C07 · C13 · C16 · C20</td><td>R1 F1 M1</td></tr></tbody></table></div>
+   <h3 class="rh">게임 3 · 누구에게 무엇을? 정답</h3>
+   <div class="tscroll"><table class="wt rt"><thead><tr><th>등급</th><th>맞는 카드</th></tr></thead><tbody>
+    ${SEG4.map(g=>`<tr><td><b>${g.n}</b></td><td>${ACTS.filter(a=>a.a===g.k).map(a=>a.t).join(' · ')}</td></tr>`).join('')}</tbody></table></div>
+   <h3 class="rh">게임 4 · CRM 예산 나누기 모범 배분</h3>
+   <p>최우수 400 · 우수 단골 120 · 이탈 위험 60 · 일반 40 · 휴면 4 = 624만 원 → 효과 − 예산 약 ${won(eff(MODEL)-624)}만 원 (똑같이 나누면 약 ${won(eff([124.8,124.8,124.8,124.8,124.8])-624)}만 원)</p>
+   <h3 class="rh">게임 1 · 디저트 가게 잘 맞는 조합</h3>
+   <p>와그작 케이크 + 20대 인증샷 손님 + 릴스 · 체험 이벤트 중심 / 과일모찌 + 40·50대 선물 손님 + 선물 포장 · 단골 문자 중심. 10대 학생에게 선물 포장, 선물 손님에게 릴스처럼 반응하지 않는 채널에 몰면 이익이 낮게 나옵니다.</p>
+   <h3 class="rh">게임 5 · 골든벨 정답</h3>
+   <div class="tscroll"><table class="wt rt"><thead><tr><th>번호</th><th>문제</th><th>정답</th></tr></thead><tbody>
+    ${QZ.map((q,i)=>`<tr><td class="num c">${i+1}</td><td>${q.q}</td><td><b>${'①②③④'[q.a]}</b> ${q.c[q.a]}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ================= RFM 표 읽기 (reader) ================= */
+const RFM_WHY={C01:'최근에 · 자주 · 많이 산 손님',C02:'활발하지만 최상위 바로 아래',C03:'20명 중 가장 자주 · 가장 많이',C04:'모든 지표가 중간',C05:'넉 달째 발길이 끊김',C06:'자주 오고 꽤 씀 · VIP 승급 후보',C07:'7개월째 안 옴 · 적게 삼',C08:'모든 지표가 중간',C09:'가장 최근에 온 손님',C10:'석 달째 안 옴',C11:'예전엔 중간 이상인데 두 달째 안 옴 · 가장 먼저 연락',C12:'자주 오고 꽤 씀 · VIP 승급 후보',C13:'모든 지표 최하위 · 회복 우선순위 가장 낮음',C14:'최근에 왔지만 빈도 · 금액이 낮음',C15:'R이 살아 있음 · 빈도를 키울 손님',C16:'다섯 달째 안 옴 · 적게 삼',C17:'최근에 · 자주 · 많이 산 손님',C18:'두 달 넘게 안 옴',C19:'자주 오고 꽤 씀 · R은 조금 낮음',C20:'반년째 안 옴 · 적게 삼'};
+const SEGNAME={vip:'최우수 (VIP)',good:'우수 단골',grow:'일반 (성장 여지)',risk:'이탈 위험',sleep:'휴면'};
+const RP={tab:'what',pick:'C11',hide:false};
+function rfmPage(){
+  $('#app').innerHTML=`<div class="screen-head"><button class="back" onclick="go('home')">← 처음 화면</button><div><p class="step">실습 ④ 준비 · 강사와 교육생 공통</p><h2>RFM 표 읽기</h2></div>
+   <p class="sub">C01~C20이 무엇인지, 숫자를 어떻게 점수로 바꾸는지, 20명이 어느 등급인지 차례로 봅니다. 계산은 앱이 하고, 손님을 누르면 따라가기만 하면 됩니다.</p></div>
+   <nav class="wstabs" id="rtabs"></nav><section id="rbody"></section>`;
+  const tabs=[['what','① 이 표는 무엇인가요?'],['follow','② 계산 따라하기'],['all','③ 고객 20명 한눈에 보기']];
+  const n=$('#rtabs');tabs.forEach(([k,t])=>{const b=document.createElement('button');b.className='wtab'+(RP.tab===k?' on':'');b.textContent=t;b.onclick=()=>{RP.tab=k;rfmPage()};n.appendChild(b)});
+  ({what:rWhat,follow:rFollow,all:rAll})[RP.tab]();
+}
+function rWhat(){
+  const c=CUST.find(x=>x[0]==='C01');
+  $('#rbody').innerHTML=`<div class="rwrap">
+   <p class="rlead">C01 ~ C20은 <b>가상의 손님 20명에게 붙인 번호</b>입니다. 이름 대신 "손님 1번, 2번…"이라고 부르는 것입니다.<br>숫자는 따로 찾을 필요 없이 <b>워크시트 표 안에 이미 다 들어 있습니다.</b> (해설집 부록 "고객 20명 최근 12개월 거래 데이터" · 계산 연습용 가상 데이터)</p>
+   <div class="tscroll"><table class="wt rt"><thead><tr><th>칸</th><th>C01의 값</th><th>뜻</th><th>무엇의 재료</th></tr></thead><tbody>
+    <tr><td class="fx">경과일</td><td class="num c">${c[1]}</td><td>마지막으로 산 날이 ${c[1]}일 전</td><td><b>R · 최근성</b></td></tr>
+    <tr><td class="fx">횟수</td><td class="num c">${c[2]}</td><td>1년 동안 ${c[2]}번 샀음</td><td><b>F · 빈도</b></td></tr>
+    <tr><td class="fx">금액 (만원)</td><td class="num c">${won(c[3])}</td><td>1년 동안 ${won(c[3])}만 원 썼음</td><td><b>M · 금액</b></td></tr></tbody></table></div>
+   <h3 class="rh">계산은 곱셈이 아니라 "줄 세우기"입니다</h3>
+   <ol class="rsteps"><li><b>한 가지 칸</b>(경과일 · 횟수 · 금액)만 보고 20명을 줄 세웁니다.</li><li><b>4명씩 끊어</b> 5점 · 4점 · 3점 · 2점 · 1점을 줍니다.</li><li>세 점수를 모아 <b>등급 이름</b>을 붙입니다.</li></ol>
+   <p class="rwarn">R만 반대입니다! 경과일은 <b>짧을수록(최근일수록) 5점</b>입니다. 교육생이 가장 많이 틀리는 곳입니다.</p>
+   <h3 class="rh">점수 모양 → 등급 이름</h3>
+   <div class="tscroll"><table class="wt rt"><thead><tr><th>점수 모양</th><th>등급</th><th>뜻</th></tr></thead><tbody>
+    <tr><td class="num">R5 · F5 · M5</td><td><b class="sv">최우수 (VIP)</b></td><td>최근에 · 자주 · 많이</td></tr>
+    <tr><td class="num">R3~4 · F4 · M4</td><td><b>우수 단골</b></td><td>활발하지만 아직 최상위는 아님</td></tr>
+    <tr><td class="num">R3~4 · F2~3 · M2~3</td><td><b>일반 (성장 여지)</b></td><td>최근에 왔지만 빈도 · 금액이 낮음</td></tr>
+    <tr><td class="num">R2 · F2~3 · M2~3</td><td><b class="sr">이탈 위험</b></td><td>예전엔 괜찮았는데 발길이 끊김</td></tr>
+    <tr><td class="num">R1 · F1 · M1</td><td><b>휴면</b></td><td>오래 안 오고, 적게 샀음</td></tr></tbody></table></div>
+   <div class="bar"><button class="btn" onclick="RP.tab='follow';rfmPage()">② 계산 따라하기로 →</button></div></div>`;
+}
+function rankLists(){
+  const R=[...CUST].sort((a,b)=>a[1]-b[1]),F=[...CUST].sort((a,b)=>b[2]-a[2]||b[3]-a[3]),M=[...CUST].sort((a,b)=>b[3]-a[3]);
+  return {R,F,M};
+}
+function rFollow(){
+  const sc=quintile();const L=rankLists();const p=RP.pick;const c=CUST.find(x=>x[0]===p);
+  const col=(key,arr,title,unit,idx)=>`<div class="rcol"><h4>${title}</h4>${[5,4,3,2,1].map(pt=>{const grp=arr.slice((5-pt)*4,(5-pt)*4+4);const hit=grp.some(g=>g[0]===p);
+     return `<div class="rgrp ${hit?'hit':''}"><span class="rpt">${key}${pt}</span><span class="rids">${grp.map(g=>`<span class="${g[0]===p?'me':''}">${g[0]}<small>(${idx===3?won(g[3]):g[idx]}${unit})</small></span>`).join('')}</span></div>`}).join('')}</div>`;
+  const s=sc[p];
+  $('#rbody').innerHTML=`<div class="rwrap">
+   <p class="rlead">손님 번호를 누르면, 세 줄 세우기 표에서 그 손님이 어느 줄(몇 점)에 있는지 빨간색으로 표시됩니다.</p>
+   <div class="pickrow" id="pick"></div>
+   <div class="rcols">${col('R',L.R,'① R · 경과일 짧은 순','일',1)}${col('F',L.F,'② F · 횟수 많은 순','회',2)}${col('M',L.M,'③ M · 금액 큰 순','만',3)}</div>
+   <div class="rresult"><div><span class="muted">${p}의 값</span><b class="num">${c[1]}일 전 · ${c[2]}회 · ${won(c[3])}만 원</b></div>
+    <div><span class="muted">점수</span><b class="num rbig">R${s.R} · F${s.F} · M${s.M}</b></div>
+    <div><span class="muted">등급</span><b class="rbig ${ANS[p]==='vip'?'sv':ANS[p]==='risk'?'sr':''}">${SEGNAME[ANS[p]]}</b></div>
+    <p>${RFM_WHY[p]}</p></div>
+   ${p==='C05'||p==='C20'?`<p class="note">F 동점: C05와 C20은 둘 다 3회 → 금액이 큰 C05(620만)를 앞에 둡니다. 그래서 C05는 F2, C20은 F1입니다.</p>`:''}
+   ${p==='C14'||p==='C18'?`<p class="note">F 동점: C14와 C18은 둘 다 5회라 둘 다 F2입니다.</p>`:''}
+   <p class="note">수업에서는 C01 · C05 · C11 · C15 네 명만 같이 찾아보고, 나머지는 ③ 한눈에 보기로 확인하면 충분합니다.</p></div>`;
+  const pk=$('#pick');CUST.forEach(([id])=>{const b=document.createElement('button');b.className='sopt'+(id===p?' on':'')+(['C01','C05','C11','C15'].includes(id)?' star':'');b.textContent=id;b.onclick=()=>{RP.pick=id;rFollow()};pk.appendChild(b)});
+}
+function rAll(){
+  const sc=quintile();
+  $('#rbody').innerHTML=`<div class="rwrap"><div class="bar"><label class="tog"><input type="checkbox" id="hideTog" ${RP.hide?'checked':''}> 점수 · 등급 가리기 (교육생이 먼저 풀 때)</label></div>
+   <div class="tscroll"><table class="wt rt all"><thead><tr><th>고객</th><th>경과일<br><small>마지막 구매</small></th><th>R</th><th>횟수<br><small>1년</small></th><th>F</th><th>금액<br><small>만원</small></th><th>M</th><th>등급</th><th>한 줄 해석</th></tr></thead><tbody>
+   ${CUST.map(([id,d,f,m])=>{const s=sc[id];const h=RP.hide;const seg=ANS[id];
+     return `<tr class="${RP.pick===id?'rowpick':''}" data-id="${id}"><td class="fx">${id}</td><td class="num c">${d}일 전</td><td class="sc num">${h?'?':s.R}</td><td class="num c">${f}회</td><td class="sc num">${h?'?':s.F}</td><td class="num c">${won(m)}</td><td class="sc num">${h?'?':s.M}</td><td><b class="${seg==='vip'?'sv':seg==='risk'?'sr':''}">${h?'?':SEGNAME[seg]}</b></td><td>${h?'':RFM_WHY[id]}</td></tr>`}).join('')}
+   </tbody></table></div><p class="note">R은 경과일이 짧을수록 5점 · F는 횟수가 많을수록 5점 · M은 금액이 클수록 5점 (20명을 4명씩 끊은 5분위). 줄을 누르면 ② 계산 따라하기에서 그 손님을 보여 줍니다.</p></div>`;
+  $('#hideTog').onchange=e=>{RP.hide=e.target.checked;rAll()};
+  document.querySelectorAll('tr[data-id]').forEach(tr=>tr.onclick=()=>{RP.pick=tr.dataset.id;RP.tab='follow';rfmPage()});
+}
+
+/* ================= 예시 · 안내 (guides) ================= */
+const GUIDE={
+ w01:{goal:'디저트 하나로 STP(나누기 → 고르기 → 자리 잡기)를 가볍게 먼저 해 봅니다. 백화점 실습 전에 감을 잡는 몸풀기입니다.',
+  steps:['디저트 하나를 고릅니다. 와그작 케이크든 과일모찌든 상관없습니다.',
+   '이 디저트를 살 만한 손님 무리 3개를 떠올립니다. "나이 + 상황"으로 적으면 쉽습니다. (예: 20대 · 친구와 주말 나들이)',
+   '무리마다 "왜 살까"와 "어디서 알게 될까"를 한 줄씩 적습니다.',
+   '규모(사람이 많은가)와 우리와 맞음(우리 디저트 강점과 맞는가)을 1~5점으로 매깁니다. 합계 1위는 앱이 표에 표시합니다.',
+   '한 무리를 골라 이유를 쓰고, 마지막에 한 줄 포지셔닝을 씁니다.'],
+  formula:'포지셔닝 한 줄 틀 · "(누구)에게, (무엇) 때문에 (어떤) 디저트"',
+  worked:[['와그작 케이크를 고른 조','A 20대 인증샷 손님: 깨는 소리와 장면을 영상으로 찍고 싶어서 삼 → 인스타 릴스로 알게 됨 → 규모 4 · 맞음 5 = 9점으로 1위. 포지셔닝: "새로운 경험을 찍어 올리고 싶은 20대에게, 깨는 소리까지 즐기는 디저트"'],
+   ['과일모찌를 고른 조','A 40·50대 선물 손님: 명절 · 방문 인사, 제철 과일과 고급 포장 때문에 삼 → 백화점 식품관 · 지인 추천으로 알게 됨 → 규모 3 · 맞음 5 = 8점. B 20·30대 데이트 손님(단면 사진, 인스타) 4 · 3 = 7점. C 60대 이상(찹쌀떡에 익숙, 동네 입소문) 3 · 3 = 6점. 포지셔닝: "제철 과일을 정성스럽게 선물하고 싶은 40·50대에게, 계절을 통째로 담은 선물 디저트"']],
+  mistakes:['"모든 연령"처럼 무리를 안 나눈 경우 → 나이와 상황을 붙여 3개로 나누게 합니다.','세 무리가 겹치는 경우(20대 / 대학생 / 젊은 여성) → 서로 다른 이유로 사는 사람들인지 묻습니다.','고른 이유에 디저트 강점이 없는 경우 → "왜 하필 우리 디저트를 사나요?"를 묻습니다.']},
+ w02:{goal:'계산 없이 R · F · M을 눈으로 읽는 연습입니다. 오후 실습 ④의 예습입니다.',
+  steps:['먼저 "최근 방문(R)"을 봅니다. 최근에 왔는지, 오래 안 왔는지.','다음 "방문 횟수(F)"를 봅니다. 자주 오는지.','마지막 "쓴 돈(M)"을 봅니다.','세 개를 합쳐 손님 이름을 붙입니다.','손님마다 해 줄 것을 한 가지 씁니다. 할인 쿠폰 말고 먼저 생각합니다.'],
+  table:[['최근에 왔고 · 자주 · 많이','최고 단골','지은, 하윤'],['예전엔 자주 왔는데 최근 방문이 오래됨','떠나려는 손님','민수'],['최근에 처음 옴 (1번)','새 손님','서연'],['자주 오지만 쓰는 돈이 적음','자주 오지만 적게 쓰는 손님','준호'],['오래 안 옴 + 1번 + 적게','잠든 손님','순자']],
+  worked:[['민수를 읽는 법','최근 방문 70일 전(오래됨) · 10번(예전엔 자주) · 15만 원(중간). "예전엔 자주 왔는데 지금 안 온다" → 떠나려는 손님. 가장 먼저 연락할 사람입니다. 해 줄 것: "요즘 안 보이셨네요" 메시지와 함께 불편했던 점 묻기.'],
+   ['준호를 읽는 법','10일 전 · 12번 · 6만 원. 자주 오지만 한 번에 5천 원 정도만 씀 → 키울 손님. 해 줄 것: 케이크 + 음료 세트로 한 번에 더 담게.']],
+  mistakes:['돈을 가장 많이 쓴 지은을 "가장 급한 손님"으로 고르는 경우 → 지은은 잘 오고 있습니다. 급한 건 떠나는 중인 민수입니다.','해 줄 것에 전부 "할인 쿠폰"을 쓰는 경우 → 쿠폰 말고 하나 더 쓰게 합니다.']},
+ w1:{goal:'백화점 고객을 네 가지 기준으로 나눠 보고, 우리에게 가장 쓸모 있는 기준을 고릅니다.',
+  steps:['기준마다 "우리가 쓸 구체적 변수"를 씁니다. 숫자로 뽑을 수 있는 것이어야 합니다. (예: 연령대, 방문 횟수)','그 변수로 나눴을 때 생기는 세그먼트를 2~3개 씁니다.','"이 기준이 유효한 이유"에는 나누고 나서 무엇이 달라지는지를 씁니다. (예: 층별 배치가 달라진다)','마지막 칸에 네 기준 중 가장 유효한 것 하나와 이유를 씁니다.'],
+  formula:'좋은 세분화 3조건 · 무리 안은 비슷하게 · 무리 사이는 다르게 · 무리마다 다르게 연락할 수 있게',
+  worked:[['인구통계 줄 예시','변수: 연령대, 가구 구성, 구매 단가 → 세그먼트: ① 30대 초반 신혼 · 유아동 ② 40~50대 자녀 동반 가족 ③ 60대 이상 시니어 부부 → 이유: 유아동관 · 리빙관 · 명품관 동선과 그대로 겹쳐서 층별 MD 배치가 바로 정해집니다.'],
+   ['행동 줄 예시','변수: 연간 방문 횟수, 1회 객단가 → 세그먼트: ① 월 2회 이상 고빈도 소액 ② 분기 1회 저빈도 고액 ③ 시즌 세일에만 오는 행사 반응형 → 이유: 구매 기록에서 바로 뽑히는 "사실"이고, 오후 RFM과 바로 이어집니다.'],
+   ['가장 유효한 기준 예시','행동 기준. 백화점은 멤버십(L.POINT)으로 전 고객의 구매 기록을 갖고 있어 추정이 아닌 데이터로 나눌 수 있고, 나누는 즉시 개인별 문자 · 앱 푸시로 실행할 수 있습니다.']],
+  mistakes:['"20대 / 30대 / 40대…" 나열만 하고 끝 → 나눈 뒤 무엇이 달라지는지 쓰게 합니다.','"VIP / 일반"을 기준으로 씀 → 그건 기준이 아니라 결과(등급)입니다. 무엇으로 VIP가 됐는지 묻습니다.','"프리미엄을 좋아하는 고객" → 어떤 숫자로 그 사람을 찾을지 변수로 바꾸게 합니다.']},
+ w2:{goal:'실습 ①에서 나눈 세그먼트 3개를 같은 잣대로 점수 매기고, 공략할 곳 하나를 고릅니다.',
+  steps:['실습 ①에서 가장 유효했던 기준의 세그먼트 3개를 A · B · C 이름 칸에 옮깁니다.','항목마다 1~5점을 매깁니다. 경쟁 강도는 "경쟁이 약할수록 높은 점수"입니다.','판단 근거 칸에 왜 그 점수인지, 어디서 확인했는지 씁니다.','총점은 앱이 더합니다. 표적화 전략 하나를 누르고 이유를 씁니다.'],
+  formula:'근거 자료 찾는 곳 · DART(dart.fss.or.kr) 롯데쇼핑 사업보고서 → 백화점 부문 매출 · 영업이익 / 산업통상자원부 월별 유통업체 매출 동향 / 롯데백화점 홈페이지 · 기사',
+  worked:[['시장 규모 줄 예시','A(월 2회 소액) 3점 · B(분기 1회 고액) 2점 · C(세일 반응형) 5점. 근거: 세일 때만 오는 사람이 인원수로는 가장 많고, 고액 저빈도층이 가장 적습니다.'],
+   ['경쟁 강도 줄 예시 (거꾸로 매기기)','C(세일 반응형)는 온라인 최저가와 정면으로 싸우므로 경쟁이 가장 셈 → 1점. B(고액층)는 매장 접객 · VIP 라운지가 있어 경쟁이 약함 → 4점.'],
+   ['결론 예시','총점 A 18 · B 20 · C 11 → B를 1순위로. 전략은 차별적: B에 예산을 집중하되 A는 유지, C는 최소 비용으로 관리합니다.']],
+  mistakes:['규모가 가장 큰 곳을 무조건 고름 → 규모 5점이어도 수익성 1점이면 이익이 남는지 묻습니다.','세 세그먼트 점수가 다 비슷함 → 항목마다 1점과 5점이 하나씩은 나오게 다시 매깁니다.','경쟁 강도를 거꾸로 매기지 않음 → 경쟁이 셀수록 낮은 점수입니다.']},
+ w42:{goal:'게임 2(손님 카드 분류) 결과를 보고, 숫자가 무엇을 말하는지 읽어 씁니다. 계산보다 "그래서 무엇을 할까"가 핵심입니다.',
+  steps:['게임 2 결과 화면을 다시 봅니다.','표의 네 가지 손님에 해당하는 고객 번호를 씁니다.','수치 근거에는 경과일 · 횟수 · 금액을 그대로 옮깁니다.','가장 시급한 조치에는 "누구에게 무엇을 먼저" 할지 씁니다.','아래 앱 계산값(47% · 3.5%)을 보고 예산을 어떻게 나눠야 할지 한두 줄 씁니다.'],
+  worked:[['R · F · M 모두 5점인 고객','C01 · C03 · C09 · C17. 4명이 1억 8,400만 원, 전체의 47%. 조치: 신규 유치보다 이 4명을 지키는 데 먼저 씁니다. 전담 어드바이저 배정, 신상품 우선 안내.'],
+   ['예전엔 우수했는데 발길이 끊긴 고객','C11 · C18 · C10 · C05, 그중 C11이 우선. C11은 횟수 6회 · 금액 1,100만 원으로 중간 이상인데 60일째 안 옴(R2). 조치: 복귀 쿠폰 전에 마지막 구매 카테고리와 불만 기록부터 확인하고 C11부터 개별 연락.'],
+   ['숫자 해석 예시','상위 20%가 47%, 하위 20%가 3.5%로 약 13.6배 차이. 그래서 예산을 똑같이 나누면 안 됩니다. 하위 고객은 버리는 게 아니라 사람이 붙는 비싼 채널에서 자동 문자 같은 싼 채널로 옮깁니다.']],
+  mistakes:['합계 점수만 보고 C11(8점)을 C15(10점)보다 덜 급하다고 봄 → R이 떨어지는 C11이 더 급합니다.','계산만 쓰고 조치가 없음 → "그래서 누구에게 뭘 먼저?"를 묻습니다.']},
+ w5:{goal:'등급마다 목적이 다르니 액션도 달라야 합니다. 남들 다 하는 할인 · 쿠폰 말고 새로운 액션을 하나 이상 넣습니다.',
+  steps:['등급마다 목적을 먼저 씁니다. 최우수 = 지키기, 우수 = 올리기, 일반 = 빈도 늘리기, 이탈 위험 = 되돌리기, 휴면 = 비용 줄이기.','목적에 맞는 액션을 씁니다. 등급이 높을수록 할인보다 경험 · 우선권 · 전용 서비스입니다.','채널은 등급이 높을수록 "사람이 직접"(전화 · 대면), 낮을수록 자동(앱 푸시 · 이메일)입니다.','예상 비용을 만 원 단위로 씁니다. 합계는 앱이 더하고, 624만 원을 넘으면 경고합니다.','성과 지표는 숫자로 씁니다. (예: 재방문율 50%)'],
+  table:[['최우수 (VIP)','VIP 전용 개장 전 쇼핑 30분, 담당 어드바이저의 계절 스타일 제안'],['우수 단골','앱에 "VIP까지 남은 금액" 게이지, 승급 시 받을 혜택 1회 미리 체험'],['이탈 위험','마지막 구매 담당 판매사원의 손편지 · 전화'],['일반','문화센터 클래스 1회 무료 체험, 식당가 연계 스탬프'],['휴면','생일 달에만 자동 문자 1통, 반응하면 일반 등급으로 복귀']],
+  tableHead:['등급','할인 · 쿠폰 말고 이런 아이디어'],
+  worked:[['최우수 줄 예시','목적: 이탈 방지와 지위 강화 / 액션: 전담 어드바이저 1:1, 신상품 · 한정판 우선 구매권, 연 2회 초청 문화행사 / 채널: 전화 · 대면 / 비용: 400만 원(1인 100만) / 지표: 유지율 100%, 초청 행사 참석률'],
+   ['예산 배분 예시','400 · 120 · 60 · 40 · 4 = 624만 원. 매출의 47%를 만드는 4명에게 65%를 씁니다.']],
+  mistakes:['VIP에게 할인 쿠폰 → VIP는 가격에 반응하지 않습니다. 되돌려 보냅니다.','다섯 등급 액션이 문구만 다르고 내용이 같음 → "이 액션을 다른 등급에 옮겨도 말이 되나?"를 묻습니다.','휴면에 예산을 가장 많이 씀 → 되살릴 근거가 데이터 어디에 있는지 묻습니다.','성과 지표가 "매출 증대" → 숫자와 목표치로 바꾸게 합니다.']},
+ w6:{goal:'등급별로 "이 손님이 앞으로 남겨 줄 돈(LTV)"을 구하고, 그 돈의 몇 %까지 써도 되는지 정합니다. 곱셈은 앱이 합니다.',
+  steps:['예상 유지 연수를 씁니다. 오래 남을 등급일수록 깁니다. (예: VIP 5년, 우수 4년, 일반 3년, 이탈 위험 2년)','상한 비율(%)을 씁니다. 보통 10~20%입니다. 승급 가능성이 크면 높게, 불확실하면 낮게.','LTV와 비용 상한은 앱이 계산해 표에 채웁니다. 괄호 안은 1년에 쓸 수 있는 돈입니다.','아래 판단 질문 3개에 숫자를 인용해서 답합니다.'],
+  formula:'LTV = 연간 구매금액 × GP율 25% × 예상 유지 연수 · 비용 상한 = LTV × 상한 비율',
+  worked:[['최우수 계산 예시','4,600만 × 0.25 × 5년 = LTV 5,750만 원. 상한 10%면 575만 원, 5년으로 나누면 1년에 115만 원까지 1인에게 쓸 수 있습니다.'],
+   ['이탈 위험 계산 예시','880만 × 0.25 × 2년 = LTV 440만 원. 상한 20%면 88만 원. 되돌리는 데 88만 원 이상 쓰면 손해입니다.'],
+   ['판단 질문 1 답 예시','지키는 쪽이 이익입니다. 이탈 위험 1명의 LTV는 440만, 붙잡는 비용 상한은 88만으로 5배를 회수합니다. 신규는 데려오는 비용이 더 들고 일반 등급에서 시작합니다.']],
+  mistakes:['GP율(25%)을 곱하지 않고 매출을 그대로 LTV로 씀 → LTV는 이익 기준입니다. (앱은 자동으로 곱합니다)','상한 비율을 100%로 씀 → 그러면 남는 돈이 0입니다.','휴면의 유지 연수를 VIP보다 길게 씀 → 순서가 거꾸로입니다.']},
+ w7:{goal:'오늘 쓴 실습을 한 장으로 묶습니다. 채점은 7번 한 칸에서만 합니다.',
+  steps:['"앞 실습에서 쓴 내용 불러오기"를 누릅니다. 1 · 2 · 4 · 5 · 6번이 자동으로 채워집니다.','불러온 내용을 두세 문장으로 다듬습니다.','3번 포지셔닝 문장은 이론 시간에 배운 틀로 새로 씁니다.','7번 칸을 새로 씁니다. 아래 틀에 숫자를 넣으면 됩니다.'],
+  formula:'7번 칸 틀 · "첫 구매 후 (며칠) 안에 (무슨 일)이 일어나면 (어디)로 넘긴다. 일어나지 않으면 (무엇)을 한다. 이 손님을 데려오는 비용 상한은 (얼마)다."',
+  worked:[['3번 포지셔닝 예시','부산 도심에 사는 40~50대 가족 고객에게 롯데백화점 부산본점은 서면 한복판이라는 접근성과 하루를 다 보낼 수 있는 식음 · 문화 시설 때문에 "가장 자주 들르게 되는 프리미엄 백화점"이다.'],
+   ['7번 예시','첫 구매 후 30일을 온보딩 기간으로 두고, 30일 안에 2회차 구매가 일어나면 정규 CRM 관리로 넘깁니다. 2회차가 없으면 광고가 아니라 "월 2회 방문 시 사은품"으로 재방문을 유도합니다. 신규 1명 획득 비용 상한은 일반 등급 LTV 1,003만 원의 10%인 100만 원입니다.']],
+  mistakes:['"신규 고객을 잘 관리해서 VIP로 만든다" → 시점(며칠)과 조건(무슨 일)이 숫자로 없으면 답이 아닙니다.','표적은 고액층인데 예산은 일반 등급에 몰림 → 옮겨 적다가 앞뒤가 안 맞는 곳을 찾는 것도 이 실습의 목적입니다.']}
+};
+const GGUIDE={
+ g2:{goal:'디저트 · 손님 · 광고 채널이 서로 맞아야 장사가 된다는 걸 몸으로 느끼는 게임입니다.',
+  steps:['디저트 하나를 누릅니다.','손님 무리 하나를 누릅니다. (Targeting)','광고비 100만 원을 다섯 채널에 슬라이더로 나눕니다. 합이 100만 원을 넘으면 버튼이 잠깁니다.','"한 달 영업해 보기"를 누르면 손님 수 · 재방문율 · 매출 · 이익과 피드백이 나옵니다.','아래 회색 글씨에 같은 조합으로 낼 수 있는 최고 이익과 우리 조 수준(%)이 나옵니다.'],
+  worked:[['잘 맞는 예','와그작 케이크 + 20대 인증샷 손님 + 릴스 50 · 체험 40 · 단골 문자 10 → 이 조합의 최고 이익에 가깝습니다. 20대는 짧은 영상과 직접 깨 보는 체험에 가장 잘 반응하기 때문입니다.'],
+   ['안 맞는 예','과일모찌 + 10대 학생 + 선물 포장에 100만 원 → 손해입니다. 10대는 선물 포장에 반응하지 않고, 과일모찌와 10대의 궁합도 낮습니다.'],
+   ['토론 질문','"같은 디저트인데 왜 우리 조만 이익이 적었을까?" → 고른 손님이 반응하는 채널에 돈을 썼는지 비교해 봅니다.']],
+  mistakes:['돈을 다섯 채널에 똑같이 20만 원씩 → 결과가 어중간합니다. 손님에 맞는 곳에 몰아 보게 합니다.','단골 문자에 0원 → 재방문율이 떨어집니다.']},
+ g1:{goal:'고객 20명을 다섯 등급으로 나눕니다. 점수 계산은 앱 버튼이 해 주고, 조는 "이 사람은 누구인가"만 판단합니다.',
+  steps:['카드 한 장을 누르고, 오른쪽 바구니를 누르면 들어갑니다. 잘못 넣으면 카드를 다시 누르고 다른 바구니를 누르면 됩니다.','막히면 "앱이 R · F · M 점수 계산하기"를 눌러 R5 · F4 같은 점수를 봅니다.','20장을 다 넣고 "채점하기"를 누르면 맞은 카드는 초록, 틀린 카드는 빨강으로 바뀌고 매출 비중 그래프가 나옵니다.'],
+  table:[['R5 F5 M5','최우수 (VIP)','C01 · C03 · C09 · C17'],['R3~4 F4 M4','우수 단골','C02 · C06 · C12 · C19'],['R3~4 F2~3 M2~3','일반 (성장 여지)','C04 · C08 · C14 · C15'],['R2 F2~3 M2~3','이탈 위험','C05 · C10 · C11 · C18'],['R1 F1 M1','휴면','C07 · C13 · C16 · C20']],
+  tableHead:['점수 모양','바구니','정답 카드'],
+  worked:[['C11과 C15를 비교하는 예','C11: 60일 전 · 6회 · 1,100만 → R2 F3 M3(합 8). C15: 22일 전 · 8회 · 1,600만 → R4 F3 M3(합 10). 합계만 보면 비슷하지만 C11은 R이 떨어져 "떠나는 중", C15는 R이 살아 있어 "키울 손님"입니다. 합계보다 R을 먼저 봅니다.'],
+   ['R 점수 매기는 법','R은 "마지막 구매 후 지난 날"이 짧을수록 5점입니다. 5일 · 8일 · 10일 · 12일인 4명이 R5, 그다음 4명이 R4 … 이런 식으로 4명씩 끊습니다. 앱 버튼이 이걸 대신합니다.']],
+  mistakes:['R을 거꾸로 생각함(지난 날이 길수록 높은 점수) → 가장 많이 틀리는 곳입니다.','돈을 많이 쓴 순서로만 나눔 → R이 떨어진 사람을 놓칩니다.']},
+ g4:{goal:'CRM 액션 카드 13장을 알맞은 등급에 붙이고, 쓰면 안 되는 카드는 버립니다. 등급마다 새 아이디어를 한 줄씩 쓰면 보너스를 받습니다.',
+  steps:['위쪽 카드를 누르고 아래 등급 칸을 누르면 붙습니다. 잘못 붙인 카드는 칸 안에서 다시 누르면 빠집니다.','효과가 없거나 역효과인 카드는 "쓰지 않을 액션"에 넣습니다.','등급마다 입력칸에 할인 · 쿠폰이 아닌 새 아이디어를 씁니다. 할인 · 쿠폰 · 적립 · %가 들어가면 보너스가 없습니다.','"채점하기"를 누르면 정답과 등급별 목적이 나옵니다.'],
+  table:[['최우수 (VIP)','전담 어드바이저, 우선 구매권, 초청 문화행사','지키기'],['우수 단골','"VIP까지 남은 금액" 안내, 승급 혜택 미리 체험','올리기'],['일반','월 2회 방문 사은품, 안 사 본 카테고리 체험','빈도 늘리기'],['이탈 위험','원인 조회 후 개별 전화, 30일 한정 복귀 혜택','되돌리기'],['휴면','뉴스레터 · 앱 푸시 자동 발송만','비용 줄이기'],['쓰지 않을 액션','전 등급 20% 할인 문자, 휴면에 유료 광고, VIP에게 할인 쿠폰','역효과']],
+  tableHead:['등급','맞는 카드','목적'],
+  worked:[['왜 "VIP에게 할인 쿠폰"은 버릴까','VIP는 가격보다 대접을 봅니다. 할인 문자는 "나를 일반 손님처럼 대한다"는 느낌을 줍니다.'],['새 아이디어 예','VIP: 개장 전 30분 전용 쇼핑 / 우수: 앱에 승급 게이지 / 일반: 문화센터 1회 무료 / 이탈 위험: 담당 판매사원 손편지 / 휴면: 생일 달 문자 1통']],
+  mistakes:['모든 칸에 할인 이야기 → "쿠폰 말고 하나 더"를 요구합니다.']},
+ g3:{goal:'624만 원을 다섯 등급에 나눠 1년 뒤 효과가 가장 크게 나오게 합니다. 등급마다 LTV로 정한 1년 한도가 있습니다.',
+  steps:['처음에는 똑같이 나눠져 있습니다. 슬라이더로 등급별 금액을 바꿉니다.','한도를 넘으면 빨간 글씨와 빨간 막대가 뜹니다.','위쪽 "효과 − 예산"이 클수록 잘 나눈 것입니다. 합계가 정확히 624만 원이어야 점수를 넣을 수 있습니다.','"모범 배분 보기"를 누르면 해설집 배분(400 · 120 · 60 · 40 · 4)으로 바뀝니다.'],
+  worked:[['똑같이 나눈 경우','124만 원씩 → 효과 − 예산 약 5,300만 원. 이탈 위험 · 일반 · 휴면은 한도를 넘어 돈이 새고, VIP에는 모자랍니다.'],
+   ['모범 배분','400 · 120 · 60 · 40 · 4 → 약 6,170만 원. 매출의 47%를 만드는 VIP 4명에게 먼저 쓰고, 휴면에는 자동 발송 비용만 남깁니다.'],
+   ['휴면에 몰아준 경우','휴면에 200만 원 넘게 → 가장 낮게 나옵니다. 휴면 4명의 매출은 전체의 3.5%뿐이라 돈을 써도 돌아오는 게 작습니다.']],
+  mistakes:['"다 똑같이 나눠야 공평하다" → 47% 대 3.5%를 다시 보여 줍니다.']},
+ g5:{goal:'오늘 배운 내용을 12문제로 복습합니다. 사후평가 4~9번(STP · 세분화 · RFM · CRM · LTV · VIP)과 이어집니다.',
+  steps:['문제를 화면에 띄우고, 조별로 보드나 종이에 번호를 씁니다. (10초)','"정답 보기"를 누르면 정답과 해설이 나옵니다.','맞힌 조 버튼을 모두 누릅니다. 누를 때마다 1점씩 올라가고, 다시 누르면 취소됩니다.','"다음 문제"로 넘어갑니다.'],
+  worked:[['진행 멘트 예','"6번 문제입니다. R 점수는 어떻게 매길까요? 10초 드립니다… 보드 들어 주세요. 정답은 ②, 지난 날이 짧을수록 5점입니다. 오늘 가장 많이 틀린 곳이죠. 맞힌 조 1점!"']],
+  mistakes:[]}
+};
+function guideHTML(g,open){
+  if(!g)return '';
+  const t=g.table?`<table class="gt"><thead><tr>${(g.tableHead||['이런 손님','이름','장부의 누구'] ).map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${g.table.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`:'';
+  return `<details class="guide" ${open?'open':''}><summary>처음이라면 · 예시로 이해하기</summary>
+   <p class="ggoal">${g.goal}</p>
+   <div class="gcols"><div><b class="gh">이렇게 진행합니다</b><ol>${g.steps.map(s=>`<li>${s}</li>`).join('')}</ol>${g.formula?`<p class="gform">${g.formula}</p>`:''}</div>
+   <div><b class="gh">예시로 보면</b>${g.worked.map(([h,d])=>`<div class="gex"><b>${h}</b><p>${d}</p></div>`).join('')}</div></div>
+   ${t}${g.mistakes&&g.mistakes.length?`<b class="gh">자주 나오는 실수와 강사 한마디</b><ul>${g.mistakes.map(m=>`<li>${m}</li>`).join('')}</ul>`:''}</details>`;
+}
+
+/* ================= 실습지 (worksheets) ================= */
+const T=(k,a,t='text')=>({k,a,t});           // input cell: key, answer, type
+const N=(k,a)=>({k,a,t:'num'});
+const WS=[
+ {id:'w01',no:'실습 0-1',t:'디저트 가게 타깃 잡기',time:'20분',sub:'와그작 케이크 또는 과일모찌 중 하나를 골라, 손님 무리를 나누고 한 무리를 고릅니다.',
+  blocks:[
+   {type:'choice',k:'dessert',label:'우리 조가 고른 디저트',opts:['와그작 케이크','과일모찌'],a:'와그작 케이크'},
+   {type:'table',head:['손님 무리','누구인가 (나이 · 상황)','왜 살까','어디서 알게 될까','규모 (1~5)','우리와 맞음 (1~5)'],w:[.7,2,2.2,1.6,.8,.9],
+    rows:[['A',T('a_who','20대 · 친구와 · 주말'),T('a_why','깨는 소리와 장면을 영상으로 찍어 올리려고'),T('a_ch','인스타 릴스 · 틱톡'),N('a_s','4'),N('a_f','5')],
+          ['B',T('b_who','10대 학생 · 방과 후'),T('b_why','친구들 사이 화제라서, 신기해서'),T('b_ch','유튜브 쇼츠'),N('b_s','4'),N('b_f','3')],
+          ['C',T('c_who','30·40대 부모 · 아이 생일'),T('c_why','아이가 좋아해서, 함께 깨 보는 체험'),T('c_ch','맘카페 · 지인 추천'),N('c_s','3'),N('c_f','3')]],
+    calc:'w01'},
+   {type:'field',k:'pick',label:'우리가 고른 무리와 이유',a:"A 무리. 규모도 크고, '깨는 경험을 찍어 올리는' 이유가 이 디저트의 강점과 가장 잘 맞습니다. 사진 찍을 자리와 소리가 핵심입니다."},
+   {type:'field',k:'pos',label:'한 줄 자리 잡기 (포지셔닝)',a:"'새로운 경험을 찍어 올리고 싶은 20대에게, 깨는 소리까지 즐기는 디저트'",line:true}]},
+ {id:'w02',no:'실습 0-2',t:'디저트 가게 장부 읽기',time:'15분',sub:'최근 6개월 앱 주문 기록입니다. 손님을 나누고, 손님마다 챙길 방법을 하나씩 적습니다. (연습용 가상 데이터)',
+  blocks:[
+   {type:'table',head:['손님','최근 방문 (R)','6개월 방문 (F)','6개월 쓴 돈 (M)','이 손님은?','무엇을 해 줄까? (할인 쿠폰 말고)'],w:[.7,1,1,1,1.5,2.6],
+    rows:[['지은','3일 전','20번','30만 원',T('j1','최고 단골'),T('j2','신메뉴 시식회에 먼저 초대')],
+          ['민수','70일 전','10번','15만 원',T('m1','떠나려는 손님'),T('m2','"요즘 안 보이셨네요" 메시지 + 불편했던 점 묻기')],
+          ['서연','5일 전','1번','4만 원',T('s1','새 손님'),T('s2','두 번째 방문 때 쓰는 음료 쿠폰')],
+          ['준호','10일 전','12번','6만 원',T('u1','자주 오지만 적게 쓰는 손님'),T('u2','케이크 + 음료 세트로 한 번에 더 담게')],
+          ['하윤','2일 전','14번','21만 원',T('h1','최고 단골'),T('h2','시즌 한정 메뉴 예약권')],
+          ['순자','150일 전','1번','1만 원',T('o1','잠든 손님'),T('o2','계절 신메뉴 소식 문자 한 통만')]]},
+   {type:'field',k:'first',label:'가장 먼저 연락할 손님은 누구이고, 왜 그런가요?',a:'민수입니다. 예전엔 자주 왔는데 70일째 발길이 끊겼습니다. 돈을 가장 많이 쓴 지은이 아니라, 떠나는 중인 손님이 제일 급합니다.'}]},
+ {id:'w1',no:'실습 ①',t:'고객 세분화 기준 설계',time:'35분',sub:'네 가지 기준으로 백화점 고객을 나누고, 가장 유효한 기준을 고릅니다. 앞의 미니 조사(부산 인구 분포) 숫자를 근거로 쓰세요.',
+  blocks:[
+   {type:'table',head:['세분화 기준','우리가 쓸 구체적 변수','나뉘는 세그먼트 (2~3개)','이 기준이 유효한 이유'],w:[1,2,2.3,2.5],
+    rows:[['인구통계',T('d_v','연령대, 가구 구성, 소득 추정(구매 단가)','area'),T('d_s','① 30대 초반 신혼·유아동 ② 40~50대 자녀 동반 가족 ③ 60대 이상 시니어 부부','area'),T('d_r','층별 MD 구성과 바로 연결됩니다. 유아동관·리빙관·명품관 동선이 이 구분과 겹칩니다.','area')],
+          ['지역',T('g_v','거주지 기준 이동 시간 (30분 이내 / 30~60분 / 60분 초과)','area'),T('g_s','① 서면·부산진구 근거리 ② 해운대·동래 등 시내 광역 ③ 김해·양산·창원 원거리','area'),T('g_r','근거리는 방문 빈도, 원거리는 1회 객단가로 성격이 갈려 판촉 설계가 달라집니다.','area')],
+          ['행동',T('b_v','연간 방문 횟수, 1회 객단가, 주 구매 카테고리, 채널 비중','area'),T('b_s','① 월 2회 이상 고빈도 소액 ② 분기 1회 저빈도 고액 ③ 시즌 세일 행사 반응형','area'),T('b_r','구매 기록에서 바로 뽑히는 사실이며, 뒤의 RFM 분석과 곧바로 이어집니다.','area')],
+          ['심리 · 라이프스타일',T('p_v','쇼핑 동기(과시/실용/경험), 브랜드 민감도, 가격 민감도','area'),T('p_s','① 브랜드 자기표현형 ② 가성비 실용형 ③ 나들이·체험 목적형','area'),T('p_r','왜 오는지를 설명해 주어 광고 카피와 공간 연출의 근거가 됩니다.','area')]]},
+   {type:'field',k:'best',label:'네 기준 중 우리에게 가장 유효한 것과 그 이유',a:"행동 기준(구매 데이터 기반). 멤버십으로 전 고객의 실제 구매 기록이 있어 추정이 아닌 데이터로 나눌 수 있고, 나눈 즉시 개인 단위 문자·앱 푸시로 실행이 연결됩니다. 다만 '왜 그렇게 사는지'는 알 수 없어 심리 기준을 보조로 얹습니다."}],
+  tip:'좋은 세분화의 조건 · 집단 안은 비슷하고, 집단 사이는 다르며, 각 집단에 다르게 접근할 수 있어야 합니다.'},
+ {id:'w2',no:'실습 ②',t:'세분시장 평가와 표적 선정',time:'35분',sub:'세 세그먼트를 같은 기준으로 5점 척도 점수화하고 하나를 고릅니다. 점수 근거는 DART · 공식 사이트 등 실제 자료로 답니다. 총점은 앱이 더합니다.',
+  blocks:[
+   {type:'table',head:['세그먼트 이름','A','B','C'],w:[1.4,2,2,2],rows:[['이름',T('na','월2회 고빈도 소액'),T('nb','분기1회 저빈도 고액'),T('nc','시즌세일 행사반응형')]]},
+   {type:'table',head:['평가 항목 (각 5점)','A','B','C','판단 근거 (자료 출처)'],w:[2,.8,.8,.8,4],
+    rows:[['시장 규모',N('s1a','3'),N('s1b','2'),N('s1c','5'),T('s1r','행사 반응형이 인원수로는 가장 많고, 고액 저빈도층이 가장 적습니다.')],
+          ['성장 잠재력',N('s2a','4'),N('s2b','4'),N('s2c','2'),T('s2r','행사 반응형은 세일이 끝나면 이탈해 성장으로 쌓이지 않습니다.')],
+          ['경쟁 강도 (낮을수록 높은 점수)',N('s3a','3'),N('s3b','4'),N('s3c','1'),T('s3r','행사 반응형은 온라인 최저가와 정면 경쟁, 고액층은 접객·라운지가 방어벽.')],
+          ['자사와의 적합성',N('s4a','4'),N('s4b','5'),N('s4c','2'),T('s4r','우리 자산은 매장 경험과 VIP 라운지, 가격 경쟁은 강점이 아닙니다.')],
+          ['수익성 (객단가 · 빈도)',N('s5a','4'),N('s5b','5'),N('s5c','1'),T('s5r','행사 반응형은 할인율이 높아 마진이 남지 않습니다.')]],
+    calc:'w2'},
+   {type:'choice',k:'strat',label:'표적화 전략',opts:['비차별적 · 전체를 하나로','차별적 · 여러 세그먼트에 각각','집중 · 하나에 자원 몰기'],a:'차별적 · 여러 세그먼트에 각각'},
+   {type:'field',k:'why',label:'이 전략을 고른 이유',a:'B를 주력으로 삼되 A는 유지, C는 최소 비용으로 관리합니다. 백화점은 층별로 서로 다른 고객을 받고 있어 하나만 남길 수 없으며, 예산은 균등하게 나누지 않고 B에 집중합니다.'}]},
+ {id:'w42',no:'실습 ④-2',t:'RFM 결과 해석',time:'50분',sub:'게임 2(손님 카드 분류)의 결과를 보고, 그 결과가 무엇을 말하는지 적습니다. 비중 계산은 앱이 해 둡니다.',
+  blocks:[
+   {type:'table',head:['분석 항목','해당 고객','수치 근거','가장 시급한 조치'],w:[2,1.3,2.4,2.8],
+    rows:[['R · F · M 모두 5점인 고객',T('v_c','C01, C03, C09, C17'),T('v_n','경과일 5~12일 · 16~22회 · 4명 합계 1억 8,400만원','area'),T('v_a','지키는 것이 전부. 전담 어드바이저 배정과 신상품 우선 안내가 1순위.','area')],
+          ['최근에 왔지만 아직 빈도가 낮은 고객',T('g_c','C15, C14 (참고 C04)'),T('g_n','C15 22일·8회·1,600만원 / C14 40일·5회·700만원','area'),T('g_a','빈도를 올리는 것이 목표. 월 2회 방문 시 사은품 등 횟수 조건형 혜택.','area')],
+          ['예전엔 우수했는데 최근 발길이 끊긴 고객',T('r_c','C11, C18, C10, C05 (우선 C11)'),T('r_n','C11 60일·6회·1,100만원 (F3·M3인데 R2)','area'),T('r_a','복귀 쿠폰 전에 최종 구매 카테고리와 클레임 이력을 조회하고 C11부터 개별 접촉.','area')],
+          ['회복 우선순위가 가장 낮은 고객',T('s_c','C13 (다음 C16, C07)'),T('s_n','C13 300일 미방문 · 연 1회 · 150만원','area'),T('s_a','회복 캠페인에서 제외하고 자동 발송 채널에만 남김. 별도 예산 없음.','area')]]},
+   {type:'calc',k:'w42'},
+   {type:'field',k:'read',label:'이 숫자에서 읽히는 것 · 그래서 예산은 어떻게?',a:'47% 대 3.5%, 약 13.6배 차이입니다. CRM 예산을 등급별로 다르게 배분하는 근거입니다. 하위 고객은 버리는 것이 아니라 사람이 붙는 비싼 채널에서 자동화된 싼 채널로 옮기는 것입니다.'}]},
+ {id:'w5',no:'실습 ⑤',t:'세그먼트별 CRM 액션 설계',time:'40분',sub:'등급마다 다른 목적과 다른 수단이 필요합니다. 남들 다 하는 할인 · 쿠폰 말고 새로운 액션을 하나 이상 넣으세요. 예산 합계는 앱이 더합니다.',
+  blocks:[
+   {type:'table',head:['세그먼트','이 등급의 목적','구체적 액션','채널','예상 비용 (만원)','성과 지표'],w:[1.4,1.3,2.8,1.3,.9,1.6],
+    rows:[['최우수 (VIP)',T('v1','이탈 방지와 지위 강화'),T('v2','전담 어드바이저 1:1 배정, 신상품·한정판 우선 구매권, VIP 라운지·발레파킹, 연 2회 초청 문화행사','area'),T('v3','전화 · 대면 (문자 아님)'),N('v4','400'),T('v5','유지율 100%, 구매금액 증감, 행사 참석률','area')],
+          ['우수 단골',T('g1','VIP 등급으로 승급시키기'),T('g2',"'VIP까지 남은 금액' 안내, 승급 혜택 미리 체험, 선호 카테고리 입고 알림",'area'),T('g3','앱 푸시 · 문자 + 담당 판매사원'),N('g4','120'),T('g5','VIP 승급률 25%, 구매 빈도 증가율','area')],
+          ['이탈 위험',T('r1','떠나기 전에 되돌리기'),T('r2','① 이탈 원인 조회 ② 원인별 개별 접촉 — C11부터 ③ 30일 한정 복귀 혜택','area'),T('r3','문자 → 무반응 시 담당자 전화'),N('r4','60'),T('r5','60일 내 재방문율 50%, 복귀 쿠폰 사용률','area')],
+          ['일반 (성장 여지)',T('n1','방문 빈도 끌어올리기'),T('n2','월 2회 방문 시 사은품, 미구매 카테고리 체험 쿠폰, 식음·문화센터 연계 할인','area'),T('n3','앱 푸시 · 문자'),N('n4','40'),T('n5','연간 방문 횟수 증가, 신규 카테고리 진입률','area')],
+          ['휴면',T('s1','비용을 들이지 않고 최소 접점만 유지'),T('s2','뉴스레터·푸시 자동 발송만, 연 1회 대형 행사 안내, 개별 접촉·유료 채널 없음','area'),T('s3','이메일 · 앱 푸시 (자동화)'),N('s4','4'),T('s5',"발송 대비 반응률, 반응 시 '일반' 재편입",'area')]],
+    calc:'w5'},
+   {type:'field',k:'privacy',label:'개인정보 원칙에 비추어 문제가 될 수 있는 액션이 있는가',a:'휴면 대상 일괄 문자·푸시는 광고성 수신 동의자만 추출하고 야간(21~08시) 발송을 금지합니다. 클레임·구매 이력을 마케팅에 돌려 쓰려면 동의받은 이용 목적 범위를 먼저 확인하고, 개인화는 임신·질병·종교를 추정하지 않는 선까지만 합니다.'}]},
+ {id:'w6',no:'실습 ⑥',t:'고객 생애가치 추정과 투자 판단',time:'35분',sub:'유지 연수와 상한 비율만 정하면 LTV와 쓸 수 있는 비용은 앱이 계산합니다. LTV = 연간 구매금액 × GP율 25% × 예상 유지 연수.',
+  blocks:[
+   {type:'table',head:['세그먼트','연간 구매금액','GP율','예상 유지 연수 (년)','LTV (앱 계산)','상한 비율 (%)','마케팅 비용 상한 (앱 계산)'],w:[1.4,1.2,.6,1.1,1.2,1,1.6],
+    rows:[['최우수 (VIP)','4,600만원','25%',N('y1','5'),{calc:'l1'},N('p1','10'),{calc:'c1'}],
+          ['우수 단골','2,625만원','25%',N('y2','4'),{calc:'l2'},N('p2','15'),{calc:'c2'}],
+          ['이탈 위험','880만원','25%',N('y3','2'),{calc:'l3'},N('p3','20'),{calc:'c3'}],
+          ['일반 (성장 여지)','1,338만원','25%',N('y4','3'),{calc:'l4'},N('p4','10'),{calc:'c4'}]],
+    calc:'w6'},
+   {type:'field',k:'q1',label:'이탈 위험 우수 고객 1명을 지키는 것과 신규 1명을 데려오는 것 중 어느 쪽이 이익인가',a:'지키는 쪽이 이익입니다. 남은 LTV 440만원 대비 비용 상한 88만원, 회수 배수 5배입니다. 신규는 획득 비용이 유지의 5배가량 들고 일반 등급에서 출발합니다. 다만 신규 유치를 없애지 않고 예산 비중을 유지 쪽에 더 둡니다.'},
+   {type:'field',k:'q2',label:'휴면 고객 회복에 예산을 쓰지 않기로 한다면 그 근거는 무엇인가',a:'휴면 4명의 연 매출은 1,350만원으로 전체의 3.5%이고, 1인당 남은 LTV는 85만원입니다. 같은 예산을 우수 단골 승급에 쓰면 1명당 연 매출 약 2,000만원이 늘어 기회비용이 명백합니다. 자동 발송 채널에는 남겨 돌아올 통로는 열어 둡니다.'},
+   {type:'field',k:'q3',label:'예상 유지 연수를 늘리려면 무엇을 해야 하는가',a:'① 전환 비용 만들기(등급 유지 조건, 누적 포인트, 전담 어드바이저) ② 구매 카테고리 넓히기 ③ 구매 없이도 올 이유 만들기 ④ 평소 방문 주기의 1.5배가 지나면 자동 알림 ⑤ 불만을 빨리 해결하기.'}]},
+ {id:'w7',no:'실습 ⑦',t:'STP + CRM 통합 기획안 (원페이퍼)',time:'45분',sub:'앞에서 쓴 내용을 "불러오기"로 옮겨 담고, 7번 한 칸을 새로 씁니다. 발표는 하지 않습니다.',
+  blocks:[
+   {type:'import'},
+   {type:'table',head:['구성','내용','가져올 곳'],w:[1.6,6,1],
+    rows:[['1. 시장 세분화 결과',T('r1','행동 기준(방문 빈도·객단가)으로 ① 고빈도 소액 ② 저빈도 고액 ③ 행사 반응형 3개로 구분했습니다. 구매 데이터로 바로 뽑히므로 실행 가능성이 가장 높습니다.','area'),'실습 ①'],
+          ['2. 표적 시장과 선정 근거',T('r2','② 분기 1회 저빈도 고액 집단을 1순위로 선정했습니다(25점 중 20점). 수익성·자사 적합성 5점으로 매장 경험과 VIP 라운지라는 강점이 그대로 작동합니다.','area'),'실습 ②'],
+          ['3. 포지셔닝 문장',T('r3',"부산 도심에 사는 40~50대 가족 고객에게 롯데백화점 부산본점은 서면 한복판이라는 접근성과 하루를 다 보낼 수 있는 식음·문화 시설 때문에 '가장 자주 들르게 되는 프리미엄 백화점'이다.",'area'),'포지셔닝 이론'],
+          ['4. 기존 고객 RFM 진단',T('r4','상위 4명(C01·C03·C09·C17)이 전체 3억 9,120만원 중 1억 8,400만원, 즉 47%를 만듭니다. 하위 4명은 3.5%이며, 이탈 위험 4명이 가장 시급한 관리 대상입니다.','area'),'실습 ④-2'],
+          ['5. 세그먼트별 CRM 액션',T('r5',"VIP는 '지키고', 우수 단골은 승급 안내로 '올리고', 일반은 '빈도를 늘리고', 이탈 위험은 '되돌리고', 휴면은 자동 채널만 남겨 '비용을 줄입니다'.",'area'),'실습 ⑤'],
+          ['6. LTV 기반 예산 배분',T('r6','총 624만원을 VIP 65% · 우수 단골 20% · 이탈 위험 10% · 일반 6% · 휴면 1% 미만으로 배분합니다. VIP의 LTV가 휴면의 68배이므로 균등 배분은 근거가 없습니다.','area'),'실습 ⑥'],
+          ['7. 신규 획득과 기존 유지의 연결',T('r7',"신규 고객은 첫 구매 시 '일반' 등급으로 자동 등록됩니다. ① 첫 구매 후 30일을 온보딩 기간으로 두고 2회차 구매가 일어나면 정규 관리로 넘깁니다. ② 2회차가 없으면 광고가 아니라 횟수 조건형 혜택으로 재방문을 유도합니다. ③ 유입 경로를 멤버십 ID에 기록해 어느 채널 고객이 VIP까지 가는지 추적합니다. ④ 신규 획득 비용 상한은 일반 등급 LTV 1,003만원의 10%인 100만원입니다.",'area'),'새로 쓰기']]}],
+  tip:'채점은 7번 한 칸에서만 합니다. "언제(며칠 안에)"와 "어떤 조건이면 넘어가는지"가 숫자로 있어야 합니다.'}];
+
+const W={db:null,mode:'local',vals:{},myteam:0,showAns:false,showEx:false,cur:'w01',timers:{},unsub:null,sync:'이 기기에만 저장 중'};
+try{W.myteam=+(localStorage.getItem('dalkom-myteam')||0)}catch(e){}
+function teamKey(i){return 'team'+(i+1)}
+function localLoad(){try{return JSON.parse(localStorage.getItem('dalkom-ws')||'{}')}catch(e){return{}}}
+function localSave(){try{localStorage.setItem('dalkom-ws',JSON.stringify(W.vals))}catch(e){}}
+W.vals=localLoad();
+function getV(t,ws,k){return ((W.vals[teamKey(t)]||{})[ws]||{})[k]??''}
+function setV(t,ws,k,v){const tk=teamKey(t);W.vals[tk]=W.vals[tk]||{};W.vals[tk][ws]=W.vals[tk][ws]||{};W.vals[tk][ws][k]=v;localSave();queueSave(t,ws,k,v)}
+function queueSave(t,ws,k,v){
+  if(W.mode==='server'){const id=t+'|'+ws+'|'+k;clearTimeout(W.timers[id]);W.pending.add(id);
+    W.timers[id]=setTimeout(async()=>{try{const r=await fetch('/api/sheet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:teamKey(t),ws,k,v})});
+      if(!r.ok)throw 0;setSync('모든 조와 실시간 공유 중')}catch(e){setSync('저장이 늦어지고 있습니다 · 이 기기에는 남아 있습니다')}finally{W.pending.delete(id)}},600);return}
+  if(!W.db)return;
+  const id=t+'|'+ws+'|'+k;clearTimeout(W.timers[id]);
+  W.timers[id]=setTimeout(async()=>{
+    const ref=W.db.doc('sheets/'+teamKey(t));const body={[ws]:{[k]:v}};
+    try{await ref.update(body)}catch(e){
+      if(e&&e.code==='invalid_argument'){try{await ref.set(body)}catch(e2){setSync('저장 실패 · 이 기기에만 남아 있습니다')}}
+      else setSync('저장이 늦어지고 있습니다');
+    }
+  },700);
+}
+function setSync(t){W.sync=t;const el=document.getElementById('syncState');if(el)el.textContent=t}
+
+/* shared db: worksheets + scoreboard */
+(async()=>{
+  let db=null;try{db=await window.claude?.use?.('db')}catch(e){}
+  if(!db){startServerSync();return}
+  W.db=db;W.mode='db';setSync('모든 조와 실시간 공유 중');
+  db.collection('sheets').onSnapshot(snap=>{
+    snap.docs.forEach(d=>{if(d.exists){const incoming=d.data();const tk=d.id;W.vals[tk]=W.vals[tk]||{};
+      for(const ws in incoming){W.vals[tk][ws]=Object.assign({},W.vals[tk][ws]||{},incoming[ws])}}});
+    localSave();refreshWsView(true);
+  },()=>setSync('연결이 끊겼습니다 · 이 기기에만 저장 중'));
+  db.doc('board/scores').onSnapshot(s=>{if(s.exists){const d=s.data();if(Array.isArray(d.s)){S.scores=[...d.s];if(d.teams)S.teams=d.teams;save();renderTeams()}}},()=>{});
+})();
+W.pending=new Set();W.ver=-1;
+async function startServerSync(){
+  try{const r=await fetch('/api/state');if(!r.ok)return;W.mode='server';setSync('모든 조와 실시간 공유 중');applyServer(await r.json())}catch(e){return}
+  setInterval(async()=>{try{const r=await fetch('/api/state?v='+W.ver);if(r.status===204)return;if(!r.ok)throw 0;applyServer(await r.json());setSync('모든 조와 실시간 공유 중')}catch(e){setSync('서버 연결이 끊겼습니다 · 이 기기에만 저장 중')}},2500);
+}
+function applyServer(st){
+  if(!st||st.v===W.ver)return;W.ver=st.v;
+  const sh=st.sheets||{};
+  for(const tk in sh){const ti=+tk.replace('team','')-1;W.vals[tk]=W.vals[tk]||{};
+    for(const ws in sh[tk]){W.vals[tk][ws]=W.vals[tk][ws]||{};for(const k in sh[tk][ws]){if(W.pending.has(ti+'|'+ws+'|'+k))continue;W.vals[tk][ws][k]=sh[tk][ws][k]}}}
+  localSave();refreshWsView(true);
+  if(st.scores&&Array.isArray(st.scores.s)&&!W.scorePending){S.scores=[...st.scores.s];if(st.scores.teams)S.teams=st.scores.teams;save();renderTeams()}
+}
+async function pushScores(){if(W.mode==='server'){W.scorePending=true;try{await fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({s:S.scores,teams:S.teams})})}catch(e){}W.scorePending=false;return}
+  if(!W.db)return;try{await W.db.doc('board/scores').set({s:S.scores,teams:S.teams})}catch(e){}}
+
+/* ---- rendering ---- */
+function cellVal(t,ws,c){return getV(t,ws,c.k)}
+function inputFor(ws,c,t,ro){
+  const v=cellVal(t,ws,c);const id=`f-${ws}-${c.k}`;
+  if(ro){const a=W.showAns?c.a:v;return `<div class="ro ${W.showAns?'ans':''}">${esc(a)||'<span class="muted">—</span>'}</div>`}
+  const ex=W.showEx&&c.a?`<div class="exa">예 · ${esc(c.a)}</div>`:'';
+  if(c.t==='num')return `<input class="wi num" id="${id}" data-k="${c.k}" inputmode="decimal" value="${esc(v)}" placeholder="0">${ex}`;
+  if(c.t==='area')return `<textarea class="wi" id="${id}" data-k="${c.k}" rows="3">${esc(v)}</textarea>${ex}`;
+  return `<input class="wi" id="${id}" data-k="${c.k}" value="${esc(v)}">${ex}`;
+}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function num(v){const n=parseFloat(String(v).replace(/[^0-9.\-]/g,''));return isNaN(n)?0:n}
+function renderBlock(ws,b,t,ro){
+  if(b.type==='table'){
+    const cw=b.w.reduce((a,c)=>a+c,0);
+    let h=`<div class="tscroll"><table class="wt"><colgroup>${b.w.map(x=>`<col style="width:${(x/cw*100).toFixed(1)}%">`).join('')}</colgroup><thead><tr>${b.head.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>`;
+    b.rows.forEach(r=>{h+='<tr>'+r.map(c=>{
+      if(typeof c==='string')return `<td class="fx">${c}</td>`;
+      if(c.calc)return `<td class="cv num" data-calc="${c.calc}"></td>`;
+      return `<td>${inputFor(ws.id,c,t,ro)}</td>`}).join('')+'</tr>'});
+    if(b.calc==='w2')h+=`<tr class="tot"><td class="fx">총점 (25점) · 앱 계산</td><td class="cv num" data-calc="ta"></td><td class="cv num" data-calc="tb"></td><td class="cv num" data-calc="tc"></td><td class="cv" data-calc="tw"></td></tr>`;
+    if(b.calc==='w5')h+=`<tr class="tot"><td class="fx" colspan="4">예산 합계 · 앱 계산 (기준 624만 원)</td><td class="cv num" data-calc="bs"></td><td class="cv" data-calc="bw"></td></tr>`;
+    if(b.calc==='w01')h+=`<tr class="tot"><td class="fx" colspan="4">규모 + 맞음 합계가 가장 높은 무리 · 앱 계산</td><td class="cv" colspan="2" data-calc="best01"></td></tr>`;
+    return h+'</tbody></table></div>';
+  }
+  if(b.type==='field'){const c={k:b.k,a:b.a,t:b.line?'text':'area'};return `<div class="wf"><label for="f-${ws.id}-${b.k}">${b.label}</label>${inputFor(ws.id,c,t,ro)}</div>`}
+  if(b.type==='choice'){const v=ro&&W.showAns?b.a:getV(t,ws.id,b.k);
+    return `<div class="wf"><span class="lab">${b.label}</span><div class="seg">${b.opts.map(o=>`<button class="sopt ${v===o?'on':''}" data-choice="${b.k}" data-v="${esc(o)}" ${ro?'disabled':''}>${o}</button>`).join('')}</div>${!ro&&W.showEx?`<div class="exa">예 · ${esc(b.a)}</div>`:''}</div>`}
+  if(b.type==='calc'&&b.k==='w42'){
+    return `<div class="calcbox"><b>앱이 계산한 값 · 고객 20명 (가상 데이터)</b>
+     <div class="calcrow"><span>상위 4명 구매금액 합계</span><span class="num">5,600 + 4,800 + 4,200 + 3,800 = 1억 8,400만원</span></div>
+     <div class="calcrow"><span>전체 대비 비중</span><span class="num">18,400 ÷ 39,120 × 100 = 47.0%</span></div>
+     <div class="calcrow"><span>하위 4명 구매금액 합계</span><span class="num">520 + 380 + 300 + 150 = 1,350만원 (3.5%)</span></div></div>`}
+  if(b.type==='import')return ro?'':`<div class="bar"><button class="btn ghost" id="importBtn">앞 실습에서 쓴 내용 불러오기</button><span class="note">1~6번 칸이 비어 있을 때만 채웁니다. 불러온 뒤 문장으로 다듬으세요.</span></div>`;
+  return '';
+}
+function computeCalcs(root,ws,t){
+  const g=(k)=>num(W.showAns&&root.dataset.ro==='1'?findAns(ws,k):getV(t,ws.id,k));
+  const set=(k,v)=>root.querySelectorAll(`[data-calc="${k}"]`).forEach(e=>e.innerHTML=v);
+  if(ws.id==='w2'){const s=x=>[1,2,3,4,5].reduce((a,i)=>a+g(`s${i}${x}`),0);const a=s('a'),b=s('b'),c=s('c');set('ta',a);set('tb',b);set('tc',c);
+    const m=Math.max(a,b,c);const n=['A','B','C'][[a,b,c].indexOf(m)];set('tw',m?`점수로는 <b>${n}</b>가 1순위입니다. 근거 칸이 비어 있으면 미완성입니다.`:'')}
+  if(ws.id==='w5'){const s=['v4','g4','r4','n4','s4'].reduce((a,k)=>a+g(k),0);set('bs',s+'만');
+    set('bw',s===0?'':s>624?`<span class="warn">${s-624}만 원 초과</span>`:s<624?`${624-s}만 원 남음`:'딱 맞습니다')}
+  if(ws.id==='w6'){const base=[4600,2625,880,1338];base.forEach((b,i)=>{const y=g('y'+(i+1)),p=g('p'+(i+1));const l=b*.25*y;const c=l*p/100;
+    set('l'+(i+1),y?Math.floor(l).toLocaleString('ko-KR')+'만':'');set('c'+(i+1),y&&p?Math.round(c).toLocaleString('ko-KR')+'만'+(y?` <span class="muted">(1년 ${Math.round(c/y).toLocaleString('ko-KR')}만)</span>`:''):'')})}
+  if(ws.id==='w01'){const r=['a','b','c'].map(x=>g(x+'_s')+g(x+'_f'));const m=Math.max(...r);set('best01',m?`<b>${'ABC'[r.indexOf(m)]}</b> 무리 (${m}점)`:'')}
+}
+function findAns(ws,k){for(const b of ws.blocks){if(b.rows)for(const r of b.rows)for(const c of r)if(c&&c.k===k)return c.a;if(b.k===k)return b.a}return ''}
+
+function wsPage(){
+  W.cur=W.cur||'w01';
+  $('#app').innerHTML=`<div class="screen-head"><button class="back" onclick="go('home')">← 처음 화면</button><div><p class="step">실습지 쓰기 · 조별로 한 대씩</p><h2>우리 조 실습지</h2></div>
+   <p class="sub">우리 조를 고르고 칸을 채우세요. 쓰는 즉시 저장되고, 강사 화면의 "조별 모아보기"에 바로 뜹니다. 합계 · LTV 같은 계산은 앱이 합니다.</p></div>
+   <div class="wsbar"><span class="lab">우리 조</span><div class="seg" id="myteam"></div><span class="sync" id="syncState">${W.sync}</span></div>
+   <nav class="wstabs" id="wstabs"></nav><section id="wsbody"></section>`;
+  const mt=$('#myteam');for(let i=0;i<S.teams;i++){const b=document.createElement('button');b.className='sopt'+(W.myteam===i?' on':'');b.textContent=(i+1)+'조';b.onclick=()=>{W.myteam=i;try{localStorage.setItem('dalkom-myteam',i)}catch(e){}wsPage()};mt.appendChild(b)}
+  drawTabs(false);drawWs(false);
+}
+function drawTabs(ro){
+  const n=$('#wstabs');n.innerHTML='';
+  WS.forEach(w=>{const b=document.createElement('button');b.className='wtab'+(W.cur===w.id?' on':'');
+    const filled=ro?'':progress(W.myteam,w);b.innerHTML=`<span class="num">${w.no}</span> ${w.t}${filled}`;b.onclick=()=>{W.cur=w.id;ro?compareDraw():(drawTabs(false),drawWs(false))};n.appendChild(b)});
+}
+function keysOf(w){const ks=[];w.blocks.forEach(b=>{if(b.rows)b.rows.forEach(r=>r.forEach(c=>{if(c&&c.k)ks.push(c.k)}));if(b.k&&b.type!=='calc')ks.push(b.k)});return ks}
+function progress(t,w){const ks=keysOf(w);const f=ks.filter(k=>String(getV(t,w.id,k)).trim()).length;return ` <span class="prog ${f===ks.length?'full':''}">${f}/${ks.length}</span>`}
+function drawWs(){
+  const w=WS.find(x=>x.id===W.cur);const t=W.myteam;
+  const body=$('#wsbody');
+  body.innerHTML=`<div class="wshead"><div><h3>${w.no} · ${w.t}</h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>
+   ${guideHTML(GUIDE[w.id],true)}
+   <div class="exbar"><label class="tog"><input type="checkbox" id="exTog" ${W.showEx?'checked':''}> 칸마다 예시 답 보기</label><button class="btn ghost" id="fillEx">예시로 빈칸 채우기 (강사 시연용)</button><span class="note">예시는 참고용입니다. 우리 조 생각으로 바꿔 쓰세요.</span></div>
+   ${w.tip?`<p class="tipline">${w.tip}</p>`:''}${w.blocks.map(b=>renderBlock(w,b,t,false)).join('')}`;
+  body.dataset.ro='0';
+  body.querySelectorAll('.wi').forEach(el=>el.addEventListener('input',e=>{setV(t,w.id,e.target.dataset.k,e.target.value);computeCalcs(body,w,t);drawTabsSoft()}));
+  body.querySelectorAll('[data-choice]').forEach(el=>el.onclick=()=>{setV(t,w.id,el.dataset.choice,el.dataset.v);body.querySelectorAll(`[data-choice="${el.dataset.choice}"]`).forEach(x=>x.classList.toggle('on',x===el))});
+  const ib=$('#importBtn');if(ib)ib.onclick=()=>doImport(t);
+  $('#exTog').onchange=e=>{W.showEx=e.target.checked;const op=body.querySelector('details.guide')?.open;drawWs();const d=$('#wsbody details.guide');if(d&&op===false)d.open=false};
+  $('#fillEx').onclick=()=>{let n=0;w.blocks.forEach(b=>{if(b.rows)b.rows.forEach(r=>r.forEach(c=>{if(c&&c.k&&c.a&&!String(getV(t,w.id,c.k)).trim()){setV(t,w.id,c.k,c.a);n++}}));if((b.type==='field'||b.type==='choice')&&!String(getV(t,w.id,b.k)).trim()){setV(t,w.id,b.k,b.a);n++}});drawWs();toast(n?`${t+1}조 실습지에 예시 ${n}칸을 채웠습니다`:'빈칸이 없습니다')};
+  computeCalcs(body,w,t);
+}
+function drawTabsSoft(){document.querySelectorAll('#wstabs .wtab').forEach((b,i)=>{const p=b.querySelector('.prog');if(p){const w=WS[i];const tmp=document.createElement('span');tmp.innerHTML=progress(W.myteam,w);p.replaceWith(tmp.firstElementChild)}})}
+function refreshWsView(fromRemote){
+  if($('#compareBody'))compareDraw();
+  const body=$('#wsbody');if(!body||!fromRemote)return;
+  const w=WS.find(x=>x.id===W.cur);
+  body.querySelectorAll('.wi').forEach(el=>{if(document.activeElement===el)return;const v=getV(W.myteam,w.id,el.dataset.k);if(el.value!==String(v))el.value=v});
+  body.querySelectorAll('[data-choice]').forEach(el=>el.classList.toggle('on',getV(W.myteam,w.id,el.dataset.choice)===el.dataset.v));
+  computeCalcs(body,w,W.myteam);drawTabsSoft();
+}
+function doImport(t){
+  const g=(ws,k)=>String(getV(t,ws,k)||'').trim();
+  const pick=g('w1','best');const segs=['d_s','g_s','b_s','p_s'].map(k=>g('w1',k)).filter(Boolean);
+  const nm={a:g('w2','na')||'A',b:g('w2','nb')||'B',c:g('w2','nc')||'C'};
+  const tot=x=>[1,2,3,4,5].reduce((a,i)=>a+num(getV(t,'w2',`s${i}${x}`)),0);
+  const T3={a:tot('a'),b:tot('b'),c:tot('c')};const top=Object.keys(T3).sort((p,q)=>T3[q]-T3[p])[0];
+  const r={
+   r1:pick?pick:(segs[0]||''),
+   r2:T3[top]?`${nm[top]} 세그먼트를 1순위로 선정했습니다(25점 중 ${T3[top]}점). 전략: ${g('w2','strat')||'-'}. ${g('w2','why')}`:'',
+   r3:'',
+   r4:[g('w42','v_c')&&`최우수: ${g('w42','v_c')}`,g('w42','r_c')&&`이탈 위험: ${g('w42','r_c')}`,g('w42','read')].filter(Boolean).join(' / '),
+   r5:['v2','g2','r2','n2','s2'].map((k,i)=>g('w5',k)&&`${['VIP','우수 단골','이탈 위험','일반','휴면'][i]} · ${g('w5',k)}`).filter(Boolean).join(' / '),
+   r6:(()=>{const b=['v4','g4','r4','n4','s4'].map(k=>num(getV(t,'w5',k)));const s=b.reduce((a,c)=>a+c,0);return s?`총 ${s}만 원 = ${['VIP','우수 단골','이탈 위험','일반','휴면'].map((n,i)=>`${n} ${b[i]}만(${Math.round(b[i]/s*100)}%)`).join(' · ')}`:''})()};
+  let n=0;for(const k in r){if(r[k]&&!String(getV(t,'w7',k)).trim()){setV(t,'w7',k,r[k]);n++}}
+  drawWs();toast(n?`${n}칸을 불러왔습니다`:'불러올 내용이 없거나 이미 채워져 있습니다');
+}
+
+/* ---- instructor compare ---- */
+function comparePage(){
+  $('#app').innerHTML=`<div class="screen-head"><button class="back" onclick="go('teacher')">← 강사 화면</button><div><p class="step">강사 화면 · ③ 조별 모아보기</p><h2>조별 모아보기</h2></div>
+   <p class="sub">실습지를 고르면 ${S.teams}개 조가 쓴 내용이 칸별로 나란히 뜹니다. 쓰는 대로 실시간으로 바뀝니다. 예시 답안은 필요할 때만 켜세요.</p></div>
+   <div class="wsbar"><label class="tog"><input type="checkbox" id="ansTog" ${W.showAns?'checked':''}> 예시 답안 열 보이기</label><span class="sync" id="syncState">${W.sync}</span></div>
+   <nav class="wstabs" id="wstabs"></nav><section id="compareBody"></section>`;
+  $('#ansTog').onchange=e=>{W.showAns=e.target.checked;compareDraw()};
+  drawTabs(true);compareDraw();
+}
+function compareDraw(){
+  const w=WS.find(x=>x.id===W.cur);const box=$('#compareBody');if(!box)return;
+  document.querySelectorAll('#wstabs .wtab').forEach((b,i)=>b.classList.toggle('on',WS[i].id===W.cur));
+  const rows=[];
+  w.blocks.forEach(b=>{
+    if(b.type==='table')b.rows.forEach(r=>r.forEach((c,ci)=>{if(c&&c.k)rows.push({label:`${typeof r[0]==='string'?r[0]:''} · ${b.head[ci]}`,k:c.k,a:c.a,num:c.t==='num'})}));
+    if(b.type==='field'||b.type==='choice')rows.push({label:b.label,k:b.k,a:b.a});
+  });
+  const cols=[...Array(S.teams).keys()];
+  let h=`<div class="tscroll"><table class="ct"><thead><tr><th style="width:16%">칸</th>${cols.map(i=>`<th style="width:${((W.showAns?60:84)/S.teams).toFixed(1)}%">${i+1}조 ${progress(i,w)}</th>`).join('')}${W.showAns?'<th class="ansh" style="width:24%">예시 답안</th>':''}</tr></thead><tbody>`;
+  rows.forEach(r=>{h+=`<tr><td class="fx">${r.label}</td>${cols.map(i=>{const v=getV(i,w.id,r.k);return `<td class="${r.num?'num':''}">${esc(v)||'<span class="muted">—</span>'}</td>`}).join('')}${W.showAns?`<td class="ansc">${esc(r.a)}</td>`:''}</tr>`});
+  box.innerHTML=`<div class="wshead"><div><h3>${w.no} · ${w.t}</h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>`+h+'</tbody></table></div>';
+}
+
+renderTeams();home();
+</script>
+
+</body>
+</html>

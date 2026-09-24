@@ -1,0 +1,71 @@
+// 달콤상점 마케팅 게임 · Railway 서버 (외부 패키지 없이 Node 기본 기능만 사용)
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+fs.mkdirSync(DATA_DIR, { recursive: true });
+const FILE = path.join(DATA_DIR, 'state.json');
+const INDEX = path.join(__dirname, 'public', 'index.html');
+
+const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 } });
+let state = empty();
+try { state = JSON.parse(fs.readFileSync(FILE, 'utf8')); } catch (e) { /* first run */ }
+
+let timer = null;
+function persist() {
+  clearTimeout(timer);
+  timer = setTimeout(() => fs.writeFile(FILE, JSON.stringify(state), () => {}), 300);
+}
+function send(res, code, obj) {
+  res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+  res.end(obj === undefined ? '' : JSON.stringify(obj));
+}
+function readBody(req) {
+  return new Promise((resolve) => {
+    let data = '';
+    req.on('data', (c) => { data += c; if (data.length > 1e6) req.destroy(); });
+    req.on('end', () => { try { resolve(JSON.parse(data || '{}')); } catch (e) { resolve(null); } });
+  });
+}
+
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, 'http://x');
+  const p = url.pathname;
+
+  if (req.method === 'GET' && p === '/api/state') {
+    if (url.searchParams.get('v') === String(state.v)) { res.writeHead(204); return res.end(); }
+    return send(res, 200, state);
+  }
+  if (req.method === 'POST' && p === '/api/sheet') {
+    const b = await readBody(req) || {};
+    if (!/^team[1-6]$/.test(b.team) || !/^w[0-9]{1,3}$/.test(b.ws || '') || !/^[a-z0-9_]{1,20}$/i.test(b.k || '')) {
+      return send(res, 400, { error: 'bad request' });
+    }
+    const t = (state.sheets[b.team] = state.sheets[b.team] || {});
+    const w = (t[b.ws] = t[b.ws] || {});
+    w[b.k] = String(b.v ?? '').slice(0, 4000);
+    state.v++; persist();
+    return send(res, 200, { ok: true, v: state.v });
+  }
+  if (req.method === 'POST' && p === '/api/scores') {
+    const b = await readBody(req) || {};
+    if (!Array.isArray(b.s)) return send(res, 400, { error: 'bad request' });
+    state.scores = { s: b.s.slice(0, 6).map((n) => Number(n) || 0), teams: [3, 4].includes(b.teams) ? b.teams : 4 };
+    state.v++; persist();
+    return send(res, 200, { ok: true });
+  }
+  if (req.method === 'POST' && p === '/api/reset') {
+    const v = state.v + 1; state = empty(); state.v = v; persist();
+    return send(res, 200, { ok: true });
+  }
+  if (req.method === 'GET' && (p === '/' || p === '/index.html')) {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
+    return fs.createReadStream(INDEX).pipe(res);
+  }
+  if (req.method === 'GET' && p === '/health') return send(res, 200, { ok: true });
+  send(res, 404, { error: 'not found' });
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, '0.0.0.0', () => console.log('dalkom game on port ' + PORT));

@@ -1,0 +1,9 @@
+{
+  "name": "dalkom-marketing-game",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LOTTE LIFT 3-3 customer segment & data marketing classroom game",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
