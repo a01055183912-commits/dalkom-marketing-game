@@ -14,7 +14,7 @@ try { state = Object.assign(empty(), JSON.parse(fs.readFileSync(FILE, 'utf8')));
 const TEAM = /^team[1-6]$/;
 const UNIT = /^(w[0-9]{1,2}|g[1-5]|rfm)$/;
 const STATIC = {
-  '/shop.jpg': ['shop.jpg', 'image/jpeg'],
+  '/banner.jpg': ['banner.jpg', 'image/jpeg'],
   '/qrcode.js': ['qrcode.js', 'application/javascript; charset=utf-8'],
 };
 
