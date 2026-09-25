@@ -257,7 +257,7 @@ table.rt{min-width:620px;font-size:15.5px;table-layout:auto}
 .ro.ans{color:var(--ink)}
 @media (max-width:860px){.first{grid-template-columns:1fr}.sync{margin-left:0}}
 @media (max-width:860px){.hero-img{border-radius:14px}.hero,.g1,.crm{grid-template-columns:1fr}.bins{position:static}.sl{grid-template-columns:1fr}.choices{grid-template-columns:1fr}}
-#fillEx.on{background:var(--berry-soft);border-color:var(--berry);color:var(--berry)}
+#fillEx.on,#exTog.on{background:var(--berry-soft);border-color:var(--berry);color:var(--berry)}
 /* 교육생 단계 흐름 */
 .flow4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 18px}
 .flow4 span{background:var(--surface);border-radius:12px;padding:10px 12px;font-weight:700;font-size:14px;text-align:center;position:relative}
@@ -1299,20 +1299,21 @@ function drawWs(){
   const body=$('#wsbody');
   body.innerHTML=`<div class="wshead"><div><h3>${w.no} · ${w.t}</h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>
    ${STUDENT?studentWsGuide(w):guideHTML(GUIDE[w.id],true)}
-   ${STUDENT?'':`<div class="exbar"><label class="tog"><input type="checkbox" id="exTog" ${W.showEx?'checked':''}> 칸마다 예시 답 보기</label><button class="btn ghost" id="fillEx">예시로 빈칸 채우기 (강사 시연용)</button><span class="note">예시는 참고용입니다. 우리 조 생각으로 바꿔 쓰세요.</span></div>`}
+   ${STUDENT?'':`<div class="exbar"><button class="btn ghost ${W.showEx?'on':''}" id="exTog" aria-pressed="${W.showEx}">${W.showEx?'예시 답 숨기기':'칸마다 예시 답 보기'}</button><button class="btn ghost" id="fillEx" aria-pressed="false">예시로 빈칸 채우기 (강사 시연용)</button><span class="note">예시는 참고용입니다. 우리 조 생각으로 바꿔 쓰세요.</span></div>`}
    ${w.tip&&!STUDENT?`<p class="tipline">${w.tip}</p>`:''}${w.blocks.map(b=>renderBlock(w,b,t,false)).join('')}`;
   body.dataset.ro='0';
   body.querySelectorAll('.wi').forEach(el=>el.addEventListener('input',e=>{setV(t,w.id,e.target.dataset.k,e.target.value);computeCalcs(body,w,t);drawTabsSoft();renderTeams()}));
   body.querySelectorAll('[data-choice]').forEach(el=>el.onclick=()=>{setV(t,w.id,el.dataset.choice,el.dataset.v);renderTeams();body.querySelectorAll(`[data-choice="${el.dataset.choice}"]`).forEach(x=>x.classList.toggle('on',x===el))});
   const ib=$('#importBtn');if(ib)ib.onclick=()=>doImport(t);
   if(STUDENT){computeCalcs(body,w,t);return}
-  $('#exTog').onchange=e=>{W.showEx=e.target.checked;const op=body.querySelector('details.guide')?.open;drawWs();const d=$('#wsbody details.guide');if(d&&op===false)d.open=false};
-  const dk=t+'|'+w.id,demo=W.demo[dk];
-  if(demo&&demo.length){$('#fillEx').textContent='시연 예시 지우기';$('#fillEx').classList.add('on')}
+  $('#exTog').onclick=()=>{W.showEx=!W.showEx;const op=body.querySelector('details.guide')?.open;drawWs();const d=$('#wsbody details.guide');if(d&&op===false)d.open=false};
+  const exCells=[];w.blocks.forEach(b=>{if(b.rows)b.rows.forEach(r=>r.forEach(c=>{if(c&&c.k&&c.a)exCells.push([c.k,c.a])}));if((b.type==='field'||b.type==='choice')&&b.a)exCells.push([b.k,b.a])});
+  const demo=exCells.filter(([k,a])=>String(a).trim()&&String(getV(t,w.id,k))===String(a));
+  if(demo.length){$('#fillEx').textContent='시연 예시 지우기';$('#fillEx').classList.add('on');$('#fillEx').setAttribute('aria-pressed','true')}
   $('#fillEx').onclick=()=>{
-    if(demo&&demo.length){let n=0;demo.forEach(([k,a])=>{if(String(getV(t,w.id,k))===String(a)){setV(t,w.id,k,'');n++}});delete W.demo[dk];drawWs();toast(`시연 예시 ${n}칸을 지웠습니다`);return}
+    if(demo.length){demo.forEach(([k])=>setV(t,w.id,k,''));drawWs();toast(`시연 예시 ${demo.length}칸을 지웠습니다 · 다시 누르면 채워집니다`);return}
     const filled=[];w.blocks.forEach(b=>{if(b.rows)b.rows.forEach(r=>r.forEach(c=>{if(c&&c.k&&c.a&&!String(getV(t,w.id,c.k)).trim()){setV(t,w.id,c.k,c.a);filled.push([c.k,c.a])}}));if((b.type==='field'||b.type==='choice')&&b.a&&!String(getV(t,w.id,b.k)).trim()){setV(t,w.id,b.k,b.a);filled.push([b.k,b.a])}});
-    if(filled.length)W.demo[dk]=filled;drawWs();toast(filled.length?`${t+1}조 실습지에 예시 ${filled.length}칸을 채웠습니다 · 다시 누르면 지워집니다`:'빈칸이 없습니다')};
+    drawWs();toast(filled.length?`${t+1}조 실습지에 예시 ${filled.length}칸을 채웠습니다 · 다시 누르면 지워집니다`:'빈칸이 없습니다')};
   computeCalcs(body,w,t);
 }
 function drawTabsSoft(){document.querySelectorAll('#wstabs .wtab').forEach(b=>{const p=b.querySelector('.prog');if(p){const w=WS.find(x=>x.id===b.dataset.ws);const tmp=document.createElement('span');tmp.innerHTML=progress(W.myteam,w);p.replaceWith(tmp.firstElementChild)}})}
