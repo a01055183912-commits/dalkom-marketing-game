@@ -11,15 +11,15 @@ const INDEX = path.join(__dirname, 'public', 'index.html');
 const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, prog: {}, open: [], cur: '', insight: [] });
 let state = empty();
 try { state = Object.assign(empty(), JSON.parse(fs.readFileSync(FILE, 'utf8'))); } catch (e) { /* first run */ }
-// 실습 ①~⑦이 백화점 예시에서 달콤상점 예시로 바뀌기 전에 "예시로 빈칸 채우기"로 저장된 옛 예시 답을 비웁니다.
+// 실습 ①~⑦이 백화점 예시에서 달콤상점 예시로 바뀌기 전에 "예시로 빈칸 채우기"로 저장된 옛 예시 답을 새 달콤상점 예시로 바꿉니다.
 try {
   const OLD = JSON.parse(fs.readFileSync(path.join(__dirname, 'old-examples.json'), 'utf8'));
   let n = 0;
   for (const tk in state.sheets) for (const ws in OLD) {
     const w = state.sheets[tk][ws];
-    if (w) for (const k in OLD[ws]) if (w[k] === OLD[ws][k]) { w[k] = ''; n++; }
+    if (w) for (const k in OLD[ws]) if (w[k] === OLD[ws][k][0]) { w[k] = OLD[ws][k][1]; n++; }
   }
-  if (n) { state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('cleared old department-store examples: ' + n); }
+  if (n) { state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('replaced old department-store examples: ' + n); }
 } catch (e) { /* no old examples file */ }
 const TEAM = /^team[1-6]$/;
 const UNIT = /^(w[0-9]{1,2}|g[1-5]|rfm)$/;
