@@ -102,6 +102,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 .chip{font-family:var(--mono);font-size:12px;border-radius:6px;padding:2px 7px;background:var(--surface2)}
 .chip.ok{background:var(--matcha-soft);color:var(--good)}.chip.no{background:#FDE2D4;color:var(--bad)}
+.chip.want{background:transparent;border:1.5px dashed var(--good);color:var(--good);font-weight:700}
+.miss{margin-top:8px;font-size:12.5px;color:var(--good);display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.ccard .fix{display:block;margin-top:6px;font-size:12.5px;font-weight:800;color:#fff;background:var(--bad);border-radius:6px;padding:3px 7px;text-align:center}
 .share{margin-top:16px}
 .srow{display:grid;grid-template-columns:110px 1fr 70px;gap:10px;align-items:center;margin:6px 0;font-size:14px}
 .strack{height:22px;background:var(--surface2);border-radius:4px;overflow:hidden}
@@ -592,14 +595,14 @@ function draw1(){
   CUST.forEach(([id,d,f,m])=>{
     const b=document.createElement('button');const p=G1.place[id];
     b.className='ccard'+(G1.sel===id?' sel':'')+(p&&!G1.checked?' placed':'')+(G1.checked&&p?(ANS[id]===p?' ok':' no'):'');
-    b.innerHTML=`<span class="id">${id}</span><span class="d"><span>최근 구매</span><span>${d}일 전</span></span><span class="d"><span>구매 횟수</span><span>${f}회</span></span><span class="d"><span>구매 금액</span><span>${won(m)}</span></span>${G1.showScore?`<span class="sc">R${sc[id].R} · F${sc[id].F} · M${sc[id].M}</span>`:''}`;
+    b.innerHTML=`<span class="id">${id}</span><span class="d"><span>최근 구매</span><span>${d}일 전</span></span><span class="d"><span>구매 횟수</span><span>${f}회</span></span><span class="d"><span>구매 금액</span><span>${won(m)}</span></span>${G1.showScore?`<span class="sc">R${sc[id].R} · F${sc[id].F} · M${sc[id].M}</span>`:''}${G1.checked&&p&&ANS[id]!==p?`<span class="fix">정답 → ${SEGNAME[ANS[id]]}</span>`:''}`;
     b.onclick=()=>{if(G1.checked)return;G1.sel=G1.sel===id?null:id;draw1()};
     cards.appendChild(b);
   });
   const bins=$('#bins');bins.innerHTML='';
   SEGS.forEach(s=>{const b=document.createElement('button');b.className='bin'+(G1.sel?' ready':'');
     const ids=Object.keys(G1.place).filter(k=>G1.place[k]===s.k);
-    b.innerHTML=`<h4><span>${s.n}</span><span class="num" style="font-size:14px">${ids.length}명</span></h4><span class="hint">${s.h}</span><div class="chips">${ids.map(i=>`<span class="chip ${G1.checked?(ANS[i]===s.k?'ok':'no'):''}">${i}</span>`).join('')}</div>`;
+    b.innerHTML=`<h4><span>${s.n}</span><span class="num" style="font-size:14px">${ids.length}명</span></h4><span class="hint">${s.h}</span><div class="chips">${ids.map(i=>`<span class="chip ${G1.checked?(ANS[i]===s.k?'ok':'no'):''}" ${G1.checked&&ANS[i]!==s.k?`title="정답은 ${SEGNAME[ANS[i]]}"`:''}>${i}${G1.checked&&ANS[i]!==s.k?` → ${SEGNAME[ANS[i]].split(' ')[0]}`:''}</span>`).join('')}</div>${G1.checked?(()=>{const miss=CUST.map(c=>c[0]).filter(i=>ANS[i]===s.k&&G1.place[i]!==s.k);return miss.length?`<div class="miss">여기 들어와야 할 손님 · ${miss.map(i=>`<span class="chip want">${i}</span>`).join('')}</div>`:''})():''}`;
     b.onclick=()=>{if(!G1.sel||G1.checked)return;G1.place[G1.sel]=s.k;G1.sel=null;draw1()};
     bins.appendChild(b)});
 }
@@ -613,7 +616,7 @@ function check1(){
   const segSum=SEGS.map(s=>({n:s.n,v:CUST.filter(c=>ANS[c[0]]===s.k).reduce((a,c)=>a+c[3],0)}));
   const sh=$('#share');sh.hidden=false;
   sh.innerHTML=`<h3 style="font-size:24px">${ok} / 20 정답</h3>
-   <p class="muted" style="margin:4px 0 10px">틀린 카드는 빨간 테두리로 표시됩니다. 초록은 정답입니다.</p>
+   <p class="muted" style="margin:4px 0 10px">틀린 카드는 빨간 테두리와 "정답 → 등급"으로 표시됩니다. 오른쪽 바구니마다 "여기 들어와야 할 손님"도 초록 점선으로 보입니다.</p>
    ${insightBox('g1',`<b>등급별 매출 비중 · 전체 ${won(tot)}만 원</b>
    ${segSum.map((s,i)=>`<div class="srow"><span>${s.n}</span><div class="strack"><div class="sfill ${i>=3?'low':''}" style="width:${(s.v/tot*100).toFixed(1)}%"></div></div><span class="num">${(s.v/tot*100).toFixed(1)}%</span></div>`).join('')}
    <ul class="fb">
