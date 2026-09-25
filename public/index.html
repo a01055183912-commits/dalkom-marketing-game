@@ -1175,6 +1175,8 @@ function teamKey(i){return 'team'+(i+1)}
 function localLoad(){try{return JSON.parse(localStorage.getItem('dalkom-ws')||'{}')}catch(e){return{}}}
 function localSave(){try{localStorage.setItem('dalkom-ws',JSON.stringify(W.vals))}catch(e){}}
 W.vals=localLoad();
+/* 이 기기에 남아 있던 옛 백화점 답도 비웁니다 (서버 쪽 정리와 같은 기준) */
+(()=>{const DEPT=/백화점|층별|유아동|리빙관|명품관|신혼|시니어 부부|서면·부산진구|해운대·동래|김해·양산|시즌 ?세일|세일 행사|소득 추정|쇼핑 동기|과시|자기표현|나들이·체험|L\.POINT|멤버십|라운지|어드바이저|발레파킹|판매사원|문화센터|문화행사|식당가|DART|사업보고서|MD|[0-9]억|[0-9]만원|고빈도 소액|저빈도 고액|행사 ?반응|접객|클레임|신상품|한정판|카테고리/;for(const tk in W.vals)for(const ws of ['w1','w2','w42','w5','w6','w7']){const w=W.vals[tk][ws];if(w)for(const k in w)if(typeof w[k]==='string'&&DEPT.test(w[k]))w[k]=''}localSave()})();
 function getV(t,ws,k){return ((W.vals[teamKey(t)]||{})[ws]||{})[k]??''}
 function setV(t,ws,k,v){const tk=teamKey(t);W.vals[tk]=W.vals[tk]||{};W.vals[tk][ws]=W.vals[tk][ws]||{};W.vals[tk][ws][k]=v;localSave();queueSave(t,ws,k,v)}
 function queueSave(t,ws,k,v){

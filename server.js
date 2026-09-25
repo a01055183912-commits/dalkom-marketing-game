@@ -21,6 +21,16 @@ try {
   }
   if (n) { state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('replaced old department-store examples: ' + n); }
 } catch (e) { /* no old examples file */ }
+// 조가 조금 고쳐 옛 예시와 글자가 달라진 칸도 백화점 내용이면 비웁니다 (실습 ①~⑦).
+const DEPT = /백화점|층별|유아동|리빙관|명품관|신혼|시니어 부부|서면·부산진구|해운대·동래|김해·양산|시즌 ?세일|세일 행사|소득 추정|쇼핑 동기|과시|자기표현|나들이·체험|L\.POINT|멤버십|라운지|어드바이저|발레파킹|판매사원|문화센터|문화행사|식당가|DART|사업보고서|MD|[0-9]억|[0-9]만원|고빈도 소액|저빈도 고액|행사 ?반응|접객|클레임|신상품|한정판|카테고리/;
+{
+  let n = 0;
+  for (const tk in state.sheets) for (const ws of ['w1', 'w2', 'w42', 'w5', 'w6', 'w7']) {
+    const w = state.sheets[tk][ws];
+    if (w) for (const k in w) if (typeof w[k] === 'string' && DEPT.test(w[k])) { w[k] = ''; n++; }
+  }
+  if (n) { state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('cleared department-store answers: ' + n); }
+}
 const TEAM = /^team[1-6]$/;
 const UNIT = /^(w[0-9]{1,2}|g[1-5]|rfm)$/;
 const STATIC = {
