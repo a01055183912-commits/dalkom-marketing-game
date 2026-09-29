@@ -10,9 +10,9 @@ const INDEX = path.join(__dirname, 'public', 'index.html');
 
 const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, prog: {}, open: [], cur: '', insight: [], content: 2 });
 let state = empty();
-try { state = Object.assign(empty(), JSON.parse(fs.readFileSync(FILE, 'utf8'))); } catch (e) { /* first run */ }
+try { const saved = JSON.parse(fs.readFileSync(FILE, 'utf8')); state = Object.assign(empty(), saved); state.content = saved.content || 1; } catch (e) { /* first run */ }
 // 교안이 샌드위치 팝업(PPT 원본) 실습지로 바뀌었으므로, 예전 실습지 답은 한 번 비웁니다.
-if ((state.content || 1) < 2) { state.sheets = {}; state.content = 2; state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('worksheets reset for new course content'); }
+if ((state.content || 1) < 2) { state.sheets = {}; state.open = []; state.cur = ''; state.insight = []; state.content = 2; state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('worksheets reset for new course content'); }
 const TEAM = /^team[1-6]$/;
 const UNIT = /^(w[0-9]{1,2}|g[1-5]|rfm)$/;
 const STATIC = {
