@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>:root{color-scheme:light}html{-webkit-text-size-adjust:100%}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>달콤상점 마케팅 게임</title>
+<title>샌드위치 팝업 마케팅 게임</title>
 <meta name="description" content="롯데 LIFT 3-3 고객 세그먼트 및 데이터 마케팅 실습 게임">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,7 +52,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .tcount{border:1px solid var(--line);border-radius:8px;padding:5px;background:var(--bg);color:var(--ink);font-family:var(--body)}
 /* home */
 .hero{padding-block:24px 18px;display:flex;flex-direction:column;gap:22px}
-.hero-img{order:-1;width:100%;height:auto;aspect-ratio:1600/664;border-radius:20px;box-shadow:var(--shadow);display:block}
+.hero-img{order:-1;width:100%;height:auto;aspect-ratio:1263/594;border-radius:20px;box-shadow:var(--shadow);display:block}
 .hero h2{font-size:clamp(34px,5vw,54px);line-height:1.1}
 .hero h2 em{font-style:normal;color:var(--berry)}
 .hero p{font-size:18px;color:var(--muted);max-width:60ch;margin:14px 0 0}
@@ -258,6 +258,13 @@ table.rt{min-width:620px;font-size:15.5px;table-layout:auto}
 @media (max-width:860px){.first{grid-template-columns:1fr}.sync{margin-left:0}}
 @media (max-width:860px){.hero-img{border-radius:14px}.hero,.g1,.crm{grid-template-columns:1fr}.bins{position:static}.sl{grid-template-columns:1fr}.choices{grid-template-columns:1fr}}
 #fillEx.on,#exTog.on{background:var(--berry-soft);border-color:var(--berry);color:var(--berry)}
+/* 실습지 내려받기 */
+.dlbox{margin-top:22px;background:var(--surface);border-radius:14px;padding:14px 18px}
+.dlrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.dlrow a.btn{text-decoration:none}
+.dlrow.small a{font-size:13.5px;color:var(--choco);border:1px solid var(--line);border-radius:999px;padding:5px 11px;text-decoration:none;background:var(--bg)}
+.dlrow.small a:hover{border-color:var(--berry)}
+.opt .optimg{width:100%;height:110px;object-fit:contain;border-radius:10px;background:#fff;margin-bottom:8px}
 /* 교육생 단계 흐름 */
 .flow4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 18px}
 .flow4 span{background:var(--surface);border-radius:12px;padding:10px 12px;font-weight:700;font-size:14px;text-align:center;position:relative}
@@ -333,7 +340,7 @@ table.bt{border-collapse:collapse;width:100%;font-size:14px;min-width:900px;back
 <body>
 <header class="top">
   <div class="top-in">
-    <button class="brand" id="homeBtn" aria-label="처음 화면으로"><h1>달콤상점</h1><small>3-3 고객 세그먼트 · 데이터 마케팅 게임</small></button>
+    <button class="brand" id="homeBtn" aria-label="처음 화면으로"><h1>샌드위치 팝업</h1><small>3-3 고객 세그먼트 · 데이터 마케팅 게임</small></button>
     <button class="tbtn" onclick="go('teacher')">강사 화면</button>
     <div class="teams" id="teams"></div>
     <label class="muted" id="tcountWrap" style="font-size:13px">조 수
@@ -358,20 +365,20 @@ const STUDENT=ME!==null;
 if(STUDENT)document.documentElement.classList.add('student');
 const R={names:{},prog:{},open:[],cur:'',insight:[],ready:false,offline:false};
 const UNITS=[
- {id:'g2',s:'게임1',k:'game'},{id:'w01',s:'0-1',k:'ws'},{id:'w02',s:'0-2',k:'ws'},
- {id:'w1',s:'①',k:'ws'},{id:'w2',s:'②',k:'ws'},
- {id:'g1',s:'게임2',k:'game'},{id:'rfm',s:'RFM',k:'read'},{id:'w42',s:'④-2',k:'ws'},
- {id:'g4',s:'게임3',k:'game'},{id:'w5',s:'⑤',k:'ws'},
+ {id:'g2',s:'게임1',k:'game'},{id:'w1',s:'①',k:'ws'},{id:'w2',s:'②',k:'ws'},{id:'w8',s:'품평회',k:'ws'},
+ {id:'g1',s:'게임2',k:'game'},{id:'rfm',s:'RFM',k:'read'},{id:'w4',s:'④',k:'ws'},
+ {id:'g4',s:'게임3',k:'game'},{id:'w42',s:'④-2',k:'ws'},{id:'w5',s:'⑤',k:'ws'},
  {id:'g3',s:'게임4',k:'game'},{id:'w6',s:'⑥',k:'ws'},
  {id:'g5',s:'게임5',k:'game'},{id:'w7',s:'⑦',k:'ws'}];
 /* 교육생 흐름: 워밍업 게임(언제든 자유) → 강사 설명 → 조별 토론 · 검색 → 활동지(강사가 열면) */
 const STEPS=[
- {t:'디저트 가게로 STP 감 잡기',g:'g2',ws:['w01','w02']},
- {t:'고객 세분화와 표적 선정',g:null,ws:['w1','w2']},
- {t:'RFM으로 우리 단골 찾기',g:'g1',ws:['rfm','w42']},
- {t:'등급별 CRM 액션 설계',g:'g4',ws:['w5']},
- {t:'LTV로 예산 나누기',g:'g3',ws:['w6']},
- {t:'복습하고 원페이퍼 완성',g:'g5',ws:['w7']}];
+ {t:'1교시 · 왜 나누고, 누구로 나눌까? (S)',g:'g2',ws:['w1']},
+ {t:'2교시 · 누구를 먼저 공략할까? (T)',g:null,ws:['w2']},
+ {t:'3~4교시 · 컨셉 시제품과 품평회 (P)',g:null,ws:['w8']},
+ {t:'5교시 · 구매 기록은 무엇을 말할까?',g:'g1',ws:['rfm','w4']},
+ {t:'6교시 · 누구에게 어떤 제안을 할까?',g:'g4',ws:['w42','w5']},
+ {t:'7교시 · 얼마까지 써도 될까?',g:'g3',ws:['w6']},
+ {t:'8교시 · 오늘을 한 장으로',g:'g5',ws:['w7']}];
 const warmOf=id=>{const s=STEPS.find(x=>x.ws.includes(id));return s&&s.g};
 function unitName(id){const w=WS.find(x=>x.id===id);if(w)return `${w.no} · ${w.t}`;if(id==='rfm')return 'RFM 표 읽기';const g=GAMES.find(x=>x.id===id);return g?`${g.no} · ${g.t}`:id}
 const isOpen=id=>!STUDENT||R.offline||id[0]==='g'||R.open.includes(id);
@@ -385,10 +392,10 @@ function teamName(t){return R.names[teamKey(t)]||''}
 function teamLabel(t){const n=teamName(t);return n?`${t+1}조 ${esc(n)}`:`${t+1}조`}
 /* 게임이 끝난 뒤 인사이트: 강사가 현황판에서 "공개"를 눌러야 교육생 화면에 뜹니다 */
 const INSIGHT={
- g2:{t:'팔 사람을 먼저 정해야 광고비가 산다',p:['같은 100만 원이라도 그 손님 무리가 반응하는 채널에 실어야 손님이 옵니다.','디저트와 손님이 맞지 않으면 광고비를 늘려도 이익이 잘 나지 않습니다. 이것이 Targeting입니다.','단골 관리에 0원이면 한 번 온 손님이 다시 올 이유가 없습니다.'],q:'우리 조가 고른 손님 무리를 한 줄로 설명하면? 왜 그 무리였나요?'},
+ g2:{t:'한 종류로 모든 손님을 잡을 수 없다',p:['같은 샌드위치 팝업이라도 사는 이유(빠른 한 끼 · 재료 선택 · 함께 나눔)가 다르면 상품 · 포장 · 안내가 달라집니다.','손님 수가 가장 많은 무리가 이익이 가장 큰 무리는 아닙니다. 1회 이익과 우리 준비 여건까지 봅니다. 이것이 Targeting입니다.','같은 100만 원이라도 표적 손님이 반응하는 곳에 써야 손님이 옵니다.'],q:'우리 조가 고른 표적 손님을 한 줄로 설명하면? 왜 그 손님이었나요?'},
  g1:{t:'합계보다 R을 먼저 본다',p:['상위 4명(20%)이 매출의 47%를 만듭니다. 모든 손님을 똑같이 대하면 안 됩니다.','합계 점수가 비슷해도 R이 떨어지는 손님(C11)은 떠나는 중입니다. 가장 먼저 연락할 사람입니다.','등급 이름보다 "이 손님에게 다음에 무엇을 할까"가 더 중요합니다.'],q:'우리 조가 가장 헷갈린 카드는 무엇이었나요? 왜 헷갈렸을까요?'},
  g4:{t:'등급마다 목적이 다르다',p:['VIP는 지키고, 우수 단골은 올리고, 일반은 자주 오게, 이탈 위험은 되돌리고, 휴면은 비용을 줄입니다.','등급이 높을수록 할인보다 경험 · 우선권 · 전용 서비스가 통합니다.','전 등급에 똑같은 할인 문자는 가장 흔하고 가장 효과 없는 액션입니다.'],q:'우리 조 새 아이디어 중 내일 바로 해 볼 수 있는 것은 무엇인가요?'},
- g3:{t:'예산은 LTV가 정한다',p:['매출의 47%를 만드는 VIP 4명에게 먼저 씁니다. 모범 배분은 4만 · 1.2만 · 6천 · 4천 · 400원입니다.','LTV 한도를 넘는 투자는 쓸수록 손해입니다.','똑같이 나누는 것은 공평해 보이지만 근거가 없습니다.'],q:'우리 조 배분이 모범 배분과 가장 다른 곳은? 그렇게 나눈 이유를 말해 보세요.'},
+ g3:{t:'예산은 LTV가 정한다',p:['매출의 47%를 만드는 VIP 4명에게 먼저 씁니다. 모범 배분은 400 · 120 · 60 · 40 · 4(만원)입니다.','LTV 한도를 넘는 투자는 쓸수록 손해입니다.','똑같이 나누는 것은 공평해 보이지만 근거가 없습니다.'],q:'우리 조 배분이 모범 배분과 가장 다른 곳은? 그렇게 나눈 이유를 말해 보세요.'},
  g5:{t:'오늘 배운 네 단어',p:['STP · 나누고(S) · 고르고(T) · 자리 잡기(P).','RFM · 언제 · 얼마나 자주 · 얼마나 많이. R만 방향이 반대입니다.','CRM과 LTV · 등급마다 다른 액션, 예산은 LTV의 10~20% 안에서.'],q:'오늘 배운 것 중 우리 회사 고객에게 바로 써 볼 한 가지는?'}};
 const insOpen=g=>!STUDENT||R.insight.includes(g);
 const INS_HTML={};
@@ -419,28 +426,32 @@ function renderTeams(){
 $('#tcount').onchange=e=>{S.teams=+e.target.value;if(S.cur>=S.teams)S.cur=0;save();renderTeams();pushScores();if($('#compareBody'))comparePage();if($('#wsbody'))wsPage()};
 function award(n,why){S.scores[S.cur]+=n;save();renderTeams();pushScores();toast(`${S.cur+1}조 +${n}점 · ${why}`)}
 const won=n=>Math.round(n).toLocaleString('ko-KR');
-/* 손님 · CRM 금액은 내부 계산 단위를 그대로 두고, 디저트 가게 규모(1/100)로 보여 줍니다 */
-const MW=v=>{const w=Math.round(v*100);return w>=10000?(w/10000).toLocaleString('ko-KR',{maximumFractionDigits:2})+'만 원':w.toLocaleString('ko-KR')+'원'};
-const WN=v=>Math.round(v*100).toLocaleString('ko-KR')+'원';
+/* 백화점 고객 금액 · 단위 만원 (원본 실습지 그대로) */
+const MW=v=>(+v).toLocaleString('ko-KR',{maximumFractionDigits:1})+'만원';
+const WN=MW;
 
 /* ---------------- home ---------------- */
 const GAMES=[
- {id:'g2',no:'게임 1',t:'디저트 가게 사장 되기',d:'와그작 케이크 또는 과일모찌 가게를 골라 손님 무리를 정하고, 광고비 100만 원을 나눠 써 봅니다. 한 달 뒤 손님 수와 매출은 앱이 계산합니다.',tags:['STP','실습 0-1 대신','15분'],b:0},
- {id:'g1',no:'게임 2',t:'손님 카드 분류',d:'고객 20명 카드를 다섯 바구니에 나눠 담습니다. R·F·M 점수 계산은 앱이 해 주고, 조는 "이 손님은 누구인가"만 판단합니다.',tags:['RFM','실습 ④ · ④-2 대신','25분'],b:1},
- {id:'g4',no:'게임 3',t:'누구에게 무엇을?',d:'CRM 액션 카드를 알맞은 등급에 붙이고, 할인 쿠폰 말고 우리 조만의 새 아이디어를 한 줄씩 적습니다.',tags:['CRM 액션','실습 ⑤ 대신','15분'],b:0},
- {id:'g3',no:'게임 4',t:'CRM 예산 나누기',d:'1년 CRM 예산 62,400원을 다섯 등급에 슬라이더로 나눕니다. LTV 한도를 넘으면 경고가 뜨고, 1년 뒤 기대 효과가 바로 계산됩니다.',tags:['LTV','실습 ⑥ 대신','15분'],b:0},
+ {id:'g2',no:'게임 1',t:'샌드위치 팝업 사장 되기',d:'롯데백화점 부산본점 식품관 2주 팝업. 대표 상품과 표적 손님(A 빠른 한 끼 · B 재료 선택 · C 함께 나눔)을 고르고 운영 · 홍보비 100만 원을 나눠 봅니다. 2주 뒤 손님 수와 이익은 앱이 계산합니다.',tags:['STP','실습 ① · ② 워밍업','15분'],b:0},
+ {id:'g1',no:'게임 2',t:'손님 카드 분류',d:'고객 20명 카드를 다섯 바구니에 나눠 담습니다. R·F·M 점수 계산은 앱이 해 주고, 조는 "이 손님은 누구인가"만 판단합니다.',tags:['RFM','실습 ④ 워밍업','25분'],b:1},
+ {id:'g4',no:'게임 3',t:'누구에게 무엇을?',d:'CRM 액션 카드를 알맞은 등급에 붙이고, 할인 쿠폰 말고 우리 조만의 새 아이디어를 한 줄씩 적습니다.',tags:['CRM 액션','실습 ⑤ 워밍업','15분'],b:0},
+ {id:'g3',no:'게임 4',t:'CRM 예산 나누기',d:'624만 원을 다섯 등급에 슬라이더로 나눕니다. LTV 한도를 넘으면 경고가 뜨고, 1년 뒤 기대 효과가 바로 계산됩니다.',tags:['LTV','실습 ⑥ 워밍업','15분'],b:0},
  {id:'g5',no:'게임 5',t:'마케팅 골든벨',d:'오늘 배운 STP · RFM · CRM · LTV를 12문제로 복습합니다. 맞힌 조를 눌러 점수를 줍니다.',tags:['복습','사후평가 대비','15분'],b:0},
 ];
+const SHEETLIST=[['w1','실습 ① 고객 세분화 기준 설계'],['w2','실습 ② 세분시장 평가와 표적 선정'],['w8','품평회 선택 결과 기록표'],['w4','실습 ④ RFM 점수 계산과 등급 분류'],['w42','실습 ④-2 RFM 결과 해석'],['w5','실습 ⑤ 세그먼트별 CRM 액션 설계'],['w6','실습 ⑥ 고객 생애가치 추정과 투자 판단'],['w7','실습 ⑦ STP + CRM 통합 기획안']];
+function sheetDownloads(teacher){return `<section class="dlbox"><p class="step" style="margin:0">실습지 내려받기 · PPT 원본 그대로 (인쇄해서 쓰거나 PowerPoint에서 바로 쓰기)</p>
+  <div class="dlrow"><a class="btn" href="/sheets/sheets-blank.pptx" download>실습지 전체 · 빈칸</a>${teacher?'<a class="btn ghost" href="/sheets/sheets-answer.pptx" download>실습지 전체 · 예시 답안 (강사용)</a>':''}</div>
+  <div class="dlrow small">${SHEETLIST.map(([id,n])=>`<a href="/sheets/sheet-${id}.pptx" download>${n}</a>`).join('')}</div></section>`}
 function home(){
   if(STUDENT){studentHome();return}
   $('#app').innerHTML=`
   <section class="hero">
     <div>
       <p class="step">LOTTE LIFT · 3-3 실습</p>
-      <h2>우리 가게 단골은<br><em>누구일까요?</em></h2>
+      <h2>누구에게,<br><em>무엇을 팔까요?</em></h2>
       <p>조마다 QR로 접속해 실습지와 게임을 합니다. 강사가 여는 활동만 교육생 화면에 열리고, 점수는 활동한 만큼 아래 현황표에 자동으로 쌓입니다.</p>
     </div>
-    <img class="hero-img" src="/banner.jpg" alt="달콤상점 · 눈으로 한 번, 한 입에 또 한 번 · 와그작 케이크와 과일모찌" width="1600" height="664">
+    <img class="hero-img" src="/popup.jpg" alt="롯데백화점 부산본점 식품관에 2주 동안 샌드위치 팝업을 엽니다. 누구에게, 무엇을 팔까요?" width="1263" height="594">
   </section>
   <section class="board-wrap">
     <div class="board-head"><div><p class="step">강사 · 실시간 조별 현황</p><h3>조별 진행 현황</h3></div>
@@ -449,16 +460,17 @@ function home(){
     <p class="note" id="boardNote">워밍업 게임은 교육생이 언제든 자유롭게 할 수 있습니다. 활동지는 강사가 설명한 뒤 "다음 화면 열기"나 열 제목을 눌러 열어 주세요. 게임 아래 "공개"를 누르면 그 게임의 인사이트가 교육생 화면에 뜹니다(버튼에 마우스를 올리면 끝낸 조 수가 보입니다). ✓는 끝낸 활동이고 숫자는 받은 점수입니다. 실습지는 칸을 채운 만큼(조금 1점 · 절반 2점 · 전부 3점), 게임은 조가 받은 최고 점수가 자동으로 들어갑니다. 합계에는 위쪽 + / − 로 고친 점수도 더해집니다.</p>
   </section>
   <div class="first">
-    <button class="big" onclick="go('ws')"><span class="gno">먼저 · 조별로 한 대씩</span><h3>실습지 쓰기</h3><p>실습 0-1부터 ⑦ 원페이퍼까지 8장을 조별로 채웁니다. 합계 · LTV 같은 계산은 앱이 하고, ⑦은 앞에서 쓴 내용을 불러옵니다.</p></button>
+    <button class="big" onclick="go('ws')"><span class="gno">먼저 · 조별로 한 대씩</span><h3>실습지 쓰기</h3><p>실습 ①부터 ⑦ 원페이퍼, 품평회 기록표까지 8장을 조별로 채웁니다. 총점 · LTV 같은 계산은 앱이 하고, ⑦은 앞에서 쓴 내용을 불러옵니다.</p></button>
     <button class="big mid" onclick="go('rfm')"><span class="gno">실습 ④ 준비</span><h3>RFM 표 읽기</h3><p>C01~C20이 무엇인지, 숫자를 점수로 바꾸는 법, 20명 한눈에 보기. 손님을 누르면 따라가기만 하면 됩니다.</p></button>
     <button class="big alt" onclick="go('teacher')"><span class="gno">강사 전용</span><h3>강사 화면</h3><p>오늘 진행 순서 · 실습별 예시 답안과 해설 · 조별 모아보기 · 게임 정답을 한곳에서 봅니다.</p></button>
   </div>
   <p class="step" style="margin-top:26px">워밍업 게임 · 교육생은 언제든 자유롭게 할 수 있습니다. 게임 → 강사 설명 → 토론 · 검색 → 활동지 순서로 진행합니다</p>
   <div class="games" id="games"></div>
+  ${sheetDownloads(true)}
   <div class="howto">
     <div><b>진행 방법</b>"조별 QR 코드"를 띄워 조마다 한 대씩 접속하게 한 뒤, "다음 화면 열기"로 활동을 하나씩 엽니다. 열지 않은 활동은 교육생 화면에 잠겨 있습니다.</div>
     <div><b>점수</b>게임마다 "점수 넣기" 버튼이 차례인 조에 점수를 줍니다. + / − 로 직접 고칠 수도 있습니다.</div>
-    <div><b>데이터</b>고객 20명 · 디저트 가게 숫자는 계산 연습용 가상 데이터입니다. 디저트 트렌드는 2026년 기사 기준입니다.</div>
+    <div><b>데이터</b>고객 20명 · 팝업 자료의 숫자는 모두 수업용 가상 데이터입니다. 롯데백화점의 실제 조사나 실적이 아닙니다.</div>
   </div>`;
   const g=$('#games');
   GAMES.forEach(x=>{const b=document.createElement('button');b.className='gcard';
@@ -507,17 +519,18 @@ function studentHome(){
   <section class="hero">
     <div>
       <p class="step">LOTTE LIFT · 3-3 실습 · ${ME+1}조 기기</p>
-      <h2>우리 가게 단골은<br><em>누구일까요?</em></h2>
+      <h2>누구에게,<br><em>무엇을 팔까요?</em></h2>
       <p>워밍업 게임은 언제든 자유롭게 해 보세요. 활동지는 강사님 설명을 들은 뒤 열립니다. 조원과 토론하고 검색해서 채운 만큼 우리 조 점수가 자동으로 올라갑니다.</p>
     </div>
-    <img class="hero-img" src="/banner.jpg" alt="달콤상점 · 눈으로 한 번, 한 입에 또 한 번 · 와그작 케이크와 과일모찌" width="1600" height="664">
+    <img class="hero-img" src="/popup.jpg" alt="롯데백화점 부산본점 식품관에 2주 동안 샌드위치 팝업을 엽니다. 누구에게, 무엇을 팔까요?" width="1263" height="594">
   </section>
   <div class="panel" id="shome" style="margin-bottom:22px">
     <div class="shome"><div><p class="step">우리 조</p><h3 id="sName">${teamLabel(ME)}</h3></div><div class="sc"><span>우리 조 점수</span><b id="sScore">${total(ME)}</b></div></div>
-    <div class="nameform"><input id="tname" maxlength="16" placeholder="우리 조 이름 (예: 딸기모찌단)" value="${esc(nm)}" aria-label="우리 조 이름"><button class="btn" id="tnameBtn">${nm?'이름 바꾸기':'이름 정하기'}</button></div>
+    <div class="nameform"><input id="tname" maxlength="16" placeholder="우리 조 이름 (예: 회의간식팀)" value="${esc(nm)}" aria-label="우리 조 이름"><button class="btn" id="tnameBtn">${nm?'이름 바꾸기':'이름 정하기'}</button></div>
   </div>
   <div class="flow4"><span>① 워밍업 게임<small>언제든 자유롭게</small></span><span>② 강사님 설명 듣기</span><span>③ 조원과 토론 · 검색</span><span>④ 활동지 쓰기<small>강사님이 열면 시작</small></span></div>
-  <div id="units"></div>`;
+  <div id="units"></div>
+  ${sheetDownloads(false)}`;
   $('#tnameBtn').onclick=saveName;$('#tname').onkeydown=e=>{if(e.key==='Enter')saveName()};
   drawUnits();
 }
@@ -587,7 +600,7 @@ const G1={sel:null,place:{},showScore:false,checked:false};
 function g1(){
   G1.sel=null;G1.place={};G1.showScore=false;G1.checked=false;
   $('#app').innerHTML=head('손님 카드 분류','카드를 누르고 → 바구니를 누르면 들어갑니다. 한 조가 5장씩 돌아가며 넣어도 좋습니다. 막히면 "앱이 점수 계산" 버튼을 누르세요.','게임 2 · RFM · 실습 ④ · ④-2')+`
-  <div class="bar"><button class="btn ghost" id="scoreBtn">앱이 R·F·M 점수 계산하기</button><button class="btn" id="checkBtn">채점하기</button><button class="btn ghost" id="resetBtn">다시 하기</button><button class="btn ghost" onclick="go('rfm')">표 읽는 법 보기</button><span class="note">경과일 = 마지막 구매 후 지난 날 · 금액 = 1년 동안 쓴 돈 · 계산 연습용 가상 데이터</span></div>
+  <div class="bar"><button class="btn ghost" id="scoreBtn">앱이 R·F·M 점수 계산하기</button><button class="btn" id="checkBtn">채점하기</button><button class="btn ghost" id="resetBtn">다시 하기</button><button class="btn ghost" onclick="go('rfm')">표 읽는 법 보기</button><span class="note">경과일 = 마지막 구매 후 지난 날 · 금액 단위 만원 · 백화점 기존 고객 20명 · 계산 연습용 가상 데이터</span></div>
   <div class="g1"><div><div class="cards" id="cards"></div><div class="share panel" id="share" hidden></div></div><div class="bins" id="bins"></div></div>`;
   $('#scoreBtn').onclick=()=>{G1.showScore=!G1.showScore;$('#scoreBtn').textContent=G1.showScore?'점수 숨기기':'앱이 R·F·M 점수 계산하기';draw1()};
   $('#checkBtn').onclick=check1;$('#resetBtn').onclick=g1;
@@ -631,35 +644,34 @@ function check1(){
   if(!studentAward('aw1','g1',pts))$('#aw1').onclick=e=>{award(pts,`카드 ${ok}장 정답`);e.target.disabled=true};
 }
 
-/* ---------------- game 2 : dessert shop ---------------- */
-const DESS=[
- {k:'wag',n:'와그작 케이크',p:'과일 모양 초콜릿 껍질을 깨면 무스와 과일이 나오는 케이크',fact:'뚜레쥬르 "아그작" 오픈런, CU "깨먹는" 빵 3개월 110만 개 (2026)'},
- {k:'mochi',n:'과일모찌',p:'찹쌀떡 안에 크림과 제철 생과일을 통째로 넣은 디저트',fact:'신세계 센텀시티 "모찌모찌" 팝업 웨이팅 (2026.7)'}];
+/* ---------------- game 2 : sandwich pop-up ---------------- */
+const PROD=[
+ {k:'one',n:'1인 한 끼 샌드위치',p:'한 손 포장 · 빠른 수령',price:7500},
+ {k:'pick',n:'재료 선택 샌드위치',p:'재료 표시 · 원하는 재료 고르기',price:9500},
+ {k:'share',n:'4인 나눔 세트',p:'개별 포장 네 개 · 예약 수령',price:28000}];
 const TGT=[
- {k:'shot',n:'20대 인증샷 손님',p:'친구와 주말 나들이 · 찍어서 올릴 장면을 찾음'},
- {k:'teen',n:'10대 학생',p:'방과 후 · 친구들 사이 화제가 되는 것'},
- {k:'gift',n:'40·50대 선물 손님',p:'명절 · 방문 인사 · 포장과 격을 봄'},
- {k:'kid',n:'30·40대 부모',p:'아이 생일 · 간식 · 안심하고 먹일 것'}];
+ {k:'A',n:'A 빠른 한 끼',p:'점심시간이 짧은 근처 직장인 · 혼자 · 예산 1만 원',base:1680},
+ {k:'B',n:'B 재료 선택',p:'재료를 확인하고 고르는 손님 · 한 개 12,000원까지',base:980},
+ {k:'C',n:'C 함께 나눔',p:'회의 · 모임 간식 네 명분 · 전체 예산 3만 원',base:560}];
 const CH=[
- {k:'reels',n:'인스타 릴스 광고',s:'짧은 영상 · SNS'},
- {k:'event',n:'체험 · 시식 이벤트',s:'직접 깨 보기 · 맛보기'},
- {k:'pack',n:'선물 포장 고급화',s:'박스 · 보자기 · 메시지 카드'},
- {k:'local',n:'맘카페 · 지역 커뮤니티',s:'동네 입소문'},
- {k:'crm',n:'단골 문자 · 적립',s:'재방문 관리'}];
-const FIT={wag:{shot:1,teen:.8,gift:.4,kid:.7},mochi:{shot:.6,teen:.4,gift:1,kid:.7}};
-const SPEND={wag:{shot:12000,teen:8000,gift:20000,kid:18000},mochi:{shot:10000,teen:6000,gift:35000,kid:15000}};
-const AFF={shot:[1,.8,.2,.1,.3],teen:[.9,.6,0,.1,.1],gift:[.2,.3,1,.5,.7],kid:[.3,.7,.3,1,.5]};
+ {k:'lunch',n:'점심 동선 안내',s:'식품관 입구 · 엘리베이터 앞 안내판'},
+ {k:'pop',n:'재료 설명 POP',s:'구성표 · 재료 표시 · 시식'},
+ {k:'pre',n:'사전 예약 · 회의 간식 안내',s:'근처 오피스 단체 주문 전단 · 예약 수령'},
+ {k:'sns',n:'SNS · 백화점 앱 배너',s:'인스타 · 앱 이벤트'},
+ {k:'crm',n:'구매 고객 재방문 안내',s:'동의 고객 메시지 · 다음 방문 혜택'}];
+const FIT={one:{A:1,B:.5,C:.3},pick:{A:.5,B:1,C:.4},share:{A:.2,B:.4,C:1}};
+const AFF={A:[1,.3,.1,.6,.3],B:[.4,1,.2,.7,.4],C:[.2,.3,1,.4,.6]};
 const G2={d:null,t:null,b:[20,20,20,20,20],done:false};
 function g2(){
   G2.d=null;G2.t=null;G2.b=[20,20,20,20,20];G2.done=false;
-  $('#app').innerHTML=head('디저트 가게 사장 되기','① 디저트를 고르고 ② 손님 무리 하나를 고른 뒤 ③ 광고비 100만 원을 나눠 쓰세요. 한 달 뒤 결과는 앱이 계산합니다.','게임 1 · STP · 실습 0-1')+`
-  <p class="step" style="margin-top:14px">① 우리 가게 디저트</p><div class="picker" id="pd"></div>
-  <p class="step" style="margin-top:18px">② 우리가 고를 손님 무리 (Targeting)</p><div class="picker" id="pt"></div>
-  <p class="step" style="margin-top:18px">③ 광고비 100만 원 나누기</p>
-  <div class="panel"><div id="sls"></div><div class="bar"><span class="budget num" id="bud"></span><button class="btn" id="run">한 달 영업해 보기</button></div><div id="out"></div></div>
-  <p class="note" style="margin-top:10px">결과 숫자는 교육용 가상 모델로 계산합니다. 손님 무리마다 잘 반응하는 채널이 다르고, 디저트와 손님이 잘 맞을수록 효과가 큽니다.</p>`;
-  const pd=$('#pd');DESS.forEach(x=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<h4>${x.n}</h4><p>${x.p}</p><p style="margin-top:6px">${x.fact}</p>`;b.onclick=()=>{G2.d=x.k;[...pd.children].forEach(c=>c.classList.remove('on'));b.classList.add('on')};pd.appendChild(b)});
-  const pt=$('#pt');TGT.forEach(x=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<h4>${x.n}</h4><p>${x.p}</p>`;b.onclick=()=>{G2.t=x.k;[...pt.children].forEach(c=>c.classList.remove('on'));b.classList.add('on')};pt.appendChild(b)});
+  $('#app').innerHTML=head('샌드위치 팝업 사장 되기','롯데백화점 부산본점 식품관에 2주 동안 샌드위치 팝업을 엽니다. ① 대표 상품 ② 표적 손님을 고르고 ③ 운영 · 홍보비 100만 원을 나눠 쓰세요. 2주 뒤 결과는 앱이 계산합니다.','게임 1 · STP · 실습 ① · ② 워밍업')+`
+  <p class="step" style="margin-top:14px">① 우리 팝업의 대표 상품</p><div class="picker" id="pd"></div>
+  <p class="step" style="margin-top:18px">② 먼저 공략할 표적 손님 (Targeting)</p><div class="picker" id="pt"></div>
+  <p class="step" style="margin-top:18px">③ 운영 · 홍보비 100만 원 나누기</p>
+  <div class="panel"><div id="sls"></div><div class="bar"><span class="budget num" id="bud"></span><button class="btn" id="run">2주 팝업 운영해 보기</button></div><div id="out"></div></div>
+  <p class="note" style="margin-top:10px">결과 숫자는 교육용 가상 모델로 계산합니다. 하루 구매 기회 A 120 · B 70 · C 40건, 매출총이익 = 판매가 × 55%(원가율 45% 가정)는 실습 ② 공통 자료와 같습니다. 롯데백화점의 실제 조사나 실적이 아닙니다.</p>`;
+  const pd=$('#pd');PROD.forEach(x=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<h4>${x.n}</h4><p>${x.p}</p><p style="margin-top:6px"><b>${won(x.price)}원</b> 가정</p>`;b.onclick=()=>{G2.d=x.k;[...pd.children].forEach(c=>c.classList.remove('on'));b.classList.add('on')};pd.appendChild(b)});
+  const pt=$('#pt');TGT.forEach(x=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<img class="optimg" src="/target-${x.k}.jpg" alt="" loading="lazy"><h4>${x.n}</h4><p>${x.p}</p>`;b.onclick=()=>{G2.t=x.k;[...pt.children].forEach(c=>c.classList.remove('on'));b.classList.add('on')};pt.appendChild(b)});
   const sls=$('#sls');CH.forEach((c,i)=>{const d=document.createElement('div');d.className='sl';
     d.innerHTML=`<label for="ch${i}">${c.n}<small>${c.s}</small></label><input type="range" id="ch${i}" min="0" max="100" step="5" value="${G2.b[i]}"><span class="num" id="cv${i}">${G2.b[i]}만 원</span>`;
     sls.appendChild(d);d.querySelector('input').oninput=e=>{G2.b[i]=+e.target.value;$('#cv'+i).textContent=G2.b[i]+'만 원';bud()}});
@@ -667,38 +679,38 @@ function g2(){
 }
 function bud(){const s=G2.b.reduce((a,c)=>a+c,0);const el=$('#bud');el.textContent=`쓴 돈 ${s} / 100만 원`+(s>100?' · 예산 초과!':s<100?` · ${100-s}만 원 남음`:'');el.className='budget num'+(s>100?' over':'');$('#run').disabled=s>100}
 function sim(d,t,b){
-  const fit=FIT[d][t],aff=AFF[t];
-  let reach=0;b.forEach((x,i)=>reach+=40*Math.sqrt(x)*aff[i]);
-  const visitors=Math.round(300+reach*fit*(d==='mochi'&&b[2]>0&&t==='gift'?1.15:1));
-  const rev=.15+.2*Math.sqrt(b[4]/100)*aff[4]+.1*Math.sqrt(b[1]/100)*aff[1];
-  const sales=visitors*SPEND[d][t]*(1+rev);
-  const profit=sales*.3-b.reduce((a,c)=>a+c,0)*10000;
+  const fit=FIT[d][t],aff=AFF[t],tg=TGT.find(x=>x.k===t),pr=PROD.find(x=>x.k===d);
+  let reach=0;b.forEach((x,i)=>reach+=Math.sqrt(x)*aff[i]);
+  const conv=Math.min(.9,.2+.07*reach);
+  const visitors=Math.round(tg.base*fit*conv);
+  const rev=.1+.25*Math.sqrt(b[4]/100)*aff[4];
+  const sales=visitors*pr.price*(1+rev*.5);
+  const profit=sales*.55-b.reduce((a,c)=>a+c,0)*10000;
   return {visitors,rev,sales,profit,fit};
 }
 function run2(){
-  if(!G2.d||!G2.t){toast('디저트와 손님 무리를 먼저 고르세요');return}
+  if(!G2.d||!G2.t){toast('대표 상품과 표적 손님을 먼저 고르세요');return}
   const r=sim(G2.d,G2.t,G2.b);const aff=AFF[G2.t];
-  // best possible for comparison (simple search)
   let best=null;for(let a=0;a<=100;a+=10)for(let b=0;b<=100-a;b+=10)for(let c=0;c<=100-a-b;c+=10)for(let d=0;d<=100-a-b-c;d+=10){const e=100-a-b-c-d;const x=sim(G2.d,G2.t,[a,b,c,d,e]);if(!best||x.profit>best.profit)best={...x,b:[a,b,c,d,e]}}
-  const fb=[];
+  const fb=[];const tn=TGT.find(x=>x.k===G2.t).n,pn=PROD.find(x=>x.k===G2.d).n;
   const maxI=G2.b.indexOf(Math.max(...G2.b));
-  if(aff[maxI]<.4)fb.push(`<b>${CH[maxI].n}</b>에 가장 많이 썼는데, ${TGT.find(x=>x.k===G2.t).n}은 여기에 잘 반응하지 않습니다.`);
+  if(aff[maxI]<.4)fb.push(`<b>${CH[maxI].n}</b>에 가장 많이 썼는데, ${tn} 손님은 여기에 잘 반응하지 않습니다.`);
   const topI=aff.indexOf(Math.max(...aff));
-  if(G2.b[topI]<30)fb.push(`이 손님이 가장 잘 반응하는 곳은 <b>${CH[topI].n}</b>입니다. 여기에 더 실어 보세요.`);
-  if(r.fit<.6)fb.push(`디저트와 손님이 잘 안 맞습니다. ${DESS.find(x=>x.k===G2.d).n}을 이 손님이 살 이유를 한 줄로 말할 수 있나요?`);
-  if(G2.b[4]===0)fb.push('단골 관리에 0원을 썼습니다. 한 번 온 손님이 다시 올 이유가 없습니다.');
-  if(!fb.length)fb.push('타깃 · 디저트 · 채널이 잘 맞습니다. 이 조합을 한 줄 포지셔닝으로 적어 보세요.');
+  if(G2.b[topI]<30)fb.push(`${tn} 손님이 가장 잘 반응하는 곳은 <b>${CH[topI].n}</b>입니다. 여기에 더 실어 보세요.`);
+  if(r.fit<.6)fb.push(`상품과 표적 손님이 잘 안 맞습니다. ${tn} 손님이 ${pn}을(를) 살 이유를 한 줄로 말할 수 있나요?`);
+  if(G2.b[4]===0)fb.push('재방문 안내에 0원을 썼습니다. 팝업이 끝나면 식품관으로 다시 올 이유가 없습니다.');
+  if(!fb.length)fb.push('표적 · 상품 · 쓰는 곳이 잘 맞습니다. 이 조합을 원페이퍼 3번 포지셔닝 문장으로 적어 보세요.');
   const ratio=best.profit>0?r.profit/best.profit:0;
   const pts=ratio>=.9?3:ratio>=.7?2:1;
   $('#out').innerHTML=`<div class="res">
-    <div class="kpi"><div class="k">한 달 손님 수</div><div class="v">${won(r.visitors)}명</div></div>
+    <div class="kpi"><div class="k">2주 구매 손님</div><div class="v">${won(r.visitors)}명</div></div>
     <div class="kpi"><div class="k">다시 온 비율</div><div class="v">${Math.round(r.rev*100)}%</div></div>
-    <div class="kpi"><div class="k">한 달 매출</div><div class="v">${won(r.sales/10000)}만</div></div>
-    <div class="kpi hl"><div class="k">남은 돈 (이익 30% − 광고비)</div><div class="v">${won(r.profit/10000)}만</div></div></div>
+    <div class="kpi"><div class="k">2주 매출</div><div class="v">${won(r.sales/10000)}만</div></div>
+    <div class="kpi hl"><div class="k">남은 돈 (매출총이익 55% − 비용)</div><div class="v">${won(r.profit/10000)}만</div></div></div>
     ${insightBox('g2',`<ul class="fb">${fb.map(x=>`<li>${x}</li>`).join('')}</ul>
-    <p class="note">같은 디저트 · 같은 손님으로 낼 수 있는 최고 이익은 약 ${won(best.profit/10000)}만 원 (${best.b.map((x,i)=>CH[i].n.split(' ')[0]+' '+x).join(' · ')}). 우리 조는 그 ${Math.max(0,Math.round(ratio*100))}% 수준입니다.</p>`)}
+    <p class="note">같은 상품 · 같은 표적으로 낼 수 있는 최고 이익은 약 ${won(best.profit/10000)}만 원 (${best.b.map((x,i)=>CH[i].n.split(' ')[0]+' '+x).join(' · ')}). 우리 조는 그 ${Math.max(0,Math.round(ratio*100))}% 수준입니다.</p>`)}
     <div class="bar"><button class="btn green" id="aw2">${S.cur+1}조에 ${pts}점 넣기</button></div>`;
-  if(!studentAward('aw2','g2',pts))$('#aw2').onclick=e=>{award(pts,'디저트 가게 결과');e.target.disabled=true};
+  if(!studentAward('aw2','g2',pts))$('#aw2').onclick=e=>{award(pts,'샌드위치 팝업 결과');e.target.disabled=true};
 }
 
 /* ---------------- game 3 : CRM budget ---------------- */
@@ -712,13 +724,13 @@ const MODEL=[400,120,60,40,4];
 let B3=[124,124,124,124,128];
 function g3(){
   B3=[124,124,124,124,128];
-  $('#app').innerHTML=head('CRM 예산 나누기','1년 CRM 예산 62,400원을 다섯 등급에 나눕니다. 처음에는 똑같이 나눠 두었습니다. 등급마다 1년 쓸 수 있는 한도(LTV 기준)를 넘으면 빨갛게 표시됩니다.','게임 4 · LTV · 실습 ⑤ · ⑥')+`
+  $('#app').innerHTML=head('CRM 예산 나누기','624만 원을 다섯 등급에 나눕니다. 처음에는 똑같이 나눠 두었습니다. 등급마다 1년 쓸 수 있는 한도(LTV 기준)를 넘으면 빨갛게 표시됩니다.','게임 4 · LTV · 실습 ⑤ · ⑥')+`
   <div class="crm"><div class="panel" id="s3"></div><div><div class="panel"><div class="res" id="k3"></div><div id="c3" style="margin-top:12px"></div></div>
   <div class="panel" style="margin-top:12px"><b>LTV로 정한 1년 한도 (4명 기준)</b>
   <table class="t" style="margin-top:6px"><tr><th>등급</th><th class="n">1인 LTV</th><th class="n">1년 한도</th></tr>
-  <tr><td>최우수</td><td class="n">57.5만 원</td><td class="n">46,000원</td></tr><tr><td>우수 단골</td><td class="n">26.25만 원</td><td class="n">39,400원</td></tr>
-  <tr><td>이탈 위험</td><td class="n">4.4만 원</td><td class="n">17,600원</td></tr><tr><td>일반</td><td class="n">10.03만 원</td><td class="n">13,300원</td></tr><tr><td>휴면</td><td class="n">8,500원</td><td class="n">3,200원</td></tr></table>
-  <p class="note">LTV = 1년 구매금액 × GP율 25% × 예상 유지 연수. 한도 = LTV의 10~20%를 유지 연수로 나눈 1년치 × 4명.</p></div></div></div>`;
+  <tr><td>최우수</td><td class="n">5,750만</td><td class="n">460만</td></tr><tr><td>우수 단골</td><td class="n">2,625만</td><td class="n">394만</td></tr>
+  <tr><td>이탈 위험</td><td class="n">440만</td><td class="n">176만</td></tr><tr><td>일반</td><td class="n">1,003만</td><td class="n">133만</td></tr><tr><td>휴면</td><td class="n">85만</td><td class="n">32만</td></tr></table>
+  <p class="note">LTV = 연간 구매금액 × GP율 25% × 예상 유지 연수. 한도 = LTV의 10~20%를 유지 연수로 나눈 1년치 × 4명.</p></div></div></div>`;
   draw3();
 }
 function draw3(){
@@ -735,20 +747,20 @@ function draw3k(){
   $('#k3').innerHTML=`<div class="kpi"><div class="k">쓴 예산</div><div class="v" style="${tot!==624?'color:var(--bad)':''}">${WN(tot)}</div></div><div class="kpi"><div class="k">1년 기대 효과</div><div class="v">${MW(e)}</div></div><div class="kpi hl"><div class="k">효과 − 예산</div><div class="v">${MW(net)}</div></div>`;
   const pts=net>=6000?3:net>=5600?2:1;
   const io=insOpen('g3');
-  $('#c3').innerHTML=`<p style="margin:0">${tot!==624?`<b style="color:var(--bad)">예산을 정확히 62,400원에 맞춰 주세요 (지금 ${tot>624?WN(tot-624)+' 초과':WN(624-tot)+' 남음'})</b>`:io?`모범 배분(4만 · 1.2만 · 6천 · 4천 · 400원)의 결과는 <b>${MW(mNet)}</b>입니다.`:'예산을 딱 맞췄습니다. 우리 조 배분의 이유를 이야기해 보고 제출하세요.'}</p>
+  $('#c3').innerHTML=`<p style="margin:0">${tot!==624?`<b style="color:var(--bad)">예산을 정확히 624만 원에 맞춰 주세요 (지금 ${tot>624?WN(tot-624)+' 초과':WN(624-tot)+' 남음'})</b>`:io?`모범 배분(400 · 120 · 60 · 40 · 4)의 결과는 <b>${MW(mNet)}</b>입니다.`:'예산을 딱 맞췄습니다. 우리 조 배분의 이유를 이야기해 보고 제출하세요.'}</p>
    <div class="bar">${io?'<button class="btn ghost" id="mdl">모범 배분 보기</button>':''}<button class="btn green" id="aw3" ${tot!==624?'disabled':''}>${S.cur+1}조에 ${pts}점 넣기</button></div>
-   ${io?`<p class="note">똑같이 나누면(12,480원씩) 약 ${MW(eff([124.8,124.8,124.8,124.8,124.8])-624)}, 휴면에 몰아주면 훨씬 낮아집니다. 매출의 47%를 만드는 4명에게 먼저 씁니다.</p>${insCard('g3')}`:insightBox('g3','')}`;
+   ${io?`<p class="note">똑같이 나누면(124.8만 원씩) 약 ${MW(eff([124.8,124.8,124.8,124.8,124.8])-624)}, 휴면에 몰아주면 훨씬 낮아집니다. 매출의 47%를 만드는 4명에게 먼저 씁니다.</p>${insCard('g3')}`:insightBox('g3','')}`;
   if($('#mdl'))$('#mdl').onclick=()=>{B3=[...MODEL];B3[4]=624-400-120-60-40;draw3()};
   if(!studentAward('aw3','g3',pts))$('#aw3').onclick=e=>{award(pts,'예산 배분');e.target.disabled=true};
 }
 
 /* ---------------- game 4 : action matching ---------------- */
 const ACTS=[
- {t:'신메뉴 시식회 우선 초대',a:'vip'},{t:'한정 케이크 우선 예약권',a:'vip'},{t:'연 2회 파티시에 클래스 초청',a:'vip'},
- {t:'"VIP까지 남은 스탬프" 안내',a:'good'},{t:'레터링 서비스 미리 체험',a:'good'},
- {t:'월 2회 방문 시 음료 업그레이드',a:'grow'},{t:'안 먹어 본 메뉴 맛보기',a:'grow'},
- {t:'마지막 메뉴 확인 후 사장님 전화',a:'risk'},{t:'30일 한정 복귀 혜택',a:'risk'},
- {t:'알림톡 · 앱 푸시 자동 발송만',a:'sleep'},
+ {t:'선호 구성 확인 · 예약 수령 상담',a:'vip'},{t:'신상품 · 한정 구성 우선 안내',a:'vip'},{t:'연 2회 초청 시식 행사',a:'vip'},
+ {t:'"VIP까지 남은 금액" 안내',a:'good'},{t:'선호 재료 구성 체험',a:'good'},
+ {t:'구매 목적에 맞는 구성 소개',a:'grow'},{t:'안 사 본 식품관 카테고리 체험',a:'grow'},
+ {t:'구매 주기 · 최근 품목 확인 후 개별 연락',a:'risk'},{t:'30일 한정 복귀 혜택',a:'risk'},
+ {t:'관심 확인 대상에 앱 안내 1회만',a:'sleep'},
  {t:'전 등급에 똑같은 20% 할인 문자',a:'trash'},{t:'휴면 고객에 유료 광고 집중',a:'trash'},{t:'VIP에게 할인 쿠폰 문자',a:'trash'}];
 const SEG4=[...SEGS.map(s=>({k:s.k,n:s.n})),{k:'trash',n:'쓰지 않을 액션'}];
 const GOAL={vip:'목적 · 지키기',good:'목적 · 올리기',grow:'목적 · 빈도 늘리기',risk:'목적 · 되돌리기',sleep:'목적 · 비용 줄이기',trash:'효과 없거나 역효과'};
@@ -798,8 +810,8 @@ const QZ=[
  {q:'RFM의 세 가지는?',c:['원가 · 판매가 · 할인율','최근성 · 빈도 · 금액','방문객 · 임대료 · 인건비','광고비 · 채널 · 노출'],a:1,e:'Recency 언제, Frequency 얼마나 자주, Monetary 얼마나 많이.'},
  {q:'R(최근성) 점수는 어떻게 매길까요?',c:['마지막 구매 후 지난 날이 길수록 5점','지난 날이 짧을수록 5점','구매 횟수가 많을수록 5점','금액이 클수록 5점'],a:1,e:'R만 정렬 방향이 반대입니다. 가장 많이 틀리는 곳입니다.'},
  {q:'합계 8점인 C11(R2)과 합계 10점인 C15(R4) 중 더 급하게 챙길 손님은?',c:['C15, 합계가 더 높으니까','C11, R이 떨어지고 있으니까','둘 다 똑같다','둘 다 챙길 필요 없다'],a:1,e:'합계보다 R을 먼저 봅니다. C11은 떠나는 중입니다.'},
- {q:'고객 20명 중 상위 4명(20%)이 만든 매출 비중은?',c:['약 20%','약 35%','약 47%','약 80%'],a:2,e:'184만 ÷ 391.2만 = 47.0%. 파레토 법칙에 가깝습니다.'},
- {q:'VIP 고객에게 가장 알맞은 CRM 액션은?',c:['20% 할인 쿠폰 문자','신메뉴 시식회 초대와 우선 예약권','알림톡 자동 발송','전 고객과 같은 사은품'],a:1,e:'등급이 올라갈수록 할인보다 경험 · 우선권 · 전용 서비스입니다.'},
+ {q:'고객 20명 중 상위 4명(20%)이 만든 매출 비중은?',c:['약 20%','약 35%','약 47%','약 80%'],a:2,e:'18,400 ÷ 39,120 = 47.0%. 파레토 법칙에 가깝습니다.'},
+ {q:'VIP 고객에게 가장 알맞은 CRM 액션은?',c:['20% 할인 쿠폰 문자','선호 확인 후 예약 상담과 우선 안내','앱 푸시 자동 발송','전 고객과 같은 사은품'],a:1,e:'등급이 올라갈수록 할인보다 경험 · 우선권 · 전용 서비스입니다.'},
  {q:'LTV(고객 생애가치) 공식으로 맞는 것은?',c:['연간 구매금액 × 방문 횟수','연간 구매금액 × GP율 × 예상 유지 연수','한 번 구매 금액 × 12','광고비 ÷ 방문객 수'],a:1,e:'LTV는 매출이 아니라 이익 기준입니다. GP율을 곱하는 걸 잊지 마세요.'},
  {q:'마케팅 비용 상한을 LTV와 똑같이 잡으면?',c:['이익이 최대가 된다','이익이 0이 된다','손님이 두 배가 된다','아무 영향이 없다'],a:1,e:'상한은 보통 LTV의 10~20%입니다.'},
  {q:'휴면 고객에게 광고 문자를 보낼 때 꼭 지킬 것은?',c:['최대한 자주 보낸다','수신 동의자만, 밤 9시~아침 8시는 피한다','회원가입만 했으면 누구에게나 보낸다','데이터는 무기한 보관한다'],a:1,e:'광고성 수신 동의는 회원가입 동의와 별개입니다. 교육용 개괄 안내이며 법률 자문이 아닙니다.'}];
@@ -834,19 +846,16 @@ function draw5(){
 }
 
 /* ================= 강사 화면 ================= */
-const TP={tab:'flow',ws:'w01'};
+const TP={tab:'flow',ws:'w1'};
 const FLOW=[
- ['09:00','도입 · QR 접속','PPT 3~11쪽 디저트로 쉽게 이해하기. 조별 QR 찍고 조 이름 정하기','현황표에 조 이름'],
- ['09:20','워밍업 게임 1','조별 기기로 "디저트 가게 사장 되기" (자유) → 인사이트 공개','현황표 게임1 ✓'],
- ['09:40','설명 → 실습 0-1 · 0-2','강사 설명 후 0-1 · 0-2 열기 → 조별 토론 · 검색 후 작성','조별 모아보기'],
- ['10:30','STP 이론 → 실습 ①','세분화 이론 설명 후 실습지 ① 열기','조별 모아보기로 비교'],
- ['11:10','표적화 → 실습 ②','근거 찾는 법(데이터랩 · 상권정보 · 리뷰) 설명 후 실습지 ② 열기','조별 모아보기'],
- ['13:00','워밍업 게임 2 → RFM','"손님 카드 분류" 후 인사이트 공개, RFM 이론 · "RFM 표 읽기" 열기','현황표 게임2 ✓'],
- ['14:00','실습 ④-2','해석 방법 설명 후 실습지 ④-2 열기','조별 모아보기'],
- ['14:40','워밍업 게임 3 → 실습 ⑤','"누구에게 무엇을?" 후 인사이트 공개, CRM 설명 후 ⑤ 열기','현황표 게임3 ✓'],
- ['15:40','워밍업 게임 4 → 실습 ⑥','"CRM 예산 나누기" 후 인사이트 공개, LTV 계산법 설명 후 ⑥ 열기','현황표 게임4 ✓'],
- ['16:40','골든벨 → 실습 ⑦','골든벨로 복습 · 인사이트 공개 후 원페이퍼 ⑦ 열기 (발표 없음)','현황표 · 조별 모아보기'],
- ['17:40','마무리','현황표 합계로 우수 조 시상','현황표 합계']];
+ ['09:00','1교시 · 왜 나누고, 누구로 나눌까? (S)','조별 QR 접속 · 조 이름 → 샌드위치 미션 · 워밍업 게임 1 → 세분화 설명 후 실습 ① 열기 (분석 범위: 식품관 팝업 방문객)','현황표 게임1 ✓ · 조별 모아보기'],
+ ['10:00','2교시 · 누구를 먼저 공략할까? (T)','공통 가상 자료 · 점수 약속 설명 → 실습 ② 열기 → 원페이퍼 ⑦ 1~3번(소싱 제안서) · 입점 심사','조별 모아보기'],
+ ['11:00','3교시 · 제안을 눈에 보이게 만들면?','컨셉 시제품 만들기 (대표 상품 1~2개 · 가격표 · 안내문) · 품평용 1개 냉장 보관','실습지 없음 (제안서 들고)'],
+ ['13:00','4교시 · 목표 고객이 선택했을까? (P)','품평회 기록표 열기 → 역할 카드 A · B · C로 선택 · 기록 → 구매 과정 · 가치 · 포지셔닝 이론 → ⑦ 3번 수정','목표 역할 선택률'],
+ ['14:00','5교시 · 구매 기록은 무엇을 말할까?','워밍업 게임 2 → 인사이트 공개 → RFM 이론 · "RFM 표 읽기" → 실습 ④ 열기 (C01 · C05 · C11 · C15만 함께)','현황표 게임2 ✓'],
+ ['15:00','6교시 · 누구에게 어떤 제안을 할까?','실습 ④-2 열기 (사실 → 확인 → 조치) → 워밍업 게임 3 → 실습 ⑤ 열기 (조별 예산 10만원)','조별 모아보기'],
+ ['16:00','7교시 · 얼마까지 써도 될까?','워밍업 게임 4 → 인사이트 공개 → 가정과 계산 구분 설명 → 실습 ⑥ 열기','현황표 게임4 ✓'],
+ ['17:00','8교시 · 오늘을 한 장으로','골든벨로 복습 → 실습 ⑦ 4~7번 완성 · 연결 점검','현황표 합계로 우수 조 시상']];
 function teacherPage(){
   $('#app').innerHTML=`<div class="screen-head"><button class="back" onclick="go('home')">← 처음 화면</button><div><p class="step">강사 전용 · 교육생 화면에 띄우지 마세요</p><h2>강사 화면</h2></div>
    <p class="sub">하루 진행 순서, 실습별 예시 답안과 해설, 조별로 쓴 내용, 게임 정답을 한곳에 모았습니다.</p></div>
@@ -879,6 +888,7 @@ function tAns(){
   const tabs=WS.map(x=>`<button class="sopt ${x.id===TP.ws?'on':''}" data-ws="${x.id}">${x.no}</button>`).join('');
   $('#tbody').innerHTML=`<div class="seg" style="margin-bottom:14px">${tabs}</div>
    <div class="wshead"><div><h3>${w.no} · ${w.t} <span class="anspill">예시 답안</span></h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>
+   <div class="dlrow small" style="margin:0 0 6px"><a href="/sheets/sheet-${w.id}.pptx" download>이 실습지 PPT (빈칸)</a><a href="/sheets/sheets-answer.pptx" download>예시 답안 PPT 전체</a></div>
    ${guideHTML(GUIDE[w.id],true)}
    ${w.tip?`<p class="tipline">${w.tip}</p>`:''}
    <div id="tansBody" data-ro="1">${w.blocks.map(b=>b.type==='import'?'':renderBlock(w,b,0,true)).join('')}</div>`;
@@ -898,9 +908,9 @@ function tGame(){
    <div class="tscroll"><table class="wt rt"><thead><tr><th>등급</th><th>맞는 카드</th></tr></thead><tbody>
     ${SEG4.map(g=>`<tr><td><b>${g.n}</b></td><td>${ACTS.filter(a=>a.a===g.k).map(a=>a.t).join(' · ')}</td></tr>`).join('')}</tbody></table></div>
    <h3 class="rh">게임 4 · CRM 예산 나누기 모범 배분</h3>
-   <p>최우수 40,000 · 우수 단골 12,000 · 이탈 위험 6,000 · 일반 4,000 · 휴면 400 = 62,400원 → 효과 − 예산 약 ${MW(eff(MODEL)-624)} (똑같이 나누면 약 ${MW(eff([124.8,124.8,124.8,124.8,124.8])-624)})</p>
-   <h3 class="rh">게임 1 · 디저트 가게 잘 맞는 조합</h3>
-   <p>와그작 케이크 + 20대 인증샷 손님 + 릴스 · 체험 이벤트 중심 / 과일모찌 + 40·50대 선물 손님 + 선물 포장 · 단골 문자 중심. 10대 학생에게 선물 포장, 선물 손님에게 릴스처럼 반응하지 않는 채널에 몰면 이익이 낮게 나옵니다.</p>
+   <p>최우수 400 · 우수 단골 120 · 이탈 위험 60 · 일반 40 · 휴면 4 = 624만 원 → 효과 − 예산 약 ${MW(eff(MODEL)-624)} (똑같이 나누면 약 ${MW(eff([124.8,124.8,124.8,124.8,124.8])-624)})</p>
+   <h3 class="rh">게임 1 · 샌드위치 팝업 잘 맞는 조합</h3>
+   <p>1인 한 끼 + A 빠른 한 끼 + 점심 동선 안내 중심 / 재료 선택형 + B 재료 선택 + 재료 설명 POP 중심 / 4인 나눔 세트 + C 함께 나눔 + 사전 예약 · 회의 간식 안내 중심. 이익은 C 조합이 가장 크게 나옵니다(1회 이익 약 15,400원). 표적과 상품이 어긋나면(예: 1인 한 끼를 C에게) 손님이 크게 줄어듭니다.</p>
    <h3 class="rh">게임 5 · 골든벨 정답</h3>
    <div class="tscroll"><table class="wt rt"><thead><tr><th>번호</th><th>문제</th><th>정답</th></tr></thead><tbody>
     ${QZ.map((q,i)=>`<tr><td class="num c">${i+1}</td><td>${q.q}</td><td><b>${'①②③④'[q.a]}</b> ${q.c[q.a]}</td></tr>`).join('')}</tbody></table></div>`;
@@ -921,11 +931,11 @@ function rfmPage(){
 function rWhat(){
   const c=CUST.find(x=>x[0]==='C01');
   $('#rbody').innerHTML=`<div class="rwrap">
-   <p class="rlead">C01 ~ C20은 <b>가상의 손님 20명에게 붙인 번호</b>입니다. 이름 대신 "손님 1번, 2번…"이라고 부르는 것입니다.<br>숫자는 따로 찾을 필요 없이 <b>워크시트 표 안에 이미 다 들어 있습니다.</b> (달콤상점 앱 회원 20명의 최근 12개월 주문 기록 · 계산 연습용 가상 데이터)</p>
+   <p class="rlead">C01 ~ C20은 <b>가상의 손님 20명에게 붙인 번호</b>입니다. 이름 대신 "손님 1번, 2번…"이라고 부르는 것입니다.<br>숫자는 따로 찾을 필요 없이 <b>워크시트 표 안에 이미 다 들어 있습니다.</b> (해설집 부록 "고객 20명 최근 12개월 거래 데이터" · 백화점 기존 고객 · 계산 연습용 가상 데이터)</p>
    <div class="tscroll"><table class="wt rt"><thead><tr><th>칸</th><th>C01의 값</th><th>뜻</th><th>무엇의 재료</th></tr></thead><tbody>
     <tr><td class="fx">경과일</td><td class="num c">${c[1]}</td><td>마지막으로 산 날이 ${c[1]}일 전</td><td><b>R · 최근성</b></td></tr>
     <tr><td class="fx">횟수</td><td class="num c">${c[2]}</td><td>1년 동안 ${c[2]}번 샀음</td><td><b>F · 빈도</b></td></tr>
-    <tr><td class="fx">금액</td><td class="num c">${MW(c[3])}</td><td>1년 동안 ${MW(c[3])} 썼음</td><td><b>M · 금액</b></td></tr></tbody></table></div>
+    <tr><td class="fx">금액 (만원)</td><td class="num c">${won(c[3])}</td><td>1년 동안 ${MW(c[3])} 썼음</td><td><b>M · 금액</b></td></tr></tbody></table></div>
    <h3 class="rh">계산은 곱셈이 아니라 "줄 세우기"입니다</h3>
    <ol class="rsteps"><li><b>한 가지 칸</b>(경과일 · 횟수 · 금액)만 보고 20명을 줄 세웁니다.</li><li><b>4명씩 끊어</b> 5점 · 4점 · 3점 · 2점 · 1점을 줍니다.</li><li>세 점수를 모아 <b>등급 이름</b>을 붙입니다.</li></ol>
    <p class="rwarn">R만 반대입니다! 경과일은 <b>짧을수록(최근일수록) 5점</b>입니다. 교육생이 가장 많이 틀리는 곳입니다.</p>
@@ -955,7 +965,7 @@ function rFollow(){
     <div><span class="muted">점수</span><b class="num rbig">R${s.R} · F${s.F} · M${s.M}</b></div>
     <div><span class="muted">등급</span><b class="rbig ${ANS[p]==='vip'?'sv':ANS[p]==='risk'?'sr':''}">${SEGNAME[ANS[p]]}</b></div>
     <p>${RFM_WHY[p]}</p></div>
-   ${p==='C05'||p==='C20'?`<p class="note">F 동점: C05와 C20은 둘 다 3회 → 금액이 큰 C05(6.2만 원)를 앞에 둡니다. 그래서 C05는 F2, C20은 F1입니다.</p>`:''}
+   ${p==='C05'||p==='C20'?`<p class="note">F 동점: C05와 C20은 둘 다 3회 → 금액이 큰 C05(620만)를 앞에 둡니다. 그래서 C05는 F2, C20은 F1입니다.</p>`:''}
    ${p==='C14'||p==='C18'?`<p class="note">F 동점: C14와 C18은 둘 다 5회라 둘 다 F2입니다.</p>`:''}
    <p class="note">수업에서는 C01 · C05 · C11 · C15 네 명만 같이 찾아보고, 나머지는 ③ 한눈에 보기로 확인하면 충분합니다.</p></div>`;
   const pk=$('#pick');CUST.forEach(([id])=>{const b=document.createElement('button');b.className='sopt'+(id===p?' on':'')+(['C01','C05','C11','C15'].includes(id)?' star':'');b.textContent=id;b.onclick=()=>{RP.pick=id;rFollow()};pk.appendChild(b)});
@@ -963,7 +973,7 @@ function rFollow(){
 function rAll(){
   const sc=quintile();
   $('#rbody').innerHTML=`<div class="rwrap"><div class="bar"><label class="tog"><input type="checkbox" id="hideTog" ${RP.hide?'checked':''}> 점수 · 등급 가리기 (교육생이 먼저 풀 때)</label></div>
-   <div class="tscroll"><table class="wt rt all"><thead><tr><th>고객</th><th>경과일<br><small>마지막 구매</small></th><th>R</th><th>횟수<br><small>1년</small></th><th>F</th><th>금액<br><small>1년</small></th><th>M</th><th>등급</th><th>한 줄 해석</th></tr></thead><tbody>
+   <div class="tscroll"><table class="wt rt all"><thead><tr><th>고객</th><th>경과일<br><small>마지막 구매</small></th><th>R</th><th>횟수<br><small>1년</small></th><th>F</th><th>금액<br><small>만원</small></th><th>M</th><th>등급</th><th>한 줄 해석</th></tr></thead><tbody>
    ${CUST.map(([id,d,f,m])=>{const s=sc[id];const h=RP.hide;const seg=ANS[id];
      return `<tr class="${RP.pick===id?'rowpick':''}" data-id="${id}"><td class="fx">${id}</td><td class="num c">${d}일 전</td><td class="sc num">${h?'?':s.R}</td><td class="num c">${f}회</td><td class="sc num">${h?'?':s.F}</td><td class="num c">${MW(m)}</td><td class="sc num">${h?'?':s.M}</td><td><b class="${seg==='vip'?'sv':seg==='risk'?'sr':''}">${h?'?':SEGNAME[seg]}</b></td><td>${h?'':RFM_WHY[id]}</td></tr>`}).join('')}
    </tbody></table></div><p class="note">R은 경과일이 짧을수록 5점 · F는 횟수가 많을수록 5점 · M은 금액이 클수록 5점 (20명을 4명씩 끊은 5분위). 줄을 누르면 ② 계산 따라하기에서 그 손님을 보여 줍니다.</p></div>`;
@@ -973,88 +983,83 @@ function rAll(){
 
 /* ================= 예시 · 안내 (guides) ================= */
 const GUIDE={
- w01:{goal:'디저트 하나로 STP(나누기 → 고르기 → 자리 잡기)를 가볍게 먼저 해 봅니다. 본 실습 전에 감을 잡는 몸풀기입니다.',
-  steps:['디저트 하나를 고릅니다. 와그작 케이크든 과일모찌든 상관없습니다.',
-   '이 디저트를 살 만한 손님 무리 3개를 떠올립니다. "나이 + 상황"으로 적으면 쉽습니다. (예: 20대 · 친구와 주말 나들이)',
-   '무리마다 "왜 살까"와 "어디서 알게 될까"를 한 줄씩 적습니다.',
-   '규모(사람이 많은가)와 우리와 맞음(우리 디저트 강점과 맞는가)을 1~5점으로 매깁니다. 합계 1위는 앱이 표에 표시합니다.',
-   '한 무리를 골라 이유를 쓰고, 마지막에 한 줄 포지셔닝을 씁니다.'],
-  formula:'포지셔닝 한 줄 틀 · "(누구)에게, (무엇) 때문에 (어떤) 디저트"',
-  worked:[['와그작 케이크를 고른 조','A 20대 인증샷 손님: 깨는 소리와 장면을 영상으로 찍고 싶어서 삼 → 인스타 릴스로 알게 됨 → 규모 4 · 맞음 5 = 9점으로 1위. 포지셔닝: "새로운 경험을 찍어 올리고 싶은 20대에게, 깨는 소리까지 즐기는 디저트"'],
-   ['과일모찌를 고른 조','A 40·50대 선물 손님: 명절 · 방문 인사, 제철 과일과 고급 포장 때문에 삼 → SNS 선물하기 · 지인 추천으로 알게 됨 → 규모 3 · 맞음 5 = 8점. B 20·30대 데이트 손님(단면 사진, 인스타) 4 · 3 = 7점. C 60대 이상(찹쌀떡에 익숙, 동네 입소문) 3 · 3 = 6점. 포지셔닝: "제철 과일을 정성스럽게 선물하고 싶은 40·50대에게, 계절을 통째로 담은 선물 디저트"']],
-  mistakes:['"모든 연령"처럼 무리를 안 나눈 경우 → 나이와 상황을 붙여 3개로 나누게 합니다.','세 무리가 겹치는 경우(20대 / 대학생 / 젊은 여성) → 서로 다른 이유로 사는 사람들인지 묻습니다.','고른 이유에 디저트 강점이 없는 경우 → "왜 하필 우리 디저트를 사나요?"를 묻습니다.']},
- w02:{goal:'계산 없이 R · F · M을 눈으로 읽는 연습입니다. 오후 실습 ④의 예습입니다.',
-  steps:['먼저 "최근 방문(R)"을 봅니다. 최근에 왔는지, 오래 안 왔는지.','다음 "방문 횟수(F)"를 봅니다. 자주 오는지.','마지막 "쓴 돈(M)"을 봅니다.','세 개를 합쳐 손님 이름을 붙입니다.','손님마다 해 줄 것을 한 가지 씁니다. 할인 쿠폰 말고 먼저 생각합니다.'],
-  table:[['최근에 왔고 · 자주 · 많이','최고 단골','지은, 하윤'],['예전엔 자주 왔는데 최근 방문이 오래됨','떠나려는 손님','민수'],['최근에 처음 옴 (1번)','새 손님','서연'],['자주 오지만 쓰는 돈이 적음','자주 오지만 적게 쓰는 손님','준호'],['오래 안 옴 + 1번 + 적게','잠든 손님','순자']],
-  worked:[['민수를 읽는 법','최근 방문 70일 전(오래됨) · 10번(예전엔 자주) · 15만 원(중간). "예전엔 자주 왔는데 지금 안 온다" → 떠나려는 손님. 가장 먼저 연락할 사람입니다. 해 줄 것: "요즘 안 보이셨네요" 메시지와 함께 불편했던 점 묻기.'],
-   ['준호를 읽는 법','10일 전 · 12번 · 6만 원. 자주 오지만 한 번에 5천 원 정도만 씀 → 키울 손님. 해 줄 것: 케이크 + 음료 세트로 한 번에 더 담게.']],
-  mistakes:['돈을 가장 많이 쓴 지은을 "가장 급한 손님"으로 고르는 경우 → 지은은 잘 오고 있습니다. 급한 건 떠나는 중인 민수입니다.','해 줄 것에 전부 "할인 쿠폰"을 쓰는 경우 → 쿠폰 말고 하나 더 쓰게 합니다.']},
- w1:{goal:'달콤상점 손님을 네 가지 기준으로 나눠 보고, 우리 가게에 가장 쓸모 있는 기준을 고릅니다.',
-  steps:['기준마다 "우리가 쓸 구체적 변수"를 씁니다. 숫자로 뽑을 수 있는 것이어야 합니다. (예: 연령대, 월 방문 횟수)','그 변수로 나눴을 때 생기는 세그먼트를 2~3개 씁니다.','"이 기준이 유효한 이유"에는 나누고 나서 무엇이 달라지는지를 씁니다. (예: 메뉴 구성 · 포장 · 알림 대상이 달라진다)','마지막 칸에 네 기준 중 가장 유효한 것 하나와 이유를 씁니다.'],
-  formula:'좋은 세분화 3조건 · 무리 안은 비슷하게 · 무리 사이는 다르게 · 무리마다 다르게 연락할 수 있게',
-  worked:[['인구통계 줄 예시','변수: 연령대, 가구 구성, 1회 구매 금액 → 세그먼트: ① 20대 친구 · 연인 ② 30·40대 아이 있는 가족 ③ 40·50대 선물 손님 → 이유: 와그작 케이크(체험 · 인증샷)와 과일모찌(선물 · 제철)가 잘 팔리는 손님이 갈려서 메뉴 구성과 포장이 바로 정해집니다.'],
-   ['행동 줄 예시','변수: 월 방문 횟수, 1회 구매 금액, 주문 채널(매장 · 앱 · 배달) → 세그먼트: ① 주 1회 이상 동네 간식 단골 ② 명절 · 기념일에만 오는 선물 세트 손님 ③ 신메뉴 · SNS 유행에만 반응하는 체험 손님 → 이유: 앱 주문 기록에서 바로 뽑히는 "사실"이고, 오후 RFM과 바로 이어집니다.'],
-   ['가장 유효한 기준 예시','행동 기준. 달콤상점은 앱 주문 · 스탬프로 손님의 구매 기록을 갖고 있어 추정이 아닌 데이터로 나눌 수 있고, 나누는 즉시 알림톡 · 앱 푸시로 실행할 수 있습니다.']],
-  mistakes:['"20대 / 30대 / 40대…" 나열만 하고 끝 → 나눈 뒤 메뉴 · 포장 · 알림 중 무엇이 달라지는지 쓰게 합니다.','"VIP / 일반"을 기준으로 씀 → 그건 기준이 아니라 결과(등급)입니다. 무엇으로 VIP가 됐는지 묻습니다.','"감성적인 손님" → 어떤 숫자로 그 사람을 찾을지 변수로 바꾸게 합니다.']},
- w2:{goal:'실습 ①에서 나눈 세그먼트 3개를 같은 잣대로 점수 매기고, 공략할 곳 하나를 고릅니다.',
-  steps:['실습 ①에서 가장 유효했던 기준의 세그먼트 3개를 A · B · C 이름 칸에 옮깁니다.','항목마다 1~5점을 매깁니다. 경쟁 강도는 "경쟁이 약할수록 높은 점수"입니다.','판단 근거 칸에 왜 그 점수인지, 어디서 확인했는지 씁니다.','총점은 앱이 더합니다. 표적화 전략 하나를 누르고 이유를 씁니다.'],
-  formula:'근거 자료 찾는 곳 · 네이버 데이터랩(검색량 추이) / 소상공인 상권정보시스템(동네 인구 · 디저트 가게 수) / 인스타 해시태그 게시물 수 / 배달앱 · 지도 리뷰 / 디저트 트렌드 기사',
-  worked:[['시장 규모 줄 예시','A(동네 간식 단골) 3점 · B(선물 세트) 2점 · C(SNS 체험) 5점. 근거: 신메뉴 해시태그 게시물과 검색량이 가장 크고, 선물 세트 손님은 명절에 몰려 인원이 적습니다.'],
-   ['경쟁 강도 줄 예시 (거꾸로 매기기)','C(SNS 체험)는 유행 디저트 가게가 계속 새로 생겨 경쟁이 가장 셈 → 1점. B(선물 세트)는 제철 과일 · 정성 포장이라 따라 하기 어려움 → 4점.'],
-   ['결론 예시','총점 A 18 · B 20 · C 11 → B를 1순위로. 전략은 차별적: B에 예산을 집중하되 A는 유지, C는 신메뉴 알림 정도로 최소 비용만 씁니다.']],
-  mistakes:['규모가 가장 큰 곳을 무조건 고름 → 규모 5점이어도 수익성 1점이면 이익이 남는지 묻습니다.','세 세그먼트 점수가 다 비슷함 → 항목마다 1점과 5점이 하나씩은 나오게 다시 매깁니다.','경쟁 강도를 거꾸로 매기지 않음 → 경쟁이 셀수록 낮은 점수입니다.']},
- w42:{goal:'게임 2(손님 카드 분류) 결과를 보고, 숫자가 무엇을 말하는지 읽어 씁니다. 계산보다 "그래서 무엇을 할까"가 핵심입니다.',
-  steps:['게임 2 결과 화면을 다시 봅니다.','표의 네 가지 손님에 해당하는 고객 번호를 씁니다.','수치 근거에는 경과일 · 횟수 · 금액을 그대로 옮깁니다.','가장 시급한 조치에는 "누구에게 무엇을 먼저" 할지 씁니다.','아래 앱 계산값(47% · 3.5%)을 보고 예산을 어떻게 나눠야 할지 한두 줄 씁니다.'],
-  worked:[['R · F · M 모두 5점인 고객','C01 · C03 · C09 · C17. 4명이 1년에 184만 원, 전체의 47%. 조치: 새 손님을 데려오는 것보다 이 4명을 지키는 데 먼저 씁니다. 신메뉴 시식회 우선 초대, 한정 케이크 우선 예약.'],
-   ['예전엔 우수했는데 발길이 끊긴 고객','C11 · C18 · C10 · C05, 그중 C11이 우선. C11은 횟수 6회 · 금액 11만 원으로 중간 이상인데 60일째 안 옴(R2). 조치: 복귀 쿠폰 전에 마지막으로 산 메뉴와 남긴 리뷰부터 확인하고 C11부터 사장님이 직접 연락.'],
-   ['숫자 해석 예시','상위 20%가 47%, 하위 20%가 3.5%로 약 13.6배 차이. 그래서 예산을 똑같이 나누면 안 됩니다. 하위 손님은 버리는 게 아니라 사장님이 직접 챙기는 비싼 방법에서 자동 알림톡 같은 싼 방법으로 옮깁니다.']],
-  mistakes:['합계 점수만 보고 C11(8점)을 C15(10점)보다 덜 급하다고 봄 → R이 떨어지는 C11이 더 급합니다.','계산만 쓰고 조치가 없음 → "그래서 누구에게 뭘 먼저?"를 묻습니다.']},
- w5:{goal:'등급마다 목적이 다르니 액션도 달라야 합니다. 남들 다 하는 할인 · 쿠폰 말고 새로운 액션을 하나 이상 넣습니다.',
-  steps:['등급마다 목적을 먼저 씁니다. 최우수 = 지키기, 우수 = 올리기, 일반 = 빈도 늘리기, 이탈 위험 = 되돌리기, 휴면 = 비용 줄이기.','목적에 맞는 액션을 씁니다. 등급이 높을수록 할인보다 경험 · 우선권 · 특별 대접입니다.','채널은 등급이 높을수록 "사장님이 직접"(전화 · 손편지 · 대면), 낮을수록 자동(알림톡 · 앱 푸시)입니다.','예상 비용을 원 단위로 씁니다. 합계는 앱이 더하고, 1년 CRM 예산 62,400원을 넘으면 경고합니다.','성과 지표는 숫자로 씁니다. (예: 재방문율 50%)'],
-  table:[['최우수 (VIP)','문 열기 전 30분 신메뉴 시식회, 파티시에가 직접 쓴 계절 추천 카드'],['우수 단골','앱에 "VIP까지 남은 스탬프" 게이지, 케이크 레터링 서비스 1회 미리 체험'],['이탈 위험','마지막으로 산 메뉴를 기억한 사장님 손편지 · 전화'],['일반','안 먹어 본 메뉴 한 입 맛보기, 음료 페어링 스탬프'],['휴면','생일 달에만 알림톡 1통, 반응하면 일반 등급으로 복귀']],
-  tableHead:['등급','할인 · 쿠폰 말고 이런 아이디어'],
-  worked:[['최우수 줄 예시','목적: 떠나지 않게 지키고 특별하게 대접 / 액션: 신메뉴 시식회 우선 초대, 한정 케이크 우선 예약권, 연 2회 파티시에 클래스 초청 / 채널: 사장님 전화 · 대면 / 비용: 40,000원(1인 1만 원) / 지표: 유지율 100%, 시식회 참석률'],
-   ['예산 배분 예시','40,000 · 12,000 · 6,000 · 4,000 · 400 = 62,400원. 매출의 47%를 만드는 4명에게 65%를 씁니다.']],
-  mistakes:['VIP에게 할인 쿠폰 → VIP는 가격에 반응하지 않습니다. 되돌려 보냅니다.','다섯 등급 액션이 문구만 다르고 내용이 같음 → "이 액션을 다른 등급에 옮겨도 말이 되나?"를 묻습니다.','휴면에 예산을 가장 많이 씀 → 되살릴 근거가 데이터 어디에 있는지 묻습니다.','성과 지표가 "매출 증대" → 숫자와 목표치로 바꾸게 합니다.']},
- w6:{goal:'등급별로 "이 손님이 앞으로 남겨 줄 돈(LTV)"을 구하고, 그 돈의 몇 %까지 써도 되는지 정합니다. 곱셈은 앱이 합니다.',
-  steps:['예상 유지 연수를 씁니다. 오래 남을 등급일수록 깁니다. (예: VIP 5년, 우수 4년, 일반 3년, 이탈 위험 2년)','상한 비율(%)을 씁니다. 보통 10~20%입니다. 승급 가능성이 크면 높게, 불확실하면 낮게.','LTV와 비용 상한은 앱이 계산해 표에 채웁니다. 괄호 안은 1년에 쓸 수 있는 돈입니다.','아래 판단 질문 3개에 숫자를 인용해서 답합니다.'],
-  formula:'LTV = 1년 구매금액 × GP율 25% × 예상 유지 연수 · 비용 상한 = LTV × 상한 비율',
-  worked:[['최우수 계산 예시','46만 × 0.25 × 5년 = LTV 57.5만 원. 상한 10%면 57,500원, 5년으로 나누면 1년에 11,500원까지 1인에게 쓸 수 있습니다.'],
-   ['이탈 위험 계산 예시','8.8만 × 0.25 × 2년 = LTV 4.4만 원. 상한 20%면 8,800원. 되돌리는 데 8,800원 넘게 쓰면 손해입니다.'],
-   ['판단 질문 1 답 예시','지키는 쪽이 이익입니다. 이탈 위험 1명의 LTV는 4.4만 원, 붙잡는 비용 상한은 8,800원으로 5배를 회수합니다. 새 손님은 데려오는 비용이 더 들고 일반 등급에서 시작합니다.']],
-  mistakes:['GP율(25%)을 곱하지 않고 매출을 그대로 LTV로 씀 → LTV는 이익 기준입니다. (앱은 자동으로 곱합니다)','상한 비율을 100%로 씀 → 그러면 남는 돈이 0입니다.','휴면의 유지 연수를 VIP보다 길게 씀 → 순서가 거꾸로입니다.']},
- w7:{goal:'오늘 쓴 실습을 한 장으로 묶습니다. 채점은 7번 한 칸에서만 합니다.',
-  steps:['"앞 실습에서 쓴 내용 불러오기"를 누릅니다. 1 · 2 · 4 · 5 · 6번이 자동으로 채워집니다.','불러온 내용을 두세 문장으로 다듬습니다.','3번 포지셔닝 문장은 이론 시간에 배운 틀로 새로 씁니다.','7번 칸을 새로 씁니다. 아래 틀에 숫자를 넣으면 됩니다.'],
-  formula:'7번 칸 틀 · "첫 구매 후 (며칠) 안에 (무슨 일)이 일어나면 (어디)로 넘긴다. 일어나지 않으면 (무엇)을 한다. 이 손님을 데려오는 비용 상한은 (얼마)다."',
-  worked:[['3번 포지셔닝 예시','특별한 날을 정성스럽게 챙기고 싶은 부산 도심의 30~50대에게 달콤상점은 깨 먹는 재미의 와그작 케이크와 제철 과일을 통째로 담은 과일모찌 덕분에 "눈으로 한 번, 한 입에 또 한 번 기억되는 선물 디저트 가게"다.'],
-   ['7번 예시','첫 구매 후 30일을 온보딩 기간으로 두고, 30일 안에 2회차 구매가 일어나면 정규 관리로 넘깁니다. 2회차가 없으면 광고가 아니라 "월 2회 방문 시 음료 업그레이드"로 재방문을 유도합니다. 새 손님 1명을 데려오는 비용 상한은 일반 등급 LTV 10만 원의 10%인 1만 원입니다.']],
-  mistakes:['"새 손님을 잘 관리해서 VIP로 만든다" → 시점(며칠)과 조건(무슨 일)이 숫자로 없으면 답이 아닙니다.','표적은 선물 세트 손님인데 예산은 일반 등급에 몰림 → 옮겨 적다가 앞뒤가 안 맞는 곳을 찾는 것도 이 실습의 목적입니다.']}
+ w1:{goal:'오늘 분석 범위는 롯데백화점 부산본점 식품관 샌드위치 팝업 방문객입니다. 네 가지 기준으로 나눠 보고, 나눈 뒤 무엇이 달라지는지로 가장 쓸모 있는 기준을 고릅니다.',
+  steps:['분석 범위를 씁니다. 백화점 전체 중 오늘은 식품관 샌드위치 팝업 방문객을 봅니다.','네 줄을 채웁니다. 변수, 나뉘는 고객군, 나눈 뒤 달라지는 결정을 적습니다.','관찰 · 질문 · 기록으로 확인할 수 있고 상품이나 안내가 달라지는 기준을 가장 쓸모 있는 기준으로 고릅니다.','다음 실습 ②에는 여기서 고른 한 기준의 고객군 세 개를 옮깁니다.'],
+  formula:'좋은 세분화 3조건 · 집단 안은 비슷하게(동질성) · 집단 사이는 다르게(이질성) · 집단마다 다르게 접근할 수 있게(접근 가능성)',
+  worked:[['인구통계 줄 예시','기록할 정보: 가구 구성 · 동행 인원 → 혼자 방문 / 아이 동반 / 성인 동행 → 달라지는 결정: 구성 수량 · 포장'],
+   ['지역 줄 예시','출발 지역 · 이동 목적 → 근처 근무 / 부산 거주 / 여행 중 → 픽업 · 휴대 방식'],
+   ['행동 줄 예시 (가장 유효)','이번 구매의 주된 목적 → A 빠른 한 끼 / B 재료 선택 / C 함께 나눔 → 상품 구성 · 수령. 영수증만으로는 목적을 알 수 없으니 짧은 질문으로 확인합니다.'],
+   ['심리 · 생활 줄 예시','중요한 선택 기준을 질문 → 편의 중시 / 재료 중시 / 대접 중시 → 설명 · 광고 문구']],
+  mistakes:['20대 / 30대 / 40대처럼 나열만 함 → "나누면 무엇을 다르게 하나요?"를 묻습니다. 포장 · 구성 · 안내가 달라질 때 씁니다.','세 개 사는 고객은 선물 고객이라고 단정 → 구매 목적을 확인했는지 묻습니다. "직접 드시나요, 나눠 드시나요?"','"프리미엄을 좋아하는 고객" → 어떤 정보로 구분할지 묻습니다. (예: 가격보다 재료를 먼저 본다고 응답)','VIP / 일반을 기준으로 씀 → 기준이 아니라 결과(등급)입니다. 다른 기준을 골라도 분류할 정보와 실행 근거가 있으면 인정합니다.']},
+ w2:{goal:'실습 ①에서 나눈 고객군 A · B · C를 같은 기준으로 점수 매기고, 먼저 공략할 표적 하나와 공략 전략을 고릅니다.',
+  steps:['실습 ①에서 선택한 기준의 세 고객군을 적습니다. 공통 연습은 빠른 한 끼 / 재료 선택 / 함께 나눔입니다.','강의 제공 공통 자료와 점수 약속(아래 표)을 모든 고객군에 똑같이 적용합니다.','점수 옆 판단 근거 칸에 비교한 정보와 출처를 씁니다. 제공 자료를 쓰면 "강의 제공 가상 자료"라고 표시합니다.','총점은 앱이 더합니다. 어느 고객을 먼저 공략할지, 자원을 한 곳에 모을지 나눌지 이유와 함께 정합니다.'],
+  formula:'근거가 같으면 같은 점수를 줍니다. 차이를 만들려고 1점과 5점을 억지로 주지 않습니다. 원본의 DART · 공식 자료 안내는 실제 조사 때의 출처 예시이며, 오늘 가상 자료를 실제 통계로 바꾸어 적지 않습니다.',
+  worked:[['점수 결과 예시','A 빠른 한 끼 15점 · B 재료 선택 16점 · C 함께 나눔 19점. 규모는 A가 가장 크지만(5점) 총점은 C가 높습니다. 규모만 보고 고르면 안 되는 이유입니다.'],
+   ['전략 예시','2주 팝업은 인력 · 매대가 한정 → 집중. C 19점, 개별 포장 · 예약 수령 강점을 근거로 회의 · 모임 간식을 준비하는 고객에 집중합니다.']],
+  mistakes:['규모가 크면 무조건 좋다고 봄 → 판매 가능량과 남는 이익, 운영 능력도 함께 봅니다.','점수가 비슷하면 틀렸다고 봄 → 비슷한 자료라면 비슷한 점수가 나올 수 있습니다. 결정에 중요한 항목을 설명하게 합니다.','"C가 정답"이라고 말함 → "우리 조건에서 C를 고른 이유"를 말하게 합니다. 바꾼 자료나 가정을 밝히면 다른 표적도 됩니다.']},
+ w8:{goal:'점심 전에 만든 시제품으로 품평회를 엽니다. 받은 역할 카드의 고객이 되어 다른 조 상품을 고르고, 우리 조 상품은 목표 고객 역할의 선택으로 평가합니다.',
+  steps:['꺼내서 자르고 가격표 · 안내문과 함께 진열합니다. (5분)','역할별로 선택하고 이유를 기록합니다. 한 사람 한 번, 자기 조 제외, 미구매도 됩니다. (10분)','결과를 해석합니다. 목표 역할 선택률 = 목표 역할이 고른 수 ÷ 투표 가능한 목표 역할 인원. 망설인 이유와 고칠 점 한 가지를 씁니다. (10분)','"방금 한 것이 포지셔닝입니다" · 구매 과정 · 가치 · 포지셔닝 이론을 연결하고 원페이퍼 3번을 고쳐 씁니다.'],
+  formula:'교실 역할 선택은 실제 수요나 구매율이 아닙니다. 총득표보다 목표 고객 역할의 선택과 이유를 봅니다.',
+  worked:[['기록 예시','C 함께 나눔 · 3조 나눔 박스 · 편의(개별 포장) · 4인분이 맞는지 헷갈림 / B 재료 선택 · 미구매 · 내용물 · 재료 표시가 없음'],
+   ['결과 예시','목표 고객 C 함께 나눔 · 투표 가능한 인원 5명 · 고른 수 4명 · 4 ÷ 5 = 80% · 고칠 점: "회의 30분 전 예약 수령"을 안내문과 원페이퍼 3번에 추가']],
+  mistakes:['총득표만 비교함 → 목표 역할이 골랐는지, 왜 골랐는지를 봅니다.','분모를 전체 인원으로 씀 → 자기 조 상품에는 투표할 수 없으므로 "투표 가능한 목표 역할 인원"이 분모입니다.']},
+ w4:{goal:'백화점 기존 고객 20명의 최근 12개월 구매 기록으로 R · F · M 점수를 매기고 등급 이름을 붙입니다. 계산은 곱셈이 아니라 줄 세우기입니다.',
+  steps:['R · 경과일이 짧은 순서로 정렬해 네 명씩 끊어 R5~R1을 줍니다. (R만 방향이 반대!)','F · 구매 횟수가 많은 순서로 네 명씩 F5~F1을 줍니다. 동점은 금액이 큰 쪽을 앞에 둡니다.','M · 구매금액이 큰 순서로 네 명씩 M5~M1을 줍니다.','세 점수를 보고 등급 이름을 붙입니다. 수업에서는 C01 · C05 · C11 · C15 네 명만 함께 찾고 나머지는 참고 답으로 확인합니다.'],
+  formula:'금액 단위는 만원이며 백화점 구매금액입니다. 샌드위치 판매 실적으로 바꾸어 읽지 않습니다.',
+  worked:[['해석 포인트','이 데이터에는 R만 높고 F가 낮은 "신규 고액"이 없습니다. C15 · C14가 가장 가까우며 "성장 여지 있는 일반"으로 보는 편이 정확합니다.'],
+   ['합계보다 R','C11(합계 8)은 R2로 이탈 위험, C15(합계 10)는 R4로 성장 후보입니다.'],
+   ['동점 처리','C14 · C18은 5회, C05 · C20은 3회로 같습니다. 금액이 큰 쪽을 앞에 둡니다.']],
+  mistakes:['R을 거꾸로 매김(지난 날이 길수록 높은 점수) → 가장 많이 틀리는 곳입니다.','등급을 실제 VIP 선정 기준으로 설명함 → 이 수업의 등급은 교육용 분류입니다. R2만으로 실제 이탈을 확정하지 않습니다.']},
+ w42:{goal:'실습 ④의 점수가 무엇을 말하는지 읽고, 사실 → 확인할 정보 → 조건을 붙인 조치 순서로 씁니다.',
+  steps:['사실 먼저 씁니다. 예: C11은 마지막 구매 후 60일, 1년 동안 6회, 구매금액 1,100만원입니다.','확인할 정보를 씁니다. 평소 구매 간격, 마지막 구매 품목, 만족 · 불만 기록.','조건을 붙여 조치를 씁니다. 식품관 관심이 확인되고 안내 대상 조건에 맞으면 팝업 예약 수령을 제안합니다.','아래 계산 세 줄(상위 4명 합계 · 비중 · 하위 4명 합계)을 채우고 무엇이 읽히는지 씁니다.'],
+  formula:'참고 · 고객 20명 구매금액 합계 = 3억 9,120만원 (39,120만원)',
+  worked:[['R · F · M 모두 5점','C01 · C03 · C09 · C17 · 4명 합계 1억 8,400만원 → 관계 유지가 먼저. 선호를 확인하고 식품관 관심이 맞으면 팝업 예약 구성 상담 제안.'],
+   ['계산 예시','5,600 + 4,800 + 4,200 + 3,800 = 1억 8,400만원 → 18,400 ÷ 39,120 × 100 = 47.0% / 하위 4명 520 + 380 + 300 + 150 = 1,350만원 (3.5%)']],
+  mistakes:['"예전엔 우수했는데"를 사실로 씀 → 확인이 필요한 가설입니다. 이전 기간 자료 없이 확정하지 않습니다.','RFM 점수로 샌드위치 취향이나 구매 목적을 정함 → 점수는 거래 기록일 뿐입니다.','47% 대 3.5%를 "하위 고객은 버린다"로 읽음 → 관리 방식과 비용을 나누는 근거입니다.']},
+ w5:{goal:'등급마다 목적이 다르므로 액션도 달라야 합니다. 이번 팝업과 이후 관계 관리에서 무엇을 달성할지, 할인 · 쿠폰 말고 새 액션을 하나 이상 넣어 씁니다.',
+  steps:['목적과 액션: 등급별로 이번 팝업과 이후 관계 관리에서 무엇을 달성할지 씁니다.','대상과 채널: RFM뿐 아니라 구매 목적 · 관심 여부를 확인한다고 적고, 안내 대상의 수신 동의를 확인합니다.','비용과 성과: 대상 수 × 1인당 비용을 계산합니다. 이번 캠페인 예산은 조별 10만원(교육용 가정)입니다.','성과 지표는 대상 · 기간 · 분모를 함께 적습니다. (예: 2주 내 예약 이용 2명 / 대상 4명 = 50%)'],
+  table:[['최우수','관계 유지','선호 구성 확인 · 예약 수령 안내','예약 이용 · 경험 만족'],['우수 단골','관심 확대','관련 구성 · 수령 방법 안내','구매 · 재방문'],['일반','다음 구매 이유 만들기','구매 목적에 맞는 구성 소개','추가 구매'],['이탈 위험 후보','상황 확인 · 재접점','주기 · 품목 확인 후 필요한 제안','반응 · 복귀'],['휴면','비용 대비 효과 확인','관심 · 동의 확인 대상에 소규모 시험','반응 · 실제 비용']],
+  tableHead:['교육용 고객군','목적','팝업과 연결할 제안','볼 지표'],
+  worked:[['예산 배분 예시','최우수 3.2만원 · 우수 단골 2.4만원 · 이탈 위험 2만원 · 일반 1.6만원 · 휴면 0.8만원 = 10만원 (조별 교육용 가정)']],
+  mistakes:['팝업에 관심이 없는 고객에게 같은 내용을 일괄 제안 → 등급에 관계없이 고객의 필요가 우선입니다.','성과 지표가 "매출 증대" → 대상 · 기간 · 분모가 있는 숫자로 바꾸게 합니다.','동의 없이 일괄 발송 · 구매 기록으로 민감한 사정 추정 → 제외합니다. 야간(21~08시) 발송도 하지 않습니다.']},
+ w6:{goal:'등급별 고객 생애가치(LTV)를 단순 추정하고, 획득 · 유지 비용을 검토할 상한을 정합니다. 곱셈은 앱이 합니다.',
+  steps:['구매금액은 실습 ④에서 등급별 네 명 평균을 씁니다. (최우수 4,600 · 우수 2,625 · 이탈 위험 880 · 일반 1,337.5만원)','GP율은 원본 제시값 25%입니다. 실제 백화점 수익률이라는 뜻은 아닙니다.','유지 연수와 예산 검토 비율은 오늘 정할 가정입니다. (예: VIP 5년 10% / 우수 4년 15% / 이탈 2년 20% / 일반 3년 10%)','아래 판단 질문 세 개에 숫자를 인용해서 답합니다.'],
+  formula:'LTV = 연간 구매금액 × GP율 25% × 예상 유지 연수 · 비용 상한 = LTV × 검토 비율',
+  worked:[['최우수 계산 예시','4,600만원 × 25% × 5년 = 5,750만원 → × 10% = 575만원 / 5년. 575만원은 설정한 검토 기준입니다. 이 금액을 쓰면 반드시 이익이 난다거나 넘으면 바로 손해라고 말할 수 없습니다.'],
+   ['팝업과 연결할 때','백화점 전체에서 예상한 고객 가치를 이번 팝업 하나의 성과나 쓸 수 있는 예산으로 보지 않습니다.']],
+  mistakes:['GP율을 곱하지 않고 매출을 그대로 LTV로 씀 → 매출총이익 기준입니다. (앱은 자동으로 곱합니다)','"상한 초과"를 "실제 손실"로 말함 → 가정이 달라지면 결과도 달라집니다.','휴면 매출 비중 3.5%만으로 회복 가치가 없다고 단정 → 늘어날 이익과 비용을 비교해야 합니다.']},
+ w7:{goal:'오늘 쓴 실습을 한 장으로 묶습니다. 1~3번은 오전 샌드위치 기획(소싱 제안서), 4~7번은 오후 백화점 고객 관리입니다.',
+  steps:['"앞 실습에서 쓴 내용 불러오기"를 누릅니다. 1 · 2 · 4 · 5 · 6번이 자동으로 채워집니다.','1~3번: 선택한 고객과 상품 약속이 같은지 확인합니다. 3번 포지셔닝은 품평회 뒤 고쳐 씁니다.','4~6번: 금액 단위와 데이터 범위, 백화점 전체 가치와 팝업 비용을 구분했는지 확인합니다.','7번: 신규 · 기존 고객을 잇는 운영안을 대상 · 기간 · 행동 · 성과 지표로 씁니다.'],
+  formula:'3번 포지셔닝 틀 · [누구]에게 우리 샌드위치는 [이유] 때문에 [어떤 자리]이다.',
+  worked:[['3번 포지셔닝 예시','회의 간식을 준비하는 고객에게, 우리 샌드위치는 개별 포장과 예약 수령 덕분에 "준비 부담을 줄여 주는 회의 간식 세트"이다.'],
+   ['7번 예시','첫 구매 후 30일 내 식품관 두 번째 구매 여부를 확인하고, 없으면 구매 목적에 맞는 다음 제안을 합니다. 성과 = 첫 구매자 중 30일 내 두 번째 구매자 비율과 실제 안내 비용.']],
+  mistakes:['회원 자동 가입 · 등급 자동 부여 · 실제 롯데 CRM 인계 규칙처럼 씀 → 수업용 운영안이라고 밝힙니다.','7번만 보고 끝냄 → 앞뒤 연결도 봅니다. 점수와 문장을 옮긴 뒤 서로 모순되는 부분을 고칩니다.']}
 };
 const GGUIDE={
- g2:{goal:'디저트 · 손님 · 광고 채널이 서로 맞아야 장사가 된다는 걸 몸으로 느끼는 게임입니다.',
-  steps:['디저트 하나를 누릅니다.','손님 무리 하나를 누릅니다. (Targeting)','광고비 100만 원을 다섯 채널에 슬라이더로 나눕니다. 합이 100만 원을 넘으면 버튼이 잠깁니다.','"한 달 영업해 보기"를 누르면 손님 수 · 재방문율 · 매출 · 이익과 피드백이 나옵니다.','아래 회색 글씨에 같은 조합으로 낼 수 있는 최고 이익과 우리 조 수준(%)이 나옵니다.'],
-  worked:[['잘 맞는 예','와그작 케이크 + 20대 인증샷 손님 + 릴스 50 · 체험 40 · 단골 문자 10 → 이 조합의 최고 이익에 가깝습니다. 20대는 짧은 영상과 직접 깨 보는 체험에 가장 잘 반응하기 때문입니다.'],
-   ['안 맞는 예','과일모찌 + 10대 학생 + 선물 포장에 100만 원 → 손해입니다. 10대는 선물 포장에 반응하지 않고, 과일모찌와 10대의 궁합도 낮습니다.'],
-   ['토론 질문','"같은 디저트인데 왜 우리 조만 이익이 적었을까?" → 고른 손님이 반응하는 채널에 돈을 썼는지 비교해 봅니다.']],
-  mistakes:['돈을 다섯 채널에 똑같이 20만 원씩 → 결과가 어중간합니다. 손님에 맞는 곳에 몰아 보게 합니다.','단골 문자에 0원 → 재방문율이 떨어집니다.']},
+ g2:{goal:'샌드위치 팝업의 대표 상품 · 표적 손님 · 운영비 쓰는 곳이 서로 맞아야 이익이 난다는 걸 몸으로 느끼는 워밍업입니다.',
+  steps:['대표 상품 하나를 누릅니다.','표적 손님 하나를 누릅니다. (Targeting)','운영 · 홍보비 100만 원을 다섯 곳에 슬라이더로 나눕니다. 합이 100만 원을 넘으면 버튼이 잠깁니다.','"2주 팝업 운영해 보기"를 누르면 구매 손님 수 · 재방문 비율 · 매출 · 남은 돈이 나옵니다.','회색 글씨에 같은 조합으로 낼 수 있는 최고 이익과 우리 조 수준(%)이 나옵니다.'],
+  worked:[['잘 맞는 예','4인 나눔 세트 + C 함께 나눔 + 사전 예약 · 회의 간식 안내에 몰아 쓰기 → 이익이 가장 크게 나옵니다. 1회 이익(약 15,400원)이 크고, C는 예약 안내에 가장 잘 반응합니다.'],
+   ['안 맞는 예','1인 한 끼 샌드위치 + C 함께 나눔 → 손님이 크게 줄어듭니다. 회의 간식 네 명분이 필요한 손님에게 1인용은 맞지 않습니다.'],
+   ['토론 질문','"손님이 가장 많은 A를 골랐는데 왜 이익은 C가 더 클까?" → 규모 · 1회 이익 · 준비 여건을 함께 봐야 하는 이유입니다.']],
+  mistakes:['다섯 곳에 똑같이 20만 원씩 → 결과가 어중간합니다. 표적 손님이 반응하는 곳에 몰아 보게 합니다.','손님 수만 보고 A를 고름 → 실습 ②의 수익성 · 자사 적합성 항목과 연결합니다.']},
  g1:{goal:'고객 20명을 다섯 등급으로 나눕니다. 점수 계산은 앱 버튼이 해 주고, 조는 "이 사람은 누구인가"만 판단합니다.',
   steps:['카드 한 장을 누르고, 오른쪽 바구니를 누르면 들어갑니다. 잘못 넣으면 카드를 다시 누르고 다른 바구니를 누르면 됩니다.','막히면 "앱이 R · F · M 점수 계산하기"를 눌러 R5 · F4 같은 점수를 봅니다.','20장을 다 넣고 "채점하기"를 누르면 맞은 카드는 초록, 틀린 카드는 빨강으로 바뀌고 매출 비중 그래프가 나옵니다.'],
   table:[['R5 F5 M5','최우수 (VIP)','C01 · C03 · C09 · C17'],['R3~4 F4 M4','우수 단골','C02 · C06 · C12 · C19'],['R3~4 F2~3 M2~3','일반 (성장 여지)','C04 · C08 · C14 · C15'],['R2 F2~3 M2~3','이탈 위험','C05 · C10 · C11 · C18'],['R1 F1 M1','휴면','C07 · C13 · C16 · C20']],
   tableHead:['점수 모양','바구니','정답 카드'],
-  worked:[['C11과 C15를 비교하는 예','C11: 60일 전 · 6회 · 11만 원 → R2 F3 M3(합 8). C15: 22일 전 · 8회 · 16만 원 → R4 F3 M3(합 10). 합계만 보면 비슷하지만 C11은 R이 떨어져 "떠나는 중", C15는 R이 살아 있어 "키울 손님"입니다. 합계보다 R을 먼저 봅니다.'],
+  worked:[['C11과 C15를 비교하는 예','C11: 60일 전 · 6회 · 1,100만 → R2 F3 M3(합 8). C15: 22일 전 · 8회 · 1,600만 → R4 F3 M3(합 10). 합계만 보면 비슷하지만 C11은 R이 떨어져 "떠나는 중", C15는 R이 살아 있어 "키울 손님"입니다. 합계보다 R을 먼저 봅니다.'],
    ['R 점수 매기는 법','R은 "마지막 구매 후 지난 날"이 짧을수록 5점입니다. 5일 · 8일 · 10일 · 12일인 4명이 R5, 그다음 4명이 R4 … 이런 식으로 4명씩 끊습니다. 앱 버튼이 이걸 대신합니다.']],
   mistakes:['R을 거꾸로 생각함(지난 날이 길수록 높은 점수) → 가장 많이 틀리는 곳입니다.','돈을 많이 쓴 순서로만 나눔 → R이 떨어진 사람을 놓칩니다.']},
  g4:{goal:'CRM 액션 카드 13장을 알맞은 등급에 붙이고, 쓰면 안 되는 카드는 버립니다. 등급마다 새 아이디어를 한 줄씩 쓰면 보너스를 받습니다.',
   steps:['위쪽 카드를 누르고 아래 등급 칸을 누르면 붙습니다. 잘못 붙인 카드는 칸 안에서 다시 누르면 빠집니다.','효과가 없거나 역효과인 카드는 "쓰지 않을 액션"에 넣습니다.','등급마다 입력칸에 할인 · 쿠폰이 아닌 새 아이디어를 씁니다. 할인 · 쿠폰 · 적립 · %가 들어가면 보너스가 없습니다.','"채점하기"를 누르면 정답과 등급별 목적이 나옵니다.'],
-  table:[['최우수 (VIP)','신메뉴 시식회 우선 초대, 한정 케이크 우선 예약권, 파티시에 클래스 초청','지키기'],['우수 단골','"VIP까지 남은 스탬프" 안내, 레터링 서비스 미리 체험','올리기'],['일반','월 2회 방문 시 음료 업그레이드, 안 먹어 본 메뉴 맛보기','빈도 늘리기'],['이탈 위험','마지막 메뉴 확인 후 사장님 전화, 30일 한정 복귀 혜택','되돌리기'],['휴면','알림톡 · 앱 푸시 자동 발송만','비용 줄이기'],['쓰지 않을 액션','전 등급 20% 할인 문자, 휴면에 유료 광고, VIP에게 할인 쿠폰','역효과']],
+  table:[['최우수 (VIP)','선호 구성 확인 · 예약 수령 상담, 신상품 · 한정 구성 우선 안내, 초청 시식 행사','관계 유지'],['우수 단골','"VIP까지 남은 금액" 안내, 선호 재료 구성 체험','관심 확대'],['일반','구매 목적에 맞는 구성 소개, 안 사 본 식품관 카테고리 체험','다음 구매 이유'],['이탈 위험','구매 주기 · 최근 품목 확인 후 개별 연락, 30일 한정 복귀 혜택','상황 확인 · 재접점'],['휴면','관심 확인 대상에 앱 안내 1회만','비용 대비 반응 확인'],['쓰지 않을 액션','전 등급 20% 할인 문자, 휴면에 유료 광고, VIP에게 할인 쿠폰','역효과']],
   tableHead:['등급','맞는 카드','목적'],
-  worked:[['왜 "VIP에게 할인 쿠폰"은 버릴까','VIP는 가격보다 대접을 봅니다. 할인 문자는 "나를 일반 손님처럼 대한다"는 느낌을 줍니다.'],['새 아이디어 예','VIP: 문 열기 전 30분 시식회 / 우수: 앱에 승급 스탬프 게이지 / 일반: 음료 페어링 스탬프 / 이탈 위험: 사장님 손편지 / 휴면: 생일 달 알림톡 1통']],
+  worked:[['왜 "VIP에게 할인 쿠폰"은 버릴까','VIP는 가격보다 대접을 봅니다. 할인 문자는 "나를 일반 손님처럼 대한다"는 느낌을 줍니다.'],['새 아이디어 예','VIP: 팝업 오픈 전 선호 구성 예약 상담 / 우수: 선호 재료 구성 미리 맛보기 / 일반: 회의 간식 4인 세트 소개 / 이탈 위험: 최근 품목 확인 후 담당자 연락 / 휴면: 관심 확인 후 앱 안내 1회']],
   mistakes:['모든 칸에 할인 이야기 → "쿠폰 말고 하나 더"를 요구합니다.']},
- g3:{goal:'1년 CRM 예산 62,400원을 다섯 등급에 나눠 1년 뒤 효과가 가장 크게 나오게 합니다. 등급마다 LTV로 정한 1년 한도가 있습니다.',
-  steps:['처음에는 똑같이 나눠져 있습니다. 슬라이더로 등급별 금액을 바꿉니다.','한도를 넘으면 빨간 글씨와 빨간 막대가 뜹니다.','위쪽 "효과 − 예산"이 클수록 잘 나눈 것입니다. 합계가 정확히 62,400원이어야 점수를 넣을 수 있습니다.','"모범 배분 보기"를 누르면 해설집 배분(4만 · 1.2만 · 6천 · 4천 · 400원)으로 바뀝니다.'],
-  worked:[['똑같이 나눈 경우','12,480원씩 → 효과 − 예산 약 53만 원. 이탈 위험 · 일반 · 휴면은 한도를 넘어 돈이 새고, VIP에는 모자랍니다.'],
-   ['모범 배분','4만 · 1.2만 · 6천 · 4천 · 400원 → 약 61.7만 원. 매출의 47%를 만드는 VIP 4명에게 먼저 쓰고, 휴면에는 자동 발송 비용만 남깁니다.'],
-   ['휴면에 몰아준 경우','휴면에 2만 원 넘게 → 가장 낮게 나옵니다. 휴면 4명의 매출은 전체의 3.5%뿐이라 돈을 써도 돌아오는 게 작습니다.']],
+ g3:{goal:'624만 원을 다섯 등급에 나눠 1년 뒤 효과가 가장 크게 나오게 합니다. 등급마다 LTV로 정한 1년 한도가 있습니다.',
+  steps:['처음에는 똑같이 나눠져 있습니다. 슬라이더로 등급별 금액을 바꿉니다.','한도를 넘으면 빨간 글씨와 빨간 막대가 뜹니다.','위쪽 "효과 − 예산"이 클수록 잘 나눈 것입니다. 합계가 정확히 624만 원이어야 점수를 넣을 수 있습니다.','"모범 배분 보기"를 누르면 해설집 배분(400 · 120 · 60 · 40 · 4)으로 바뀝니다.'],
+  worked:[['똑같이 나눈 경우','124만 원씩 → 효과 − 예산 약 5,300만 원. 이탈 위험 · 일반 · 휴면은 한도를 넘어 돈이 새고, VIP에는 모자랍니다.'],
+   ['모범 배분','400 · 120 · 60 · 40 · 4 → 약 6,170만 원. 매출의 47%를 만드는 VIP 4명에게 먼저 쓰고, 휴면에는 자동 발송 비용만 남깁니다.'],
+   ['휴면에 몰아준 경우','휴면에 200만 원 넘게 → 가장 낮게 나옵니다. 휴면 4명의 매출은 전체의 3.5%뿐이라 돈을 써도 돌아오는 게 작습니다.']],
   mistakes:['"다 똑같이 나눠야 공평하다" → 47% 대 3.5%를 다시 보여 줍니다.']},
  g5:{goal:'오늘 배운 내용을 12문제로 복습합니다. 사후평가 4~9번(STP · 세분화 · RFM · CRM · LTV · VIP)과 이어집니다.',
   steps:['문제를 화면에 띄우고, 조별로 보드나 종이에 번호를 씁니다. (10초)','"정답 보기"를 누르면 정답과 해설이 나옵니다.','맞힌 조 버튼을 모두 누릅니다. 누를 때마다 1점씩 올라가고, 다시 누르면 취소됩니다.','"다음 문제"로 넘어갑니다.'],
@@ -1066,7 +1071,7 @@ function studentWsGuide(w){
   return `<div class="sguide"><b>이렇게 활동합니다</b><ol>
    <li><b>강사님 설명</b>을 먼저 듣습니다.</li>
    <li>조원 모두 한 번씩 의견을 말하고 <b>충분히 토론</b>합니다.</li>
-   <li>근거가 필요하면 <b>검색</b>합니다. (기사 · SNS 해시태그 · 배달앱 · 지도 리뷰 · 네이버 데이터랩 · 소상공인 상권정보)</li>
+   <li>근거가 필요하면 <b>검색</b>합니다. (강의 제공 가상 자료 · 이론 슬라이드 · 공식 사이트 · 기사)</li>
    <li>정답보다 <b>우리 조의 생각과 근거</b>로 칸을 채웁니다. 채운 만큼 점수가 올라갑니다.</li></ol>
    ${g?`<div class="bar" style="margin-top:10px"><button class="btn ghost" onclick="go('${g}')">워밍업 · ${esc(unitName(g))} 먼저 해 보기</button></div>`:''}</div>`;
 }
@@ -1085,98 +1090,117 @@ function guideHTML(g,open){
 const T=(k,a,t='text')=>({k,a,t});           // input cell: key, answer, type
 const N=(k,a)=>({k,a,t:'num'});
 const WS=[
- {id:'w01',no:'실습 0-1',t:'디저트 가게 타깃 잡기',time:'20분',sub:'와그작 케이크 또는 과일모찌 중 하나를 골라, 손님 무리를 나누고 한 무리를 고릅니다.',
-  blocks:[
-   {type:'choice',k:'dessert',label:'우리 조가 고른 디저트',opts:['와그작 케이크','과일모찌'],a:'와그작 케이크'},
-   {type:'table',head:['손님 무리','누구인가 (나이 · 상황)','왜 살까','어디서 알게 될까','규모 (1~5)','우리와 맞음 (1~5)'],w:[.7,2,2.2,1.6,.8,.9],
-    rows:[['A',T('a_who','20대 · 친구와 · 주말'),T('a_why','깨는 소리와 장면을 영상으로 찍어 올리려고'),T('a_ch','인스타 릴스 · 틱톡'),N('a_s','4'),N('a_f','5')],
-          ['B',T('b_who','10대 학생 · 방과 후'),T('b_why','친구들 사이 화제라서, 신기해서'),T('b_ch','유튜브 쇼츠'),N('b_s','4'),N('b_f','3')],
-          ['C',T('c_who','30·40대 부모 · 아이 생일'),T('c_why','아이가 좋아해서, 함께 깨 보는 체험'),T('c_ch','맘카페 · 지인 추천'),N('c_s','3'),N('c_f','3')]],
-    calc:'w01'},
-   {type:'field',k:'pick',label:'우리가 고른 무리와 이유',a:"A 무리. 규모도 크고, '깨는 경험을 찍어 올리는' 이유가 이 디저트의 강점과 가장 잘 맞습니다. 사진 찍을 자리와 소리가 핵심입니다."},
-   {type:'field',k:'pos',label:'한 줄 자리 잡기 (포지셔닝)',a:"'새로운 경험을 찍어 올리고 싶은 20대에게, 깨는 소리까지 즐기는 디저트'",line:true}]},
- {id:'w02',no:'실습 0-2',t:'디저트 가게 장부 읽기',time:'15분',sub:'최근 6개월 앱 주문 기록입니다. 손님을 나누고, 손님마다 챙길 방법을 하나씩 적습니다. (연습용 가상 데이터)',
-  blocks:[
-   {type:'table',head:['손님','최근 방문 (R)','6개월 방문 (F)','6개월 쓴 돈 (M)','이 손님은?','무엇을 해 줄까? (할인 쿠폰 말고)'],w:[.7,1,1,1,1.5,2.6],
-    rows:[['지은','3일 전','20번','30만 원',T('j1','최고 단골'),T('j2','신메뉴 시식회에 먼저 초대')],
-          ['민수','70일 전','10번','15만 원',T('m1','떠나려는 손님'),T('m2','"요즘 안 보이셨네요" 메시지 + 불편했던 점 묻기')],
-          ['서연','5일 전','1번','4만 원',T('s1','새 손님'),T('s2','두 번째 방문 때 쓰는 음료 쿠폰')],
-          ['준호','10일 전','12번','6만 원',T('u1','자주 오지만 적게 쓰는 손님'),T('u2','케이크 + 음료 세트로 한 번에 더 담게')],
-          ['하윤','2일 전','14번','21만 원',T('h1','최고 단골'),T('h2','시즌 한정 메뉴 예약권')],
-          ['순자','150일 전','1번','1만 원',T('o1','잠든 손님'),T('o2','계절 신메뉴 소식 문자 한 통만')]]},
-   {type:'field',k:'first',label:'가장 먼저 연락할 손님은 누구이고, 왜 그런가요?',a:'민수입니다. 예전엔 자주 왔는데 70일째 발길이 끊겼습니다. 돈을 가장 많이 쓴 지은이 아니라, 떠나는 중인 손님이 제일 급합니다.'}]},
- {id:'w1',no:'실습 ①',t:'고객 세분화 기준 설계',time:'35분',sub:'네 가지 기준으로 달콤상점 손님을 나누고, 가장 유효한 기준을 고릅니다. 검색으로 찾은 숫자(동네 인구 · 검색량 · 리뷰 수 등)를 근거로 쓰세요.',
+ {id:'w1',no:'실습 ①',t:'고객 세분화 기준 설계',time:'35분',sub:'네 가지 기준으로 백화점 고객을 나누고, 가장 유효한 기준을 고르십시오. 오늘 분석 범위: 롯데백화점 부산본점 식품관 샌드위치 팝업 방문객.',
   blocks:[
    {type:'table',head:['세분화 기준','우리가 쓸 구체적 변수','나뉘는 세그먼트 (2~3개)','이 기준이 유효한 이유'],w:[1,2,2.3,2.5],
-    rows:[['인구통계',T('d_v','연령대, 가구 구성, 1회 구매 금액','area'),T('d_s','① 20대 친구·연인 ② 30·40대 아이 있는 가족 ③ 40·50대 선물 손님','area'),T('d_r','어떤 디저트를 어떻게 포장해 팔지가 바로 갈립니다. 와그작 케이크는 ①②, 과일모찌 선물 세트는 ③과 잘 맞습니다.','area')],
-          ['지역',T('g_v','가게까지 거리 (걸어서 10분 이내 / 차로 20분 / 택배·배달)','area'),T('g_s','① 가게 근처 직장인·주민 ② 주말에 일부러 찾아오는 시내 손님 ③ 택배 선물 세트 주문 손님','area'),T('g_r','근처 손님은 자주·조금, 먼 손님은 가끔·많이 사서 알림과 혜택 설계가 달라집니다.','area')],
-          ['행동',T('b_v','월 방문 횟수, 1회 구매 금액, 주문 채널(매장·앱·배달), 주로 사는 메뉴','area'),T('b_s','① 주 1회 이상 동네 간식 단골 ② 명절·기념일 선물 세트 손님 ③ 신메뉴·SNS 유행 체험 손님','area'),T('b_r','앱 주문 기록에서 바로 뽑히는 사실이며, 뒤의 RFM 분석과 곧바로 이어집니다.','area')],
-          ['심리 · 라이프스타일',T('p_v','사는 이유(인증샷/선물/간식/기분 전환), 가격 민감도, 새것 선호','area'),T('p_s','① 인증샷·경험형 ② 정성 선물형 ③ 가성비 간식형','area'),T('p_r','왜 사는지를 알려 주어 SNS 문구, 매장 사진 자리, 포장 디자인의 근거가 됩니다.','area')]]},
-   {type:'field',k:'best',label:'네 기준 중 우리에게 가장 유효한 것과 그 이유',a:"행동 기준(앱 주문 데이터). 스탬프·앱 주문으로 손님의 실제 구매 기록이 있어 추정이 아닌 데이터로 나눌 수 있고, 나눈 즉시 알림톡·앱 푸시로 실행됩니다. 다만 '왜 사는지'는 알 수 없어 심리 기준(인증샷·선물)을 보조로 얹습니다."}],
-  tip:'좋은 세분화의 조건 · 집단 안은 비슷하고, 집단 사이는 다르며, 각 집단에 다르게 접근할 수 있어야 합니다.'},
- {id:'w2',no:'실습 ②',t:'세분시장 평가와 표적 선정',time:'35분',sub:'세 세그먼트를 같은 기준으로 5점 척도 점수화하고 하나를 고릅니다. 점수 근거는 검색량 · 리뷰 · 상권 정보 등 실제 자료로 답니다. 총점은 앱이 더합니다.',
+    rows:[['인구통계',T('d_v','가구 구성 · 자녀 유무, 성인 가구원 수','area'),T('d_s','① 1인 가구 ② 자녀 동거 가구 ③ 성인만 사는 다인 가구','area'),T('d_r','구성 수량과 개별 포장 선호가 달라집니다.','area')],
+          ['지역',T('g_v','출발지에서 식품관까지 이동 시간 (10분 이내 / 11~30분 / 30분 초과)','area'),T('g_s','① 가까운 직장 · 거주 ② 부산 시내 ③ 원거리 · 여행 중','area'),T('g_r','수령 시간과 들고 가는 방식(휴대 포장)이 달라집니다.','area')],
+          ['행동',T('b_v','이번 구매의 주된 목적 (짧은 질문으로 확인)','area'),T('b_s','A 빠른 한 끼 B 재료 선택 C 함께 나눔','area'),T('b_r','내용물 · 수량 · 포장 · 예약 수령이 바로 달라집니다.','area')],
+          ['심리 · 라이프스타일',T('p_v','고를 때 가장 중요하게 보는 것 (질문)','area'),T('p_s','① 편의 중시 ② 재료 중시 ③ 대접 중시','area'),T('p_r','안내 문구에서 먼저 말할 장점이 달라집니다.','area')]]},
+   {type:'field',k:'best',label:'네 기준 중 우리에게 가장 유효한 것과 그 이유',a:'선택: 행동 기준(이번 구매의 주된 목적). ① 짧은 질문으로 바로 확인할 수 있습니다. ② 목적에 따라 구성 · 포장 · 수령 방식이 바로 달라집니다. ③ 구매 개수만으로 목적을 단정하지 않고, 구매 시간 · 수량은 보조 정보로 씁니다. ④ 실습 ②에는 A · B · C를 그대로 옮깁니다.'}],
+  tip:'좋은 세분화의 조건 · 집단 안은 비슷하고(동질성), 집단 사이는 다르며(이질성), 각 집단에 다르게 접근할 수 있어야(접근 가능성) 합니다.'},
+ {id:'w2',no:'실습 ②',t:'세분시장 평가와 표적 선정',time:'35분',sub:'세 개 세그먼트를 같은 기준으로 점수화하고 하나를 고르십시오. 오늘은 강의 제공 가상 자료와 점수 약속으로 비교하고, 출처 칸에 "강의 제공 가상 자료"라고 적습니다. 총점은 앱이 더합니다.',
   blocks:[
-   {type:'table',head:['세그먼트 이름','A','B','C'],w:[1.4,2,2,2],rows:[['이름',T('na','주1회 동네 간식 단골'),T('nb','명절·기념일 선물 세트'),T('nc','SNS 신메뉴 체험족')]]},
+   {type:'info',html:`<b>실습 ②에 제공하는 공통 자료 · 모든 수치는 수업용 가정입니다</b>
+    <div class="tscroll"><table class="wt rt"><thead><tr><th>비교 정보</th><th>A 빠른 한 끼</th><th>B 재료 선택</th><th>C 함께 나눔</th></tr></thead><tbody>
+    <tr><td class="fx">예상 구매 기회 / 하루</td><td>120건</td><td>70건</td><td>40건</td></tr>
+    <tr><td class="fx">수요 증가율 가정</td><td>5%</td><td>12%</td><td>8%</td></tr>
+    <tr><td class="fx">직접 비교할 대안 수</td><td>8개</td><td>4개</td><td>2개</td></tr>
+    <tr><td class="fx">1회 판매 예상 매출총이익</td><td>약 4,100원 (7,500원)</td><td>약 5,200원 (9,500원)</td><td>약 15,400원 (4인 28,000원)</td></tr>
+    <tr><td class="fx">우리 준비 여건</td><td>빠른 제조는 보통</td><td>재료 설명 준비는 보통</td><td>개별 포장 · 예약 수령에 강점</td></tr></tbody></table></div>
+    <b style="display:block;margin-top:10px">점수 약속 · 근거가 같으면 같은 점수</b>
+    <div class="calcrow"><span>시장 규모</span><span>하루 50건 미만 2점 / 50~99건 3점 / 100건 이상 5점</span></div>
+    <div class="calcrow"><span>성장 잠재력</span><span>증가율 5% 미만 2점 / 5~9% 3점 / 10~14% 4점 / 15% 이상 5점</span></div>
+    <div class="calcrow"><span>경쟁 강도</span><span>대안 6개 이상 2점 / 3~5개 3점 / 1~2개 4점 / 없음 5점</span></div>
+    <div class="calcrow"><span>자사 적합성</span><span>준비 부족 1점 / 보통 3점 / 바로 실행할 강점 5점</span></div>
+    <div class="calcrow"><span>수익성</span><span>1회 이익 3천 미만 1점 / 3천~4,999원 2점 / 5천~7,999원 3점 / 8천~14,999원 4점 / 1만 5천원 이상 5점</span></div>`},
+   {type:'table',head:['세그먼트 이름','A','B','C'],w:[1.4,2,2,2],rows:[['이름',T('na','빠른 한 끼'),T('nb','재료 선택'),T('nc','함께 나눔')]]},
    {type:'table',head:['평가 항목 (각 5점)','A','B','C','판단 근거 (자료 출처)'],w:[2,.8,.8,.8,4],
-    rows:[['시장 규모',N('s1a','3'),N('s1b','2'),N('s1c','5'),T('s1r','SNS 체험족이 인원수로는 가장 많고(해시태그·검색량), 선물 세트 손님이 가장 적습니다.')],
-          ['성장 잠재력',N('s2a','4'),N('s2b','4'),N('s2c','2'),T('s2r','체험족은 유행이 지나면 떠나 매출로 쌓이지 않습니다. 선물 수요는 명절마다 다시 돌아옵니다.')],
-          ['경쟁 강도 (낮을수록 높은 점수)',N('s3a','3'),N('s3b','4'),N('s3c','1'),T('s3r','체험족은 새로 생기는 유행 디저트 가게와 정면 경쟁, 선물 세트는 제철 과일·정성 포장이 방어벽.')],
-          ['자사와의 적합성',N('s4a','4'),N('s4b','5'),N('s4c','2'),T('s4r','우리 강점은 제철 과일과 정성 포장, 가격 경쟁은 강점이 아닙니다.')],
-          ['수익성 (객단가 · 빈도)',N('s5a','4'),N('s5b','5'),N('s5c','1'),T('s5r','체험족은 한 번 사고 끝나 재구매가 낮고, 선물 세트는 1회 구매 금액이 큽니다.')]],
+    rows:[['시장 규모',N('s1a','5'),N('s1b','3'),N('s1c','2'),T('s1r','예상 구매 기회: 하루 120 / 70 / 40건 (강의 제공 가상 자료)')],
+          ['성장 잠재력',N('s2a','3'),N('s2b','4'),N('s2c','3'),T('s2r','수요 증가율 가정: 5% / 12% / 8%')],
+          ['경쟁 강도 (낮을수록 높은 점수)',N('s3a','2'),N('s3b','3'),N('s3c','4'),T('s3r','직접 비교할 대안: 8개 / 4개 / 2개 (대안이 적을수록 높은 점수)')],
+          ['자사와의 적합성',N('s4a','3'),N('s4b','3'),N('s4c','5'),T('s4r','빠른 제조 · 재료 설명은 보통, 개별 포장 · 예약 수령은 준비된 강점')],
+          ['수익성 (객단가 · 빈도)',N('s5a','2'),N('s5b','3'),N('s5c','5'),T('s5r','1회 매출총이익 약 4,100 / 5,200 / 15,400원 (원가율 45% 가정)')]],
     calc:'w2'},
-   {type:'choice',k:'strat',label:'표적화 전략',opts:['비차별적 · 전체를 하나로','차별적 · 여러 세그먼트에 각각','집중 · 하나에 자원 몰기'],a:'차별적 · 여러 세그먼트에 각각'},
-   {type:'field',k:'why',label:'이 전략을 고른 이유',a:'B를 주력으로 삼되 A는 유지, C는 신메뉴 알림 정도로 최소 비용만 씁니다. 작은 가게라 모든 손님을 똑같이 챙길 여력이 없어서, 예산은 똑같이 나누지 않고 B에 집중합니다.'}]},
- {id:'w42',no:'실습 ④-2',t:'RFM 결과 해석',time:'50분',sub:'게임 2(손님 카드 분류)의 결과를 보고, 그 결과가 무엇을 말하는지 적습니다. 비중 계산은 앱이 해 둡니다.',
+   {type:'choice',k:'strat',label:'표적화 전략',opts:['비차별적 · 전체를 하나로','차별적 · 여러 세그먼트에 각각','집중 · 하나에 자원 몰기'],a:'집중 · 하나에 자원 몰기'},
+   {type:'field',k:'why',label:'이 전략을 고른 이유',a:'C 19점, 개별 포장 · 예약 수령 강점을 근거로 회의 · 모임 간식을 준비하는 고객에 집중합니다. A · B · C의 구매 목적이 달라 비차별적으로 모두에게 맞추기 어렵고, 2주 팝업에서 세 가지 구성과 수령 서비스를 동시에 운영할 인력 · 매대가 부족해 차별적 전략도 어렵습니다.'}]},
+ {id:'w8',no:'품평회',t:'선택 결과 기록표',time:'20분',sub:'받은 역할 카드의 고객이 되어 다른 조 상품 한 개를 고르거나 "미구매"를 고르고, 이유를 적으십시오.',
+  blocks:[
+   {type:'info',html:`<b>공통 고객 역할 카드 · 수업용 가상 역할</b>
+    <div class="calcrow"><span><b>A 빠른 한 끼</b> · 점심시간이 짧습니다. 혼자 먹고, 예산은 1만 원입니다.</span><span>간편하게 먹기 · 빠른 수령 · 한 끼로 충분한 구성</span></div>
+    <div class="calcrow"><span><b>B 재료 선택</b> · 재료를 확인하고 고릅니다. 한 개에 12,000원까지 고려합니다.</span><span>내용물 표시 · 원하는 재료 선택 · 구성 설명</span></div>
+    <div class="calcrow"><span><b>C 함께 나눔</b> · 회의 간식 네 명분이 필요합니다. 전체 예산은 30,000원입니다.</span><span>네 명에게 나누기 편함 · 수량과 재료 확인 · 약속한 시간에 수령</span></div>
+    <p class="note" style="margin:6px 0 0">조건에 맞는 상품이 없으면 구매하지 않아도 됩니다. 자기 조 상품에는 투표할 수 없습니다.</p>`},
+   {type:'table',head:['','고객 역할 (A / B / C)','선택 상품 또는 미구매 (조 이름)','가장 큰 선택 이유 (내용물 / 가격 / 포장 / 편의 / 기타)','망설인 점'],w:[.4,1.3,1.8,2.2,2],
+    rows:[['1',T('v1r','C 함께 나눔'),T('v1p','3조 · 나눔 박스'),T('v1w','편의 (개별 포장)'),T('v1h','4인분이 맞는지 헷갈림')],
+          ['2',T('v2r','A 빠른 한 끼'),T('v2p','2조 · 한 끼 샌드위치'),T('v2w','가격'),T('v2h','양이 적어 보임')],
+          ['3',T('v3r','B 재료 선택'),T('v3p','미구매'),T('v3w','내용물'),T('v3h','재료 표시가 없음')],
+          ['4',T('v4r','C 함께 나눔'),T('v4p','1조 · 회의 간식 4인 세트'),T('v4w','편의 (예약 수령)'),T('v4h','수령 시간이 회의와 맞을지')]]},
+   {type:'table',head:['우리 조 상품의 결과','목표 고객','투표 가능한 목표 역할 인원','목표 역할이 고른 수','목표 역할 선택률 (앱 계산)','고칠 점 한 가지'],w:[1.2,1.3,1.2,1.1,1.2,2.6],
+    rows:[['목표 고객 기준',T('tg','C 함께 나눔'),N('ta','5'),N('tc','4'),{calc:'rate'},T('tfix',"'회의 30분 전 예약 수령'을 안내문과 원페이퍼 3번에 추가",'area')]]}],
+  tip:'읽는 법 · 총득표보다 목표 역할의 선택과 이유를 봅니다. 자기 조 상품에는 투표할 수 없으므로 분모는 "투표 가능한 목표 역할 인원"입니다. 교실 선택은 실제 수요가 아닙니다.'},
+ {id:'w4',no:'실습 ④',t:'RFM 점수 계산과 등급 분류',time:'50분',sub:'케이스 데이터를 지표별로 정렬해 5분위로 나누고 점수를 매기십시오. ※ 계산 연습용 가상 데이터 · 백화점 기존 고객 20명 · 금액 단위 만원',
+  blocks:[
+   {type:'info',html:`<b>계산 순서</b>
+    <div class="calcrow"><span>① 경과일 오름차순 정렬 → 상위 4명씩 R5~R1 (R만 정렬 방향이 반대!)</span></div>
+    <div class="calcrow"><span>② 구매횟수 내림차순 → F5~F1 (동점은 금액이 큰 쪽을 앞에)</span></div>
+    <div class="calcrow"><span>③ 구매금액 내림차순 → M5~M1</span></div>
+    <p class="note" style="margin:6px 0 0">세그먼트 이름은 최우수 · 신규 고액 · 이탈 위험 우수 · 일반 · 휴면 중에서 고르거나 직접 지으십시오. 수업에서는 C01 · C05 · C11 · C15 네 명만 함께 찾습니다.</p>`},
+   {type:'table',head:['고객','경과일','횟수','금액 (만원)','R','F','M','세그먼트'],w:[.7,.8,.7,1,.6,.6,.6,1.6],
+    rows:CUST.map(([id,d,f,m])=>{const s=quintile()[id];const k=id.toLowerCase();return [id,String(d),String(f),won(m),N(k+'r',String(s.R)),N(k+'f',String(s.F)),N(k+'m',String(s.M)),T(k+'s',SEGNAME[ANS[id]])]})}]},
+ {id:'w42',no:'실습 ④-2',t:'RFM 결과 해석',time:'50분',sub:'점수를 매겼으면 그 결과가 무엇을 말하는지 읽어내십시오. 사실 → 확인할 정보 → 조건을 붙인 조치 순서로 씁니다.',
   blocks:[
    {type:'table',head:['분석 항목','해당 고객','수치 근거','가장 시급한 조치'],w:[2,1.3,2.4,2.8],
-    rows:[['R · F · M 모두 5점인 고객',T('v_c','C01, C03, C09, C17'),T('v_n','경과일 5~12일 · 16~22회 · 4명 합계 184만 원','area'),T('v_a','지키는 것이 전부. 신메뉴 시식회 우선 초대와 한정 케이크 우선 예약이 1순위.','area')],
-          ['최근에 왔지만 아직 빈도가 낮은 고객',T('g_c','C15, C14 (참고 C04)'),T('g_n','C15 22일·8회·16만 원 / C14 40일·5회·7만 원','area'),T('g_a','빈도를 올리는 것이 목표. 월 2회 방문 시 음료 업그레이드 같은 횟수 조건형 혜택.','area')],
-          ['예전엔 우수했는데 최근 발길이 끊긴 고객',T('r_c','C11, C18, C10, C05 (우선 C11)'),T('r_n','C11 60일·6회·11만 원 (F3·M3인데 R2)','area'),T('r_a','복귀 쿠폰 전에 마지막으로 산 메뉴와 남긴 리뷰를 확인하고 C11부터 사장님이 직접 연락.','area')],
-          ['회복 우선순위가 가장 낮은 고객',T('s_c','C13 (다음 C16, C07)'),T('s_n','C13 300일 미방문 · 1년 1회 · 1.5만 원','area'),T('s_a','되살리기 대상에서 빼고 자동 알림톡에만 남김. 따로 예산 없음.','area')]]},
-   {type:'calc',k:'w42'},
-   {type:'field',k:'read',label:'이 숫자에서 읽히는 것 · 그래서 예산은 어떻게?',a:'47% 대 3.5%, 약 13.6배 차이입니다. CRM 예산을 등급별로 다르게 나누는 근거입니다. 하위 손님은 버리는 것이 아니라 사장님이 직접 챙기는 비싼 방법에서 자동 알림톡 같은 싼 방법으로 옮기는 것입니다.'}]},
- {id:'w5',no:'실습 ⑤',t:'세그먼트별 CRM 액션 설계',time:'40분',sub:'등급마다 다른 목적과 다른 수단이 필요합니다. 남들 다 하는 할인 · 쿠폰 말고 새로운 액션을 하나 이상 넣으세요. 1년 예산 62,400원 · 합계는 앱이 더합니다.',
+    rows:[['R · F · M 모두 5점인 고객',T('v_c','C01, C03, C09, C17'),T('v_n','경과일 5~12일 · 16~22회 · 3,800~5,600만원, 4명 합계 1억 8,400만원','area'),T('v_a','관계 유지가 먼저입니다. 선호를 확인하고, 식품관 관심이 맞으면 팝업 예약 구성 상담을 제안합니다.','area')],
+          ['최근에 왔지만 아직 빈도가 낮은 고객',T('g_c','C15, C14'),T('g_n','C15 22일 · 8회 · 1,600만원 / C14 40일 · 5회 · 700만원','area'),T('g_a','다음 구매 목적을 질문합니다. 함께 먹을 간식이 필요하면 4인 구성과 수령 방법을 안내합니다.','area')],
+          ['예전엔 우수했는데 최근 발길이 끊긴 고객',T('r_c','확인 후보 C11, C18, C10, C05 (우선 C11)'),T('r_n','C11 60일 · 6회 · 1,100만원 (R2 · F3 · M3). 과거 우수 여부는 이전 기간 기록으로 확인 필요','area'),T('r_a','평소 구매 주기 · 최근 품목을 먼저 확인하고, 필요가 맞으면 팝업을 재접촉 계기로 씁니다.','area')],
+          ['회복 우선순위가 가장 낮은 고객',T('s_c','C13 (다음 C16, C07)'),T('s_n','300일 · 연 1회 · 150만원 · R1 · F1 · M1','area'),T('s_a','회복 가능성과 비용을 먼저 확인합니다. 관심 · 동의가 있으면 소규모로 안내하고 반응을 봅니다.','area')]]},
+   {type:'table',head:['계산 항목','계산식','값','여기서 읽히는 것'],w:[1.8,2.2,1.3,3],
+    rows:[['상위 4명의 구매금액 합계',T('k1f','5,600 + 4,800 + 4,200 + 3,800'),T('k1v','1억 8,400만원'),T('k1r','C03 · C17 · C01 · C09 네 명이 만든 금액입니다.')],
+          ['전체 대비 비중',T('k2f','18,400 ÷ 39,120 × 100'),T('k2v','47.0%'),T('k2r','고객 수 20%가 구매금액의 약 47%를 만듭니다.')],
+          ['하위 4명의 구매금액 합계',T('k3f','520 + 380 + 300 + 150'),T('k3v','1,350만원 (3.5%)'),T('k3r','하위 20%는 전체의 약 3.5%입니다.')]]}],
+  tip:'참고 · 고객 20명 구매금액 합계 = 3억 9,120만원 (39,120만원). 47% 대 3.5%는 관리 방식과 비용을 나누는 근거이며, 하위 고객을 버린다는 뜻은 아닙니다.'},
+ {id:'w5',no:'실습 ⑤',t:'세그먼트별 CRM 액션 설계',time:'40분',sub:'등급마다 다른 목적과 다른 수단이 필요합니다. 남들 다 하는 할인 · 쿠폰 말고, 새로운 액션을 하나 이상 넣으십시오. 이번 캠페인 예산은 조별 10만원(교육용 가정)입니다.',
   blocks:[
-   {type:'table',head:['세그먼트','이 등급의 목적','구체적 액션','채널','예상 비용 (원)','성과 지표'],w:[1.4,1.3,2.8,1.3,.9,1.6],
-    rows:[['최우수 (VIP)',T('v1','떠나지 않게 지키고 특별하게 대접'),T('v2','신메뉴 시식회 우선 초대, 한정 케이크·시즌 과일모찌 우선 예약권, 생일 케이크 무료 레터링, 연 2회 파티시에 클래스 초청','area'),T('v3','사장님 전화 · 대면 (단체 문자 아님)'),N('v4','40000'),T('v5','유지율 100%, 구매 금액 증감, 시식회 참석률','area')],
-          ['우수 단골',T('g1','VIP 등급으로 올리기'),T('g2',"'VIP까지 남은 스탬프' 안내, 레터링 서비스 1회 미리 체험, 좋아하는 메뉴 입고 알림",'area'),T('g3','앱 푸시 · 알림톡 + 매장에서 한마디'),N('g4','12000'),T('g5','VIP 승급률 25%, 방문 빈도 증가율','area')],
-          ['이탈 위험',T('r1','떠나기 전에 되돌리기'),T('r2','① 마지막으로 산 메뉴·리뷰 확인 ② 원인별 개별 연락 — C11부터 ③ 30일 한정 복귀 혜택','area'),T('r3','알림톡 → 무반응 시 사장님 전화'),N('r4','6000'),T('r5','60일 내 재방문율 50%, 복귀 혜택 사용률','area')],
-          ['일반 (성장 여지)',T('n1','방문 빈도 끌어올리기'),T('n2','월 2회 방문 시 음료 업그레이드, 안 먹어 본 메뉴 맛보기, 케이크+음료 세트 제안','area'),T('n3','앱 푸시 · 알림톡'),N('n4','4000'),T('n5','월 방문 횟수 증가, 새 메뉴 구매율','area')],
-          ['휴면',T('s1','돈을 들이지 않고 최소한의 연결만 유지'),T('s2','알림톡·푸시 자동 발송만, 명절 선물 세트 예약 안내 1년 1회, 개별 연락·유료 광고 없음','area'),T('s3','알림톡 · 앱 푸시 (자동)'),N('s4','400'),T('s5',"발송 대비 반응률, 반응 시 '일반' 재편입",'area')]],
-    calc:'w5'},
-   {type:'field',k:'privacy',label:'개인정보 원칙에 비추어 문제가 될 수 있는 액션이 있는가',a:'휴면 손님 일괄 알림톡·푸시는 광고성 수신 동의자만 추리고 밤 9시~아침 8시 발송은 하지 않습니다. 불만 리뷰·주문 기록을 마케팅에 쓰려면 동의받은 이용 목적 안인지 먼저 확인하고, 생일·알레르기 같은 정보는 꼭 필요한 곳에만 씁니다.'}]},
- {id:'w6',no:'실습 ⑥',t:'고객 생애가치 추정과 투자 판단',time:'35분',sub:'유지 연수와 상한 비율만 정하면 LTV와 쓸 수 있는 비용은 앱이 계산합니다. LTV = 1년 구매금액 × GP율 25% × 예상 유지 연수.',
+   {type:'table',head:['세그먼트','이 등급의 목적','구체적 액션','채널','예상 비용','성과 지표'],w:[1.5,1.2,2.6,1.3,1.2,1.7],
+    rows:[['최우수 (VIP) C01 · C03 · C09 · C17',T('v1','관계 유지'),T('v2','선호 구성을 확인하고 샌드위치 예약 수령 상담 · 구성 체험 제안','area'),T('v3','희망 채널 (전화 · 메시지)'),T('v4','1인 8,000원 × 4명 = 3.2만원'),T('v5','팝업 2주 내 예약 이용 2명 / 대상 4명 = 50%','area')],
+          ['우수 단골 C02 · C06 · C12 · C19',T('g1','관심 확대'),T('g2','선호 재료가 들어간 구성 체험, 예약 수령 방법 안내','area'),T('g3','동의한 앱 · 메시지'),T('g4','1인 6,000원 × 4명 = 2.4만원'),T('g5','2주 내 구매 2명 / 4명 = 50%','area')],
+          ['이탈 위험 C05 · C10 · C11 · C18',T('r1','상황 확인과 재접촉'),T('r2','구매 주기 · 품목 확인 후 간식 수요가 있으면 필요한 구성 제안','area'),T('r3','동의한 메시지, 희망 시 전화'),T('r4','1인 5,000원 × 4명 = 2만원'),T('r5','30일 내 식품관 구매 1명 / 4명 = 25%','area')],
+          ['일반 (성장 여지) C04 · C08 · C14 · C15',T('n1','다음 구매 이유 만들기'),T('n2','구매 목적에 맞는 구성 안내, 소규모 체험 제안','area'),T('n3','동의한 앱 · 메시지'),T('n4','1인 4,000원 × 4명 = 1.6만원'),T('n5','30일 내 추가 구매 1명 / 4명 = 25%','area')],
+          ['휴면 C07 · C13 · C16 · C20',T('s1','작은 비용으로 반응 확인'),T('s2','관심이 확인된 대상에게 팝업 안내 1회','area'),T('s3','동의한 앱 · 이메일'),T('s4','1인 2,000원 × 4명 = 0.8만원'),T('s5','2주 내 문의 · 예약 1명 / 4명 = 25%','area')]]},
+   {type:'field',k:'privacy',label:'개인정보 원칙에 비추어 문제가 될 수 있는 액션이 있는가',a:'동의 없이 일괄 발송하거나, 구매 기록으로 민감한 개인 사정(임신 · 질병 · 종교 등)을 추정하는 액션은 제외합니다. 수신 동의한 목적 · 채널만 쓰고, 원치 않는 안내는 바로 중단하며, 야간(21~08시) 발송은 하지 않습니다. ※ 교육용 개괄 안내이며 법률 자문이 아닙니다.'}],
+  tip:'예산 배분 예시 · 최우수 3.2만원 · 우수 단골 2.4만원 · 이탈 위험 2만원 · 일반 1.6만원 · 휴면 0.8만원 · 합계 10만원 (조별 교육용 가정)'},
+ {id:'w6',no:'실습 ⑥',t:'고객 생애가치 추정과 투자 판단',time:'35분',sub:'등급별 LTV를 계산하고, 획득 · 유지 비용의 상한을 정하십시오. 연간 구매금액 = 실습 ④ 등급별 4명 평균, GP율 25%로 통일. LTV와 비용 상한은 앱이 계산합니다.',
   blocks:[
-   {type:'table',head:['세그먼트','1년 구매금액 (1인)','GP율','예상 유지 연수 (년)','LTV (앱 계산)','상한 비율 (%)','마케팅 비용 상한 (앱 계산)'],w:[1.4,1.2,.6,1.1,1.2,1,1.6],
-    rows:[['최우수 (VIP)','46만 원','25%',N('y1','5'),{calc:'l1'},N('p1','10'),{calc:'c1'}],
-          ['우수 단골','26.25만 원','25%',N('y2','4'),{calc:'l2'},N('p2','15'),{calc:'c2'}],
-          ['이탈 위험','8.8만 원','25%',N('y3','2'),{calc:'l3'},N('p3','20'),{calc:'c3'}],
-          ['일반 (성장 여지)','13.38만 원','25%',N('y4','3'),{calc:'l4'},N('p4','10'),{calc:'c4'}]],
+   {type:'table',head:['세그먼트','연간 구매금액 (만원)','GP율','예상 유지 연수 (년)','LTV (앱 계산)','검토 비율 (%)','마케팅 비용 상한 (앱 계산)'],w:[1.4,1.2,.6,1.1,1.2,1,1.6],
+    rows:[['최우수 (VIP)',N('a1','4600'),'25%',N('y1','5'),{calc:'l1'},N('p1','10'),{calc:'c1'}],
+          ['우수 단골',N('a2','2625'),'25%',N('y2','4'),{calc:'l2'},N('p2','15'),{calc:'c2'}],
+          ['이탈 위험',N('a3','880'),'25%',N('y3','2'),{calc:'l3'},N('p3','20'),{calc:'c3'}],
+          ['일반 (성장 여지)',N('a4','1337.5'),'25%',N('y4','3'),{calc:'l4'},N('p4','10'),{calc:'c4'}]],
     calc:'w6'},
-   {type:'field',k:'q1',label:'이탈 위험 단골 1명을 지키는 것과 새 손님 1명을 데려오는 것 중 어느 쪽이 이익인가',a:'지키는 쪽이 이익입니다. 남은 LTV 4.4만 원 대비 비용 상한 8,800원, 회수 배수 5배입니다. 새 손님은 광고·시식 비용이 지키는 비용의 5배가량 들고 일반 등급에서 출발합니다. 다만 새 손님 유치를 없애지 않고 예산 비중을 지키는 쪽에 더 둡니다.'},
-   {type:'field',k:'q2',label:'휴면 손님 되살리기에 예산을 쓰지 않기로 한다면 그 근거는 무엇인가',a:'휴면 4명의 1년 구매는 13.5만 원으로 전체의 3.5%이고, 1인당 남은 LTV는 8,500원입니다. 같은 돈을 우수 단골 승급에 쓰면 1명당 1년 구매가 약 20만 원 늘어 기회비용이 분명합니다. 자동 알림톡은 남겨 돌아올 통로는 열어 둡니다.'},
-   {type:'field',k:'q3',label:'예상 유지 연수를 늘리려면 무엇을 해야 하는가',a:'① 떠나기 아까운 이유 만들기(스탬프 · 등급 유지 조건 · 이름을 기억하는 응대) ② 사는 메뉴 넓히기(케이크 손님에게 과일모찌) ③ 사지 않아도 올 이유 만들기(시식회 · 클래스) ④ 평소 방문 주기의 1.5배가 지나면 자동 알림 ⑤ 불만 리뷰에 빨리 답하기.'}]},
- {id:'w7',no:'실습 ⑦',t:'STP + CRM 통합 기획안 (원페이퍼)',time:'45분',sub:'앞에서 쓴 내용을 "불러오기"로 옮겨 담고, 7번 한 칸을 새로 씁니다. 발표는 하지 않습니다.',
+   {type:'field',k:'q1',label:'이탈 위험 우수 고객 1명을 지키는 것과 신규 1명을 데려오는 것 중 어느 쪽이 이익인가',a:'추정치로는 지키는 쪽이 유리해 보입니다. 이탈 위험 고객의 추정 LTV는 440만원이고 검토 상한은 88만원입니다. 다만 유지와 신규 유치의 실제 비용 · 성공 확률이 없어 확정할 수는 없습니다. 각 방법으로 늘어날 이익에서 추가 비용을 빼 비교해야 합니다.'},
+   {type:'field',k:'q2',label:'휴면 고객 회복에 예산을 쓰지 않기로 한다면 그 근거는 무엇인가',a:'회복으로 늘어날 이익보다 비용이 크다는 근거가 필요합니다. 휴면 4명의 매출 비중 3.5%만으로 회복 가치가 없다고 단정할 수는 없습니다. 그래서 실습 ⑤에서는 전면 중단 대신 0.8만원으로 반응을 먼저 봅니다.'},
+   {type:'field',k:'q3',label:'예상 유지 연수를 늘리려면 무엇을 해야 하는가',a:'다시 구매할 이유를 만들고, 불만을 빨리 해결하고, 구매 주기에 맞춰 필요한 구성을 제안합니다. 샌드위치 첫 구매 뒤 식품관의 두 번째 구매를 확인합니다. 구매 없이 방문만 하면 이 실습의 R은 바뀌지 않습니다.'}],
+  tip:'LTV = 연간 구매금액 × GP율 × 예상 유지 연수 · 유지 연수 · 검토 비율은 가정이며 미래 이익을 보장하지 않습니다. 백화점 전체 고객 가치를 이번 팝업의 예산으로 보지 않습니다.'},
+ {id:'w7',no:'실습 ⑦',t:'STP + CRM 통합 기획안 (원페이퍼)',time:'45분',sub:'앞선 워크시트를 옮겨 담고, 두 축이 어떻게 이어지는지 적으십시오. 1~3번은 오전 샌드위치 기획(소싱 제안서), 4~7번은 8교시에 씁니다.',
   blocks:[
    {type:'import'},
-   {type:'table',head:['구성','내용','가져올 곳'],w:[1.6,6,1],
-    rows:[['1. 시장 세분화 결과',T('r1','행동 기준(방문 빈도·1회 구매 금액)으로 ① 동네 간식 단골 ② 선물 세트 손님 ③ SNS 체험족 3개로 나눴습니다. 앱 주문 데이터로 바로 뽑히므로 실행 가능성이 가장 높습니다.','area'),'실습 ①'],
-          ['2. 표적 시장과 선정 근거',T('r2','② 명절·기념일 선물 세트 손님을 1순위로 골랐습니다(25점 중 20점). 수익성·우리와 맞음이 5점으로 제철 과일과 정성 포장이라는 강점이 그대로 작동합니다.','area'),'실습 ②'],
-          ['3. 포지셔닝 문장',T('r3',"특별한 날을 정성스럽게 챙기고 싶은 부산 도심의 30~50대에게 달콤상점은 깨 먹는 재미의 와그작 케이크와 제철 과일을 통째로 담은 과일모찌 덕분에 '눈으로 한 번, 한 입에 또 한 번 기억되는 선물 디저트 가게'다.",'area'),'포지셔닝 이론'],
-          ['4. 기존 고객 RFM 진단',T('r4','상위 4명(C01·C03·C09·C17)이 전체 391.2만 원 중 184만 원, 즉 47%를 만듭니다. 하위 4명은 3.5%이며, 이탈 위험 4명이 가장 급한 관리 대상입니다.','area'),'실습 ④-2'],
-          ['5. 세그먼트별 CRM 액션',T('r5',"VIP는 '지키고', 우수 단골은 승급 안내로 '올리고', 일반은 '빈도를 늘리고', 이탈 위험은 '되돌리고', 휴면은 자동 알림만 남겨 '비용을 줄입니다'.",'area'),'실습 ⑤'],
-          ['6. LTV 기반 예산 배분',T('r6','1년 CRM 예산 62,400원을 VIP 65% · 우수 단골 20% · 이탈 위험 10% · 일반 6% · 휴면 1% 미만으로 나눕니다. VIP의 LTV가 휴면의 68배이므로 똑같이 나눌 근거가 없습니다.','area'),'실습 ⑥'],
-          ['7. 신규 획득과 기존 유지의 연결',T('r7',"새 손님은 첫 구매 때 '일반' 등급으로 자동 등록됩니다. ① 첫 구매 후 30일을 온보딩 기간으로 두고 2회차 구매가 일어나면 정규 관리로 넘깁니다. ② 2회차가 없으면 광고가 아니라 횟수 조건형 혜택으로 재방문을 유도합니다. ③ 어디서 알고 왔는지(릴스·지인·배달앱)를 앱 회원 정보에 기록해 어느 경로 손님이 VIP까지 가는지 봅니다. ④ 새 손님 1명을 데려오는 비용 상한은 일반 등급 LTV 10만 원의 10%인 1만 원입니다.",'area'),'새로 쓰기']]}],
-  tip:'채점은 7번 한 칸에서만 합니다. "언제(며칠 안에)"와 "어떤 조건이면 넘어가는지"가 숫자로 있어야 합니다.'}];
+   {type:'table',head:['구성','내용','가져올 워크시트'],w:[1.6,6,1],
+    rows:[['1. 시장 세분화 결과',T('r1','이번 구매의 주된 목적을 질문해 A 빠른 한 끼 · B 재료 선택 · C 함께 나눔으로 나눴습니다. 목적에 따라 구성 · 포장 · 수령 방식이 달라집니다.','area'),'실습 ①'],
+          ['2. 표적 시장과 선정 근거',T('r2','C 함께 나눔(19점 / 25점)을 선택하고 집중 전략을 씁니다. 개별 포장 · 예약 수령 강점과 1회 이익 가정이 가장 유리합니다(강의 제공 가상 자료).','area'),'실습 ②'],
+          ['3. 포지셔닝 문장',T('r3','회의 간식을 준비하는 고객에게, 우리 샌드위치는 개별 포장과 예약 수령 덕분에 ‘준비 부담을 줄여 주는 회의 간식 세트’이다. (4인 세트 28,000원 가정 · 단품 4개보다 2,000원 저렴)','area'),'포지셔닝 이론'],
+          ['4. 기존 고객 RFM 진단',T('r4','백화점 기존 고객 20명 중 상위 4명(C01 · C03 · C09 · C17)이 18,400만원, 전체의 47.0%입니다. C11(R2 · F3 · M3)은 평소 구매 주기를 먼저 확인합니다.','area'),'실습 ④ · ④-2'],
+          ['5. 세그먼트별 CRM 액션',T('r5','관심 · 동의가 확인된 고객에게만 제안합니다. 최우수는 예약 상담, 우수는 구성 체험, 이탈 위험은 주기 확인 후 재접촉, 일반은 다음 구매 안내, 휴면은 소규모 안내.','area'),'실습 ⑤'],
+          ['6. LTV 기반 예산 배분',T('r6','추정 LTV: 최우수 5,750만원 · 우수 2,625만원 · 이탈 위험 440만원 · 일반 약 1,003만원. 이번 캠페인 예산은 이와 별도로 10만원(3.2 · 2.4 · 2 · 1.6 · 0.8만원).','area'),'실습 ⑥'],
+          ['7. 신규 획득과 기존 유지의 연결',T('r7','기존 회원의 팝업 구매는 같은 고객 기록에 연결합니다. 신규 구매자는 필요한 동의 후 첫 구매 30일 안에 식품관 두 번째 구매가 있는지 확인하고, 없으면 구매 목적에 맞는 다음 제안을 합니다. 성과 = 첫 구매자 중 30일 내 두 번째 구매자 비율과 실제 안내 비용.','area'),'전체']]}],
+  tip:'채점은 7번 한 칸에서만 합니다. 대상 · 기간 · 행동 · 성과 지표가 있어야 합니다. 점수와 문장을 옮긴 뒤 앞뒤가 서로 모순되는 부분을 고칩니다.'}];
 
-const W={db:null,mode:'local',vals:{},demo:{},myteam:0,showAns:false,showEx:false,cur:'w01',timers:{},unsub:null,sync:'이 기기에만 저장 중'};
+const W={db:null,mode:'local',vals:{},demo:{},myteam:0,showAns:false,showEx:false,cur:'w1',timers:{},unsub:null,sync:'이 기기에만 저장 중'};
 try{W.myteam=+(localStorage.getItem('dalkom-myteam')||0)}catch(e){}
 function teamKey(i){return 'team'+(i+1)}
-function localLoad(){try{return JSON.parse(localStorage.getItem('dalkom-ws')||'{}')}catch(e){return{}}}
-function localSave(){try{localStorage.setItem('dalkom-ws',JSON.stringify(W.vals))}catch(e){}}
+function localLoad(){try{return JSON.parse(localStorage.getItem('popup-ws')||'{}')}catch(e){return{}}}
+function localSave(){try{localStorage.setItem('popup-ws',JSON.stringify(W.vals))}catch(e){}}
 W.vals=localLoad();
-/* 이 기기에 남아 있던 옛 백화점 답도 비웁니다 (서버 쪽 정리와 같은 기준) */
-(()=>{const DEPT=/백화점|층별|유아동|리빙관|명품관|신혼|시니어 부부|서면·부산진구|해운대·동래|김해·양산|시즌 ?세일|세일 행사|소득 추정|쇼핑 동기|과시|자기표현|나들이·체험|L\.POINT|멤버십|라운지|어드바이저|발레파킹|판매사원|문화센터|문화행사|식당가|DART|사업보고서|MD|[0-9]억|[0-9]만원|고빈도 소액|저빈도 고액|행사 ?반응|접객|클레임|신상품|한정판|카테고리/;for(const tk in W.vals)for(const ws of ['w1','w2','w42','w5','w6','w7']){const w=W.vals[tk][ws];if(w)for(const k in w)if(typeof w[k]==='string'&&DEPT.test(w[k]))w[k]=''}localSave()})();
 function getV(t,ws,k){return ((W.vals[teamKey(t)]||{})[ws]||{})[k]??''}
 function setV(t,ws,k,v){const tk=teamKey(t);W.vals[tk]=W.vals[tk]||{};W.vals[tk][ws]=W.vals[tk][ws]||{};W.vals[tk][ws][k]=v;localSave();queueSave(t,ws,k,v)}
 function queueSave(t,ws,k,v){
@@ -1254,8 +1278,6 @@ function renderBlock(ws,b,t,ro){
       if(c.calc)return `<td class="cv num" data-calc="${c.calc}"></td>`;
       return `<td>${inputFor(ws.id,c,t,ro)}</td>`}).join('')+'</tr>'});
     if(b.calc==='w2')h+=`<tr class="tot"><td class="fx">총점 (25점) · 앱 계산</td><td class="cv num" data-calc="ta"></td><td class="cv num" data-calc="tb"></td><td class="cv num" data-calc="tc"></td><td class="cv" data-calc="tw"></td></tr>`;
-    if(b.calc==='w5')h+=`<tr class="tot"><td class="fx" colspan="4">예산 합계 · 앱 계산 (기준 62,400원)</td><td class="cv num" data-calc="bs"></td><td class="cv" data-calc="bw"></td></tr>`;
-    if(b.calc==='w01')h+=`<tr class="tot"><td class="fx" colspan="4">규모 + 맞음 합계가 가장 높은 무리 · 앱 계산</td><td class="cv" colspan="2" data-calc="best01"></td></tr>`;
     return h+'</tbody></table></div>';
   }
   if(b.type==='field'){const c={k:b.k,a:b.a,t:b.line?'text':'area'};return `<div class="wf"><label for="f-${ws.id}-${b.k}">${b.label}</label>${inputFor(ws.id,c,t,ro)}</div>`}
@@ -1266,6 +1288,7 @@ function renderBlock(ws,b,t,ro){
      <div class="calcrow"><span>상위 4명 구매금액 합계</span><span class="num">56만 + 48만 + 42만 + 38만 = 184만 원</span></div>
      <div class="calcrow"><span>전체 대비 비중</span><span class="num">184만 ÷ 391.2만 × 100 = 47.0%</span></div>
      <div class="calcrow"><span>하위 4명 구매금액 합계</span><span class="num">5.2만 + 3.8만 + 3만 + 1.5만 = 13.5만 원 (3.5%)</span></div></div>`}
+  if(b.type==='info')return `<div class="calcbox">${b.html}</div>`;
   if(b.type==='import')return ro?'':`<div class="bar"><button class="btn ghost" id="importBtn">앞 실습에서 쓴 내용 불러오기</button><span class="note">1~6번 칸이 비어 있을 때만 채웁니다. 불러온 뒤 문장으로 다듬으세요.</span></div>`;
   return '';
 }
@@ -1274,16 +1297,14 @@ function computeCalcs(root,ws,t){
   const set=(k,v)=>root.querySelectorAll(`[data-calc="${k}"]`).forEach(e=>e.innerHTML=v);
   if(ws.id==='w2'){const s=x=>[1,2,3,4,5].reduce((a,i)=>a+g(`s${i}${x}`),0);const a=s('a'),b=s('b'),c=s('c');set('ta',a);set('tb',b);set('tc',c);
     const m=Math.max(a,b,c);const n=['A','B','C'][[a,b,c].indexOf(m)];set('tw',m?`점수로는 <b>${n}</b>가 1순위입니다. 근거 칸이 비어 있으면 미완성입니다.`:'')}
-  if(ws.id==='w5'){const s=['v4','g4','r4','n4','s4'].reduce((a,k)=>a+g(k),0);set('bs',s.toLocaleString('ko-KR')+'원');
-    set('bw',s===0?'':s>62400?`<span class="warn">${(s-62400).toLocaleString('ko-KR')}원 초과</span>`:s<62400?`${(62400-s).toLocaleString('ko-KR')}원 남음`:'딱 맞습니다')}
-  if(ws.id==='w6'){const base=[4600,2625,880,1338];base.forEach((b,i)=>{const y=g('y'+(i+1)),p=g('p'+(i+1));const l=b*.25*y;const c=l*p/100;
-    set('l'+(i+1),y?MW(Math.floor(l)):'');set('c'+(i+1),y&&p?WN(c)+(y?` <span class="muted">(1년 ${WN(c/y)})</span>`:''):'')})}
-  if(ws.id==='w01'){const r=['a','b','c'].map(x=>g(x+'_s')+g(x+'_f'));const m=Math.max(...r);set('best01',m?`<b>${'ABC'[r.indexOf(m)]}</b> 무리 (${m}점)`:'')}
+  if(ws.id==='w6'){[1,2,3,4].forEach(i=>{const a=g('a'+i),y=g('y'+i),p=g('p'+i);const l=a*.25*y;const c=l*p/100;
+    set('l'+i,a&&y?won(l)+'만원':'');set('c'+i,a&&y&&p?won(c)+'만원'+` <span class="muted">(LTV의 ${p}%)</span>`:'')})}
+  if(ws.id==='w8'){const a=g('ta'),c=g('tc');set('rate',a?`${c} ÷ ${a} = <b>${Math.round(c/a*100)}%</b>`:'')}
 }
 function findAns(ws,k){for(const b of ws.blocks){if(b.rows)for(const r of b.rows)for(const c of r)if(c&&c.k===k)return c.a;if(b.k===k)return b.a}return ''}
 
 function wsPage(){
-  W.cur=W.cur||'w01';
+  W.cur=W.cur||'w1';
   $('#app').innerHTML=`<div class="screen-head"><button class="back" onclick="go('home')">← 처음 화면</button><div><p class="step">실습지 쓰기 · 조별로 한 대씩</p><h2>우리 조 실습지</h2></div>
    <p class="sub">우리 조를 고르고 칸을 채우세요. 쓰는 즉시 저장되고, 강사 화면의 "조별 모아보기"에 바로 뜹니다. 합계 · LTV 같은 계산은 앱이 합니다.</p></div>
    <div class="wsbar"><span class="lab">우리 조</span><div class="seg" id="myteam"></div><span class="sync" id="syncState">${W.sync}</span></div>
@@ -1303,6 +1324,7 @@ function drawWs(){
   const w=WS.find(x=>x.id===W.cur);const t=W.myteam;
   const body=$('#wsbody');
   body.innerHTML=`<div class="wshead"><div><h3>${w.no} · ${w.t}</h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>
+   <div class="dlrow small" style="margin:0 0 6px"><a href="/sheets/sheet-${w.id}.pptx" download>이 실습지 PPT 원본 내려받기 (빈칸)</a></div>
    ${STUDENT?studentWsGuide(w):guideHTML(GUIDE[w.id],true)}
    ${STUDENT?'':`<div class="exbar"><button class="btn ghost ${W.showEx?'on':''}" id="exTog" aria-pressed="${W.showEx}">${W.showEx?'예시 답 숨기기':'칸마다 예시 답 보기'}</button><button class="btn ghost" id="fillEx" aria-pressed="false">예시로 빈칸 채우기 (강사 시연용)</button><span class="note">예시는 참고용입니다. 우리 조 생각으로 바꿔 쓰세요.</span></div>`}
    ${w.tip&&!STUDENT?`<p class="tipline">${w.tip}</p>`:''}${w.blocks.map(b=>renderBlock(w,b,t,false)).join('')}`;
@@ -1340,9 +1362,9 @@ function doImport(t){
    r1:pick?pick:(segs[0]||''),
    r2:T3[top]?`${nm[top]} 세그먼트를 1순위로 선정했습니다(25점 중 ${T3[top]}점). 전략: ${g('w2','strat')||'-'}. ${g('w2','why')}`:'',
    r3:'',
-   r4:[g('w42','v_c')&&`최우수: ${g('w42','v_c')}`,g('w42','r_c')&&`이탈 위험: ${g('w42','r_c')}`,g('w42','read')].filter(Boolean).join(' / '),
-   r5:['v2','g2','r2','n2','s2'].map((k,i)=>g('w5',k)&&`${['VIP','우수 단골','이탈 위험','일반','휴면'][i]} · ${g('w5',k)}`).filter(Boolean).join(' / '),
-   r6:(()=>{const b=['v4','g4','r4','n4','s4'].map(k=>num(getV(t,'w5',k)));const s=b.reduce((a,c)=>a+c,0);return s?`1년 CRM 예산 총 ${s.toLocaleString('ko-KR')}원 = ${['VIP','우수 단골','이탈 위험','일반','휴면'].map((n,i)=>`${n} ${b[i].toLocaleString('ko-KR')}원(${Math.round(b[i]/s*100)}%)`).join(' · ')}`:''})()};
+   r4:[g('w42','k1v')&&`상위 4명 ${g('w42','k1v')}`,g('w42','k2v')&&`전체의 ${g('w42','k2v')}`,g('w42','r_c')&&`이탈 위험 확인 후보: ${g('w42','r_c')}`].filter(Boolean).join(' · '),
+   r5:['v2','g2','r2','n2','s2'].map((k,i)=>g('w5',k)&&`${['최우수','우수 단골','이탈 위험','일반','휴면'][i]} · ${g('w5',k)}`).filter(Boolean).join(' / '),
+   r6:(()=>{const l=[1,2,3,4].map(i=>num(getV(t,'w6','a'+i))*.25*num(getV(t,'w6','y'+i)));return l.some(Boolean)?`추정 LTV: ${['최우수','우수','이탈 위험','일반'].map((n,i)=>`${n} ${won(l[i])}만원`).join(' · ')}. 이번 캠페인 예산은 이와 별도로 10만원.`:''})()};
   let n=0;for(const k in r){if(r[k]&&!String(getV(t,'w7',k)).trim()){setV(t,'w7',k,r[k]);n++}}
   drawWs();toast(n?`${n}칸을 불러왔습니다`:'불러올 내용이 없거나 이미 채워져 있습니다');
 }

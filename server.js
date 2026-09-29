@@ -8,34 +8,32 @@ fs.mkdirSync(DATA_DIR, { recursive: true });
 const FILE = path.join(DATA_DIR, 'state.json');
 const INDEX = path.join(__dirname, 'public', 'index.html');
 
-const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, prog: {}, open: [], cur: '', insight: [] });
+const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, prog: {}, open: [], cur: '', insight: [], content: 2 });
 let state = empty();
 try { state = Object.assign(empty(), JSON.parse(fs.readFileSync(FILE, 'utf8'))); } catch (e) { /* first run */ }
-// 실습 ①~⑦이 백화점 예시에서 달콤상점 예시로 바뀌기 전에 "예시로 빈칸 채우기"로 저장된 옛 예시 답을 새 달콤상점 예시로 바꿉니다.
-try {
-  const OLD = JSON.parse(fs.readFileSync(path.join(__dirname, 'old-examples.json'), 'utf8'));
-  let n = 0;
-  for (const tk in state.sheets) for (const ws in OLD) {
-    const w = state.sheets[tk][ws];
-    if (w) for (const k in OLD[ws]) if (w[k] === OLD[ws][k][0]) { w[k] = OLD[ws][k][1]; n++; }
-  }
-  if (n) { state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('replaced old department-store examples: ' + n); }
-} catch (e) { /* no old examples file */ }
-// 조가 조금 고쳐 옛 예시와 글자가 달라진 칸도 백화점 내용이면 비웁니다 (실습 ①~⑦).
-const DEPT = /백화점|층별|유아동|리빙관|명품관|신혼|시니어 부부|서면·부산진구|해운대·동래|김해·양산|시즌 ?세일|세일 행사|소득 추정|쇼핑 동기|과시|자기표현|나들이·체험|L\.POINT|멤버십|라운지|어드바이저|발레파킹|판매사원|문화센터|문화행사|식당가|DART|사업보고서|MD|[0-9]억|[0-9]만원|고빈도 소액|저빈도 고액|행사 ?반응|접객|클레임|신상품|한정판|카테고리/;
-{
-  let n = 0;
-  for (const tk in state.sheets) for (const ws of ['w1', 'w2', 'w42', 'w5', 'w6', 'w7']) {
-    const w = state.sheets[tk][ws];
-    if (w) for (const k in w) if (typeof w[k] === 'string' && DEPT.test(w[k])) { w[k] = ''; n++; }
-  }
-  if (n) { state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('cleared department-store answers: ' + n); }
-}
+// 교안이 샌드위치 팝업(PPT 원본) 실습지로 바뀌었으므로, 예전 실습지 답은 한 번 비웁니다.
+if ((state.content || 1) < 2) { state.sheets = {}; state.content = 2; state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('worksheets reset for new course content'); }
 const TEAM = /^team[1-6]$/;
 const UNIT = /^(w[0-9]{1,2}|g[1-5]|rfm)$/;
 const STATIC = {
-  '/banner.jpg': ['banner.jpg', 'image/jpeg'],
+  '/popup.jpg': ['popup.jpg', 'image/jpeg'],
+  '/target-A.jpg': ['target-A.jpg', 'image/jpeg'],
+  '/target-B.jpg': ['target-B.jpg', 'image/jpeg'],
+  '/target-C.jpg': ['target-C.jpg', 'image/jpeg'],
   '/qrcode.js': ['qrcode.js', 'application/javascript; charset=utf-8'],
+};
+// 실습지 내려받기 · PPT 원본 슬라이드 그대로 (강사 노트는 뺀 파일)
+const SHEETS = {
+  'sheets-blank': '3-3 실습지 전체 (빈칸).pptx',
+  'sheets-answer': '3-3 실습지 전체 (예시 답안).pptx',
+  'sheet-w1': '실습1 고객 세분화 기준 설계.pptx',
+  'sheet-w2': '실습2 세분시장 평가와 표적 선정.pptx',
+  'sheet-w8': '품평회 선택 결과 기록표.pptx',
+  'sheet-w4': '실습4 RFM 점수 계산과 등급 분류.pptx',
+  'sheet-w42': '실습4-2 RFM 결과 해석.pptx',
+  'sheet-w5': '실습5 세그먼트별 CRM 액션 설계.pptx',
+  'sheet-w6': '실습6 고객 생애가치 추정과 투자 판단.pptx',
+  'sheet-w7': '실습7 STP+CRM 통합 기획안 (원페이퍼).pptx',
 };
 
 let timer = null;
@@ -118,6 +116,15 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && (p === '/' || p === '/index.html')) {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
     return fs.createReadStream(INDEX).pipe(res);
+  }
+  const sm = req.method === 'GET' && p.match(/^\/sheets\/([a-z0-9-]+)\.pptx$/);
+  if (sm && SHEETS[sm[1]]) {
+    res.writeHead(200, {
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'Content-Disposition': "attachment; filename=\"" + sm[1] + ".pptx\"; filename*=UTF-8''" + encodeURIComponent(SHEETS[sm[1]]),
+      'Cache-Control': 'no-cache',
+    });
+    return fs.createReadStream(path.join(__dirname, 'public', 'sheets', sm[1] + '.pptx')).pipe(res);
   }
   if (req.method === 'GET' && STATIC[p]) {
     res.writeHead(200, { 'Content-Type': STATIC[p][1], 'Cache-Control': 'public, max-age=86400' });
