@@ -8,7 +8,7 @@ fs.mkdirSync(DATA_DIR, { recursive: true });
 const FILE = path.join(DATA_DIR, 'state.json');
 const INDEX = path.join(__dirname, 'public', 'index.html');
 
-const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, people: {}, prog: {}, open: [], cur: '', insight: [], content: 3 });
+const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, people: {}, prog: {}, open: [], cur: '', lock: false, insight: [], content: 3 });
 let state = empty();
 try { const saved = JSON.parse(fs.readFileSync(FILE, 'utf8')); state = Object.assign(empty(), saved); state.content = saved.content || 1; } catch (e) { /* first run */ }
 // 교안 교체(2) · 개인별 실습지 저장 방식 변경(3) 때 예전 실습지 답을 한 번 비웁니다.
@@ -118,6 +118,7 @@ const server = http.createServer(async (req, res) => {
     if (!Array.isArray(b.open)) return send(res, 400, { error: 'bad request' });
     state.open = [...new Set(b.open.filter((x) => UNIT.test(x)))];
     state.cur = UNIT.test(b.cur || '') ? b.cur : '';
+    if (typeof b.lock === 'boolean') state.lock = b.lock;
     state.v++; persist();
     return send(res, 200, { ok: true });
   }

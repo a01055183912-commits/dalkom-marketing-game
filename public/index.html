@@ -382,7 +382,7 @@ const STUDENT=ME!==null&&!!PNAME&&String(ME+1)===LS.get('popup-team');
 const JOIN=!TEACHER&&!STUDENT;
 if(STUDENT||JOIN)document.documentElement.classList.add('student');
 if(JOIN)document.documentElement.classList.add('joining');
-const R={names:{},people:{},prog:{},open:[],cur:'',insight:[],ready:false,offline:false};
+const R={lock:false,names:{},people:{},prog:{},open:[],cur:'',insight:[],ready:false,offline:false};
 const UNITS=[
  {id:'g2',s:'게임1',k:'game'},{id:'w1',s:'①',k:'ws'},{id:'w2',s:'②',k:'ws'},{id:'w8',s:'품평회',k:'ws'},
  {id:'g1',s:'게임2',k:'game'},{id:'rfm',s:'RFM',k:'read'},{id:'w4',s:'④',k:'ws'},
@@ -400,7 +400,8 @@ const STEPS=[
  {t:'8교시 · 오늘을 한 장으로',g:'g5',ws:['w7']}];
 const warmOf=id=>{const s=STEPS.find(x=>x.ws.includes(id));return s&&s.g};
 function unitName(id){const w=WS.find(x=>x.id===id);if(w)return `${w.no} · ${w.t}`;if(id==='rfm')return 'RFM 표 읽기';const g=GAMES.find(x=>x.id===id);return g?`${g.no} · ${g.t}`:id}
-const isOpen=id=>!STUDENT||R.offline||id[0]==='g'||R.open.includes(id);
+/* 활동지 잠금이 꺼져 있으면(기본) 모든 활동지가 열려 있고, 켜면 강사가 연 것만 보입니다 */
+const isOpen=id=>!STUDENT||R.offline||id[0]==='g'||!R.lock||R.open.includes(id);
 function sheetPts(d,w){const ks=keysOf(w);if(!ks.length)return 0;const f=ks.filter(k=>String((d||{})[k]??'').trim()).length;return f>=ks.length?3:f*2>=ks.length?2:f?1:0}
 /* 교육생 기기: 내 실습지 점수 · 강사 화면: 그 조 사람들 점수의 평균 */
 function wsPts(t,w){if(STUDENT||t>=6)return sheetPts((W.vals[teamKey(t)]||{})[w.id],w);const m=W.pvals[teamKey(t)]||{};const ids=Object.keys(m);if(!ids.length)return 0;return Math.round(ids.reduce((a,p)=>a+sheetPts((m[p]||{})[w.id],w),0)/ids.length)}
@@ -492,9 +493,9 @@ function home(){
   </section>
   <section class="board-wrap">
     <div class="board-head"><div><p class="step">강사 · 실시간 조별 현황</p><h3>조별 진행 현황</h3></div>
-      <div class="bar"><button class="btn" id="nextBtn"></button><button class="btn ghost" id="qrBtn">조별 QR 코드</button></div></div>
+      <div class="bar"><button class="btn ghost" id="lockBtn"></button><button class="btn" id="nextBtn"></button><button class="btn ghost" id="qrBtn">조별 QR 코드</button></div></div>
     <div class="tscroll" id="board"></div>
-    <p class="note" id="boardNote">워밍업 게임은 교육생이 언제든 자유롭게 할 수 있습니다. 활동지는 강사가 설명한 뒤 "다음 화면 열기"나 열 제목을 눌러 열어 주세요. 게임 아래 "공개"를 누르면 그 게임의 인사이트가 교육생 화면에 뜹니다(버튼에 마우스를 올리면 끝낸 조 수가 보입니다). ✓는 끝낸 활동이고 숫자는 받은 점수입니다. 실습지는 칸을 채운 만큼(조금 1점 · 절반 2점 · 전부 3점), 게임은 조가 받은 최고 점수가 자동으로 들어갑니다. 합계에는 위쪽 + / − 로 고친 점수도 더해집니다.</p>
+    <p class="note" id="boardNote">워밍업 게임은 교육생이 언제든 자유롭게 할 수 있습니다. 활동지는 처음에 모두 열려 있습니다. 순서대로 열고 싶으면 "순서대로 열기"를 누른 뒤 "다음 화면 열기"나 열 제목으로 하나씩 여세요. 게임 아래 "공개"를 누르면 그 게임의 인사이트가 교육생 화면에 뜹니다(버튼에 마우스를 올리면 끝낸 조 수가 보입니다). ✓는 끝낸 활동이고 숫자는 받은 점수입니다. 실습지는 칸을 채운 만큼(조금 1점 · 절반 2점 · 전부 3점), 게임은 조가 받은 최고 점수가 자동으로 들어갑니다. 합계에는 위쪽 + / − 로 고친 점수도 더해집니다.</p>
   </section>
   <div class="first">
     <button class="big" onclick="go('ws')"><span class="gno">먼저 · 조별로 한 대씩</span><h3>실습지 쓰기</h3><p>실습 ①부터 ⑦ 원페이퍼, 품평회 기록표까지 8장을 조별로 채웁니다. 총점 · LTV 같은 계산은 앱이 하고, ⑦은 앞에서 쓴 내용을 불러옵니다.</p></button>
@@ -522,7 +523,7 @@ function drawBoard(){
   const el=$('#board');if(!el)return;
   const prev=drawBoard.prev||{},now={};
   const cell=(key,v,cls,html)=>{now[key]=v;const up=prev[key]!==undefined&&v>prev[key];return `<td class="${cls}${up?' bump':''}">${html}</td>`};
-  let h=`<table class="bt"><thead><tr><th>조</th>${UNITS.map(u=>`<th class="${R.cur===u.id?'curcol':''}">${u.k==='game'?`<span class="uh open" title="${esc(unitName(u.id))} · 워밍업 게임은 언제든 자유롭게 열려 있습니다">${u.s}<small>자유</small></span>`:`<button class="uh ${R.open.includes(u.id)?'open':''} ${R.cur===u.id?'cur':''}" data-u="${u.id}" title="${esc(unitName(u.id))}">${u.s}<small>${R.open.includes(u.id)?'열림':'닫힘'}</small></button>`}</th>`).join('')}<th>합계</th></tr>
+  let h=`<table class="bt"><thead><tr><th>조</th>${UNITS.map(u=>`<th class="${R.cur===u.id?'curcol':''}">${u.k==='game'?`<span class="uh open" title="${esc(unitName(u.id))} · 워밍업 게임은 언제든 자유롭게 열려 있습니다">${u.s}<small>자유</small></span>`:`<button class="uh ${R.open.includes(u.id)?'open':''} ${R.cur===u.id?'cur':''}" data-u="${u.id}" title="${esc(unitName(u.id))}">${u.s}<small>${!R.lock||R.open.includes(u.id)?'열림':'닫힘'}</small></button>`}</th>`).join('')}<th>합계</th></tr>
    <tr class="insrow"><th><span class="muted" style="font-size:12px;font-weight:400">인사이트</span></th>${UNITS.map(u=>u.k!=='game'?'<th></th>':`<th><button class="insb ${R.insight.includes(u.id)?'on':''}" data-ins="${u.id}" title="끝낸 조 ${[...Array(S.teams).keys()].filter(t=>gamePts(t,u.id)>0).length} / ${S.teams}">${R.insight.includes(u.id)?'💡 공개됨':'공개'}</button></th>`).join('')}<th></th></tr></thead><tbody>`;
   for(let t=0;t<S.teams;t++){
     h+=`<tr><td class="tnm">${teamLabel(t)} <small class="muted">${Object.keys(R.people[teamKey(t)]||{}).length}명</small></td>`+UNITS.map(u=>{const p=unitPts(t,u.id);if(u.k==='read')return '<td><span class="muted">—</span></td>';
@@ -536,17 +537,22 @@ function drawBoard(){
     setOpen(on?R.open.filter(x=>x!==id):[...R.open,id],on?(R.cur===id?'':R.cur):id)});
   const nx=UNITS.find(u=>u.k!=='game'&&!R.open.includes(u.id));
   const nb=$('#nextBtn');
-  if(nb){nb.textContent=nx?`다음 화면 열기 ▶ ${unitName(nx.id)}`:'모든 활동이 열렸습니다';nb.disabled=!nx;nb.onclick=()=>{if(nx)setOpen([...R.open,nx.id],nx.id)}}
+  if(nb){nb.hidden=!R.lock;nb.textContent=nx?`다음 화면 열기 ▶ ${unitName(nx.id)}`:'모든 활동이 열렸습니다';nb.disabled=!nx;nb.onclick=()=>{if(nx)setOpen([...R.open,nx.id],nx.id)}}
+  const lb=$('#lockBtn');if(lb){lb.textContent=R.lock?'🔒 순서대로 열기 중 · 모두 열기':'🔓 활동지 모두 열림 · 순서대로 열기';lb.onclick=()=>setLock(!R.lock)}
   const note=$('#boardNote');if(note&&R.offline&&!note.dataset.off){note.dataset.off=1;note.insertAdjacentHTML('afterbegin','<b style="color:var(--bad)">서버에 연결되지 않아 열기 · 닫기가 교육생 화면에 전달되지 않습니다.</b> ')}
 }
 async function setInsight(list,shown){
   R.insight=list;drawBoard();toast(shown?`교육생 화면에 인사이트를 열었습니다 · ${unitName(shown)}`:'인사이트를 다시 닫았습니다');
   if(W.mode==='server'){try{await fetch('/api/insight',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({insight:list})})}catch(e){toast('저장에 실패했습니다')}}
 }
+async function setLock(v){
+  R.lock=v;drawBoard();toast(v?'활동지를 잠갔습니다 · "다음 화면 열기"로 하나씩 여세요':'모든 활동지를 교육생 화면에 열었습니다');
+  if(W.mode==='server'){try{await fetch('/api/open',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({open:R.open,cur:R.cur,lock:v})})}catch(e){toast('저장에 실패했습니다')}}
+}
 async function setOpen(open,cur){
   R.open=UNITS.map(u=>u.id).filter(id=>open.includes(id));R.cur=cur||'';drawBoard();
   if(cur)toast(`교육생 화면에 열었습니다 · ${unitName(cur)}`);
-  if(W.mode==='server'){try{await fetch('/api/open',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({open:R.open,cur:R.cur})})}catch(e){toast('열기 저장에 실패했습니다')}}
+  if(W.mode==='server'){try{await fetch('/api/open',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({open:R.open,cur:R.cur,lock:R.lock})})}catch(e){toast('열기 저장에 실패했습니다')}}
 }
 
 /* ---------------- 교육생 (조별 기기) 첫 화면 ---------------- */
@@ -557,7 +563,7 @@ function studentHome(){
     <div>
       <p class="step">LOTTE LIFT · 3-3 실습 · ${ME+1}조 기기</p>
       <h2>누구에게,<br><em>무엇을 팔까요?</em></h2>
-      <p>워밍업 게임은 언제든 자유롭게 해 보세요. 활동지는 강사님 설명을 들은 뒤 열립니다. 조원과 토론하고 검색해서 채운 만큼 우리 조 점수가 자동으로 올라갑니다.</p>
+      <p>워밍업 게임은 언제든 자유롭게 해 보세요. 활동지는 아래에서 바로 눌러 이 화면에서 씁니다(강사님이 순서대로 열 때는 열린 것만 보입니다). 조원과 토론하고 검색해서 채운 만큼 우리 조 점수가 자동으로 올라갑니다.</p>
     </div>
     <img class="hero-img" src="/popup.jpg" alt="롯데백화점 부산본점 식품관에 2주 동안 샌드위치 팝업을 엽니다. 누구에게, 무엇을 팔까요?" width="1263" height="594">
   </section>
@@ -582,14 +588,13 @@ function drawUnits(){
   const box=$('#units');if(!box)return;
   const sc=$('#sScore');if(sc)sc.textContent=total(ME);const sn=$('#sName');if(sn)sn.innerHTML=teamLabel(ME);
   if(!R.ready&&!R.offline){box.innerHTML='<p class="note">서버에 연결하는 중입니다…</p>';return}
-  const needName=!teamName(ME)&&W.mode==='server';
   box.innerHTML='';
   const card=u=>{const open=isOpen(u.id);const b=document.createElement('button');
     const p=unitPts(ME,u.id);const w=WS.find(x=>x.id===u.id);
     const prog=w?(()=>{const ks=keysOf(w);const f=ks.filter(k=>String(getV(ME,w.id,k)).trim()).length;return `${f}/${ks.length}칸 · <b>${p}점</b>`})():u.k==='game'?(p?`최고 <b>${p}점</b>`:'아직 안 함'):'점수 없음 · 읽기 자료';
     b.className='unit'+(open?'':' locked')+(open&&R.cur===u.id?' cur':'')+(open&&u.k!=='read'&&unitDone(ME,u.id)?' done':'');
     b.innerHTML=`<span class="us">${u.k==='game'?'워밍업 · 자유':u.k==='read'?'읽기 자료':'활동지 '+u.s}</span><h4>${esc(unitName(u.id))}</h4><span class="up">${open?prog:'🔒 강사님 설명 뒤에 열립니다'}</span>`;
-    b.onclick=()=>{if(!open){toast('강사님 설명을 들은 뒤에 열립니다');return}if(needName){toast('먼저 우리 조 이름을 정해 주세요');$('#tname').focus();return}
+    b.onclick=()=>{if(!open){toast('강사님 설명을 들은 뒤에 열립니다');return}
       if(w){W.cur=u.id;go('ws')}else go(u.id)};
     return b};
   STEPS.forEach((s,i)=>{const sec=document.createElement('section');sec.className='stepbox';
@@ -1284,12 +1289,12 @@ function liveRefresh(){renderTeams();drawBoard();drawUnits()}
 function applyServer(st){
   if(!st||st.v===W.ver)return;W.ver=st.v;
   const was=R.ready,before=R.open.slice();
-  R.names=st.names||{};R.prog=st.prog||{};R.open=Array.isArray(st.open)?st.open:[];R.cur=st.cur||'';R.ready=true;
+  R.names=st.names||{};R.prog=st.prog||{};R.open=Array.isArray(st.open)?st.open:[];const lockBefore=R.lock;R.lock=!!st.lock;R.cur=st.cur||'';R.ready=true;
   const insBefore=R.insight.slice();R.insight=Array.isArray(st.insight)?st.insight:[];
   if(STUDENT&&was){const ni=R.insight.filter(x=>!insBefore.includes(x));if(ni.length)toast(`💡 인사이트가 열렸습니다 · ${unitName(ni[ni.length-1])}`)}
   if(STUDENT&&R.insight.join()!==insBefore.join())fillInsights();
   if(STUDENT&&was){const added=R.open.filter(x=>!before.includes(x));if(added.length)toast(`새 활동이 열렸습니다 · ${unitName(added[added.length-1])}`);
-    if(added.length||R.open.length!==before.length){if($('#wstabs')&&$('#wsbody'))drawTabs(false)}}
+    if(added.length||R.open.length!==before.length||lockBefore!==R.lock){if($('#units'))drawUnits();if($('#wstabs')&&$('#wsbody'))drawTabs(false)}}
   const sh=st.sheets||{};
   if(!STUDENT){W.pvals=sh;R.people=st.people||{}}
   else for(const tk in sh){const ti=+tk.replace('team','')-1;W.vals[tk]=W.vals[tk]||{};
