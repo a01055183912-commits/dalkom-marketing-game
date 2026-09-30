@@ -8,7 +8,7 @@ fs.mkdirSync(DATA_DIR, { recursive: true });
 const FILE = path.join(DATA_DIR, 'state.json');
 const INDEX = path.join(__dirname, 'public', 'index.html');
 
-const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, people: {}, prog: {}, open: [], cur: '', lock: false, insight: [], content: 3 });
+const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, people: {}, secrets: {}, prog: {}, open: [], cur: '', lock: false, insight: [], content: 3 });
 let state = empty();
 try { const saved = JSON.parse(fs.readFileSync(FILE, 'utf8')); state = Object.assign(empty(), saved); state.content = saved.content || 1; } catch (e) { /* first run */ }
 // 교안 교체(2) · 개인별 실습지 저장 방식 변경(3) 때 예전 실습지 답을 한 번 비웁니다.
@@ -17,8 +17,17 @@ const TEAM = /^team[1-6]$/;
 const PERSON = /^p[a-z0-9]{6,16}$/;
 // 실습지는 사람마다 따로 저장합니다: sheets[조][사람][실습지][칸].
 // 교육생 기기에는 자기 실습지만 보냅니다. 같은 조 다른 사람 · 다른 조 기록은 보내지 않습니다.
+// 사람마다 기기에서 만든 비밀 열쇠(secret)가 있어야 자기 칸에 저장됩니다. 열쇠는 어느 화면에도 보내지 않습니다.
+state.secrets = state.secrets || {};
+const SECRET = /^[a-z0-9]{12,40}$/;
+function mySecret(person, secret) {
+  if (!PERSON.test(person || '') || !SECRET.test(secret || '')) return false;
+  if (!state.secrets[person]) { state.secrets[person] = secret; return true; }
+  return state.secrets[person] === secret;
+}
+function teacherView() { const { secrets, ...rest } = state; return rest; }
 function personView(team, person) {
-  const { sheets, people, ...rest } = state;
+  const { sheets, people, secrets, ...rest } = state;
   const mine = (sheets[team] || {})[person];
   return { ...rest, sheets: mine ? { [team]: mine } : {} };
 }
@@ -69,13 +78,14 @@ const server = http.createServer(async (req, res) => {
     const team = url.searchParams.get('team'), person = url.searchParams.get('person');
     if (team && (!TEAM.test(team) || !PERSON.test(person || ''))) return send(res, 400, { error: 'bad team' });
     if (url.searchParams.get('v') === String(state.v)) { res.writeHead(204); return res.end(); }
-    return send(res, 200, team ? personView(team, person) : state);
+    return send(res, 200, team ? personView(team, person) : teacherView());
   }
   if (req.method === 'POST' && p === '/api/sheet') {
     const b = await readBody(req) || {};
     if (!TEAM.test(b.team) || !PERSON.test(b.person || '') || !/^w[0-9]{1,3}$/.test(b.ws || '') || !/^[a-z0-9_]{1,20}$/i.test(b.k || '')) {
       return send(res, 400, { error: 'bad request' });
     }
+    if (!mySecret(b.person, b.secret)) return send(res, 403, { error: 'not your sheet' });
     const t = (state.sheets[b.team] = state.sheets[b.team] || {});
     const me = (t[b.person] = t[b.person] || {});
     const w = (me[b.ws] = me[b.ws] || {});
@@ -100,6 +110,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && p === '/api/person') {
     const b = await readBody(req) || {};
     if (!TEAM.test(b.team) || !PERSON.test(b.person || '')) return send(res, 400, { error: 'bad request' });
+    if (!mySecret(b.person, b.secret)) return send(res, 403, { error: 'not your sheet' });
     const name = String(b.name ?? '').trim().slice(0, 12);
     const t = (state.people[b.team] = state.people[b.team] || {});
     if (t[b.person] !== name) { t[b.person] = name; state.v++; persist(); }

@@ -377,6 +377,9 @@ const TEACHER=QS.has('teacher')||(LS.get('popup-role')==='teacher'&&!QS.has('tea
 const ME=(()=>{if(TEACHER)return null;const n=parseInt(QS.get('team')||LS.get('popup-team'),10);return n>=1&&n<=6?n-1:null})();
 const newPid=()=>('p'+Math.random().toString(36).slice(2)+'00000000').slice(0,11);
 let PID=LS.get('popup-pid');if(!/^p[a-z0-9]{6,16}$/.test(PID||'')){PID=newPid();LS.set('popup-pid',PID)}
+/* 이 기기만 아는 비밀 열쇠: 이게 있어야 내 칸에 저장됩니다(다른 사람이 내 칸에 쓰지 못함) */
+const newSecret=()=>(Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+'000000000000').slice(0,20);
+let PSEC=LS.get('popup-psec');if(!/^[a-z0-9]{12,40}$/.test(PSEC||'')){PSEC=newSecret();LS.set('popup-psec',PSEC)}
 const PNAME=LS.get('popup-pname')||'';
 const STUDENT=ME!==null&&!!PNAME&&String(ME+1)===LS.get('popup-team');
 const JOIN=!TEACHER&&!STUDENT;
@@ -471,10 +474,11 @@ function joinPage(){
    <div class="jointeams" id="jt">${[1,2,3,4,5,6].map(n=>`<button class="sopt ${pick===n-1?'on':''}" data-n="${n}">${n}조</button>`).join('')}</div>
    <label class="lab" for="jname">내 이름</label><input id="jname" maxlength="12" placeholder="이름 (예: 김롯데)" value="${esc(PNAME)}" autocomplete="name">
    <button class="btn" id="jgo">시작하기</button>
-   <p class="note" style="margin:0">실습지는 나만 씁니다. 같은 조 사람이나 다른 조가 쓴 내용은 보이지 않고, 내가 쓴 내용도 다른 사람에게 보이지 않습니다.</p></section>`;
+   <p class="note" style="margin:0">실습지는 나만 씁니다. 내 칸에는 이 기기로만 저장되고, 같은 조 사람이나 다른 조가 쓴 내용은 보이지 않습니다.</p>
+   <p class="note" style="margin:0"><a href="?teacher=1">강사로 계속하기</a></p></section>`;
   document.querySelectorAll('#jt [data-n]').forEach(b=>b.onclick=()=>{pick=+b.dataset.n-1;document.querySelectorAll('#jt .sopt').forEach(x=>x.classList.toggle('on',x===b))});
   const go=()=>{const nm=$('#jname').value.trim().slice(0,12);if(pick<0){toast('조를 골라 주세요');return}if(!nm){toast('이름을 적어 주세요');$('#jname').focus();return}
-    if(nm!==PNAME){LS.set('popup-pid',newPid());LS.del('popup-ws');LS.del('dalkom-g5-'+pick)}
+    if(nm!==PNAME){LS.set('popup-pid',newPid());LS.set('popup-psec',newSecret());LS.del('popup-ws');LS.del('dalkom-g5-'+pick)}
     LS.set('popup-team',pick+1);LS.set('popup-pname',nm);LS.del('popup-role');location.href=location.pathname+'?team='+(pick+1)};
   $('#jgo').onclick=go;$('#jname').onkeydown=e=>{if(e.key==='Enter')go()};
 }
@@ -1250,8 +1254,8 @@ function setV(t,ws,k,v){const tk=teamKey(t);W.vals[tk]=W.vals[tk]||{};W.vals[tk]
 function queueSave(t,ws,k,v){
   if(W.mode==='server'&&!STUDENT){setSync('강사 시연용 · 조 실습지에는 저장되지 않습니다');return}
   if(W.mode==='server'){const id=t+'|'+ws+'|'+k;clearTimeout(W.timers[id]);W.pending.add(id);
-    W.timers[id]=setTimeout(async()=>{try{const r=await fetch('/api/sheet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:teamKey(t),person:PID,ws,k,v})});
-      if(!r.ok)throw 0;setSync('내 실습지 · 자동 저장 중')}catch(e){setSync('저장이 늦어지고 있습니다 · 이 기기에는 남아 있습니다')}finally{W.pending.delete(id)}},600);return}
+    W.timers[id]=setTimeout(async()=>{try{const r=await fetch('/api/sheet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:teamKey(t),person:PID,secret:PSEC,ws,k,v})});
+      if(r.status===403){setSync('이 기기는 이 실습지에 저장할 수 없습니다 · 첫 화면에서 다시 들어와 주세요');return}if(!r.ok)throw 0;setSync('내 실습지 · 자동 저장 중')}catch(e){setSync('저장이 늦어지고 있습니다 · 이 기기에는 남아 있습니다')}finally{W.pending.delete(id)}},600);return}
   if(!W.db)return;
   const id=t+'|'+ws+'|'+k;clearTimeout(W.timers[id]);
   W.timers[id]=setTimeout(async()=>{
@@ -1280,7 +1284,7 @@ W.pending=new Set();W.ver=-1;
 const STATE_Q=STUDENT?`?team=team${ME+1}&person=${PID}`:'';
 async function startServerSync(){
   if(JOIN)return;
-  try{const r=await fetch('/api/state'+STATE_Q);if(!r.ok){goOffline();return}W.mode='server';setSync(STUDENT?'내 실습지 · 자동 저장 중':'모든 조와 실시간 공유 중');applyServer(await r.json());if(STUDENT)fetch('/api/person',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:teamKey(ME),person:PID,name:PNAME})}).catch(()=>{})}catch(e){goOffline();return}
+  try{const r=await fetch('/api/state'+STATE_Q);if(!r.ok){goOffline();return}W.mode='server';setSync(STUDENT?'내 실습지 · 자동 저장 중':'모든 조와 실시간 공유 중');applyServer(await r.json());if(STUDENT)fetch('/api/person',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:teamKey(ME),person:PID,secret:PSEC,name:PNAME})}).catch(()=>{})}catch(e){goOffline();return}
   setInterval(async()=>{try{const r=await fetch('/api/state'+(STATE_Q?STATE_Q+'&':'?')+'v='+W.ver);if(r.status===204)return;if(!r.ok)throw 0;applyServer(await r.json());setSync('모든 조와 실시간 공유 중')}catch(e){setSync('서버 연결이 끊겼습니다 · 이 기기에만 저장 중')}},2500);
 }
 function goOffline(){R.offline=true;R.ready=true;liveRefresh()}
