@@ -1300,7 +1300,11 @@ function applyServer(st){
     if(added.length||R.open.length!==before.length||lockBefore!==R.lock){if($('#units'))drawUnits();if($('#wstabs')&&$('#wsbody'))drawTabs(false)}}
   const sh=st.sheets||{};
   if(!STUDENT){W.pvals=sh;R.people=st.people||{}}
-  else for(const tk in sh){const ti=+tk.replace('team','')-1;W.vals[tk]=W.vals[tk]||{};
+  else if(!W.synced){W.synced=true;
+    /* 새로고침 뒤 첫 연결: 이 기기에 남은 내 기록 중 서버에 없는 것은 다시 올립니다(재배포 등으로 서버 기록이 비었을 때 대비) */
+    const tk=teamKey(ME),mine=W.vals[tk]||{},srv=sh[tk]||{};
+    for(const ws in mine)for(const k in mine[ws]){const v=mine[ws][k];if(String(v??'').trim()&&(srv[ws]||{})[k]===undefined)queueSave(ME,ws,k,v)}}
+  if(STUDENT)for(const tk in sh){const ti=+tk.replace('team','')-1;W.vals[tk]=W.vals[tk]||{};
     for(const ws in sh[tk]){W.vals[tk][ws]=W.vals[tk][ws]||{};for(const k in sh[tk][ws]){if(W.pending.has(ti+'|'+ws+'|'+k))continue;W.vals[tk][ws][k]=sh[tk][ws][k]}}}
   localSave();refreshWsView(true);
   if(st.scores&&Array.isArray(st.scores.s)&&!W.scorePending){S.scores=[...st.scores.s];if(st.scores.teams)S.teams=st.scores.teams;save()}
