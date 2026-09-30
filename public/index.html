@@ -265,6 +265,14 @@ table.rt{min-width:620px;font-size:15.5px;table-layout:auto}
 .dlrow.small a{font-size:13.5px;color:var(--choco);border:1px solid var(--line);border-radius:999px;padding:5px 11px;text-decoration:none;background:var(--bg)}
 .dlrow.small a:hover{border-color:var(--berry)}
 .opt .optimg{width:100%;height:110px;object-fit:contain;border-radius:10px;background:#fff;margin-bottom:8px}
+/* 조 · 이름 고르기 */
+.joining #teams{display:none}
+.join{max-width:520px;margin:40px auto;display:flex;flex-direction:column;gap:14px}
+.join h2{margin:0;font-size:34px}
+.jointeams{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.jointeams .sopt{font-size:20px;padding:14px 0;font-weight:700}
+.join input{border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:18px;background:var(--bg);color:var(--ink)}
+.join .btn{font-size:18px;padding:12px}
 /* 교육생 단계 흐름 */
 .flow4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 18px}
 .flow4 span{background:var(--surface);border-radius:12px;padding:10px 12px;font-weight:700;font-size:14px;text-align:center;position:relative}
@@ -360,10 +368,21 @@ try{const s=JSON.parse(localStorage.getItem('dalkom-score4')||'null');if(s){Obje
 function save(){try{localStorage.setItem('dalkom-score4',JSON.stringify(S))}catch(e){}}
 const $=s=>document.querySelector(s);
 /* 조별 QR로 들어오면 (?team=N) 교육생 화면, 그냥 들어오면 강사 · 프로젝터 화면 */
-const ME=(()=>{const n=parseInt(new URLSearchParams(location.search).get('team'),10);return n>=1&&n<=6?n-1:null})();
-const STUDENT=ME!==null;
-if(STUDENT)document.documentElement.classList.add('student');
-const R={names:{},prog:{},open:[],cur:'',insight:[],ready:false,offline:false};
+/* 들어오는 방법: 주소를 열고 "몇 조 · 내 이름"을 고르면 그 기기는 그 사람 실습지 전용이 됩니다.
+   ?team=N 은 조를 미리 골라 둔 주소, ?teacher=1 은 강사 화면 */
+const QS=new URLSearchParams(location.search);
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+if(QS.has('teacher'))LS.set('popup-role','teacher');
+const TEACHER=QS.has('teacher')||(LS.get('popup-role')==='teacher'&&!QS.has('team'));
+const ME=(()=>{if(TEACHER)return null;const n=parseInt(QS.get('team')||LS.get('popup-team'),10);return n>=1&&n<=6?n-1:null})();
+const newPid=()=>('p'+Math.random().toString(36).slice(2)+'00000000').slice(0,11);
+let PID=LS.get('popup-pid');if(!/^p[a-z0-9]{6,16}$/.test(PID||'')){PID=newPid();LS.set('popup-pid',PID)}
+const PNAME=LS.get('popup-pname')||'';
+const STUDENT=ME!==null&&!!PNAME&&String(ME+1)===LS.get('popup-team');
+const JOIN=!TEACHER&&!STUDENT;
+if(STUDENT||JOIN)document.documentElement.classList.add('student');
+if(JOIN)document.documentElement.classList.add('joining');
+const R={names:{},people:{},prog:{},open:[],cur:'',insight:[],ready:false,offline:false};
 const UNITS=[
  {id:'g2',s:'게임1',k:'game'},{id:'w1',s:'①',k:'ws'},{id:'w2',s:'②',k:'ws'},{id:'w8',s:'품평회',k:'ws'},
  {id:'g1',s:'게임2',k:'game'},{id:'rfm',s:'RFM',k:'read'},{id:'w4',s:'④',k:'ws'},
@@ -382,7 +401,9 @@ const STEPS=[
 const warmOf=id=>{const s=STEPS.find(x=>x.ws.includes(id));return s&&s.g};
 function unitName(id){const w=WS.find(x=>x.id===id);if(w)return `${w.no} · ${w.t}`;if(id==='rfm')return 'RFM 표 읽기';const g=GAMES.find(x=>x.id===id);return g?`${g.no} · ${g.t}`:id}
 const isOpen=id=>!STUDENT||R.offline||id[0]==='g'||R.open.includes(id);
-function wsPts(t,w){const ks=keysOf(w);if(!ks.length)return 0;const f=ks.filter(k=>String(getV(t,w.id,k)).trim()).length;return f>=ks.length?3:f*2>=ks.length?2:f?1:0}
+function sheetPts(d,w){const ks=keysOf(w);if(!ks.length)return 0;const f=ks.filter(k=>String((d||{})[k]??'').trim()).length;return f>=ks.length?3:f*2>=ks.length?2:f?1:0}
+/* 교육생 기기: 내 실습지 점수 · 강사 화면: 그 조 사람들 점수의 평균 */
+function wsPts(t,w){if(STUDENT||t>=6)return sheetPts((W.vals[teamKey(t)]||{})[w.id],w);const m=W.pvals[teamKey(t)]||{};const ids=Object.keys(m);if(!ids.length)return 0;return Math.round(ids.reduce((a,p)=>a+sheetPts((m[p]||{})[w.id],w),0)/ids.length)}
 function gamePts(t,g){return +((R.prog[teamKey(t)]||{})[g]||0)}
 function unitPts(t,id){const w=WS.find(x=>x.id===id);return w?wsPts(t,w):id[0]==='g'?gamePts(t,id):0}
 function unitDone(t,id){const w=WS.find(x=>x.id===id);return w?wsPts(t,w)===3:gamePts(t,id)>0}
@@ -411,7 +432,8 @@ function startCheer(){if(!STUDENT)return;const el=document.createElement('div');
 function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,1800)}
 function renderTeams(){
   const box=$('#teams');box.innerHTML='';
-  if(STUDENT){box.innerHTML=`<div class="team on"><span class="tn">${teamLabel(ME)}</span><span class="ts num" title="우리 조 점수">${total(ME)}</span></div>`;return}
+  if(JOIN){box.innerHTML='';return}
+  if(STUDENT){box.innerHTML=`<div class="team on"><span class="tn">${teamLabel(ME)} · ${esc(PNAME)}</span><span class="ts num" title="내 점수">${total(ME)}</span></div>`;return}
   for(let i=0;i<S.teams;i++){
     const d=document.createElement('div');d.className='team'+(i===S.cur?' on':'');
     d.innerHTML=`<button class="tn" title="지금 차례인 조로 선택">${teamLabel(i)}</button><span class="ts num">${total(i)}</span><button class="pm" aria-label="${i+1}조 1점 빼기">−</button><button class="pm" aria-label="${i+1}조 1점 더하기">+</button>`;
@@ -442,7 +464,22 @@ const SHEETLIST=[['w1','실습 ① 고객 세분화 기준 설계'],['w2','실�
 function sheetDownloads(teacher){return `<section class="dlbox"><p class="step" style="margin:0">실습지 내려받기 · PPT 원본 그대로 (인쇄해서 쓰거나 PowerPoint에서 바로 쓰기)</p>
   <div class="dlrow"><a class="btn" href="/sheets/sheets-blank.pptx" download>실습지 전체 · 빈칸</a>${teacher?'<a class="btn ghost" href="/sheets/sheets-answer.pptx" download>실습지 전체 · 예시 답안 (강사용)</a>':''}</div>
   <div class="dlrow small">${SHEETLIST.map(([id,n])=>`<a href="/sheets/sheet-${id}.pptx" download>${n}</a>`).join('')}</div></section>`}
+function joinPage(){
+  let pick=ME!==null?ME:-1;
+  $('#app').innerHTML=`<section class="join panel"><p class="step">LOTTE LIFT · 3-3 실습 · 샌드위치 팝업</p><h2>몇 조인가요?</h2>
+   <div class="jointeams" id="jt">${[1,2,3,4,5,6].map(n=>`<button class="sopt ${pick===n-1?'on':''}" data-n="${n}">${n}조</button>`).join('')}</div>
+   <label class="lab" for="jname">내 이름</label><input id="jname" maxlength="12" placeholder="이름 (예: 김롯데)" value="${esc(PNAME)}" autocomplete="name">
+   <button class="btn" id="jgo">시작하기</button>
+   <p class="note" style="margin:0">실습지는 사람마다 따로 저장됩니다. 같은 조 사람이 쓴 내용도 내 칸에는 보이지 않고, 다른 조 기록도 보이지 않습니다.</p>
+   <p class="note" style="margin:0"><a href="?teacher=1">강사로 시작하기</a></p></section>`;
+  document.querySelectorAll('#jt [data-n]').forEach(b=>b.onclick=()=>{pick=+b.dataset.n-1;document.querySelectorAll('#jt .sopt').forEach(x=>x.classList.toggle('on',x===b))});
+  const go=()=>{const nm=$('#jname').value.trim().slice(0,12);if(pick<0){toast('조를 골라 주세요');return}if(!nm){toast('이름을 적어 주세요');$('#jname').focus();return}
+    if(nm!==PNAME){LS.set('popup-pid',newPid());LS.del('popup-ws');LS.del('dalkom-g5-'+pick)}
+    LS.set('popup-team',pick+1);LS.set('popup-pname',nm);LS.del('popup-role');location.href=location.pathname+'?team='+(pick+1)};
+  $('#jgo').onclick=go;$('#jname').onkeydown=e=>{if(e.key==='Enter')go()};
+}
 function home(){
+  if(JOIN){joinPage();return}
   if(STUDENT){studentHome();return}
   $('#app').innerHTML=`
   <section class="hero">
@@ -488,7 +525,7 @@ function drawBoard(){
   let h=`<table class="bt"><thead><tr><th>조</th>${UNITS.map(u=>`<th class="${R.cur===u.id?'curcol':''}">${u.k==='game'?`<span class="uh open" title="${esc(unitName(u.id))} · 워밍업 게임은 언제든 자유롭게 열려 있습니다">${u.s}<small>자유</small></span>`:`<button class="uh ${R.open.includes(u.id)?'open':''} ${R.cur===u.id?'cur':''}" data-u="${u.id}" title="${esc(unitName(u.id))}">${u.s}<small>${R.open.includes(u.id)?'열림':'닫힘'}</small></button>`}</th>`).join('')}<th>합계</th></tr>
    <tr class="insrow"><th><span class="muted" style="font-size:12px;font-weight:400">인사이트</span></th>${UNITS.map(u=>u.k!=='game'?'<th></th>':`<th><button class="insb ${R.insight.includes(u.id)?'on':''}" data-ins="${u.id}" title="끝낸 조 ${[...Array(S.teams).keys()].filter(t=>gamePts(t,u.id)>0).length} / ${S.teams}">${R.insight.includes(u.id)?'💡 공개됨':'공개'}</button></th>`).join('')}<th></th></tr></thead><tbody>`;
   for(let t=0;t<S.teams;t++){
-    h+=`<tr><td class="tnm">${teamLabel(t)}</td>`+UNITS.map(u=>{const p=unitPts(t,u.id);if(u.k==='read')return '<td><span class="muted">—</span></td>';
+    h+=`<tr><td class="tnm">${teamLabel(t)} <small class="muted">${Object.keys(R.people[teamKey(t)]||{}).length}명</small></td>`+UNITS.map(u=>{const p=unitPts(t,u.id);if(u.k==='read')return '<td><span class="muted">—</span></td>';
       return cell(t+u.id,p,'',unitDone(t,u.id)?`<span class="ck">✓</span><span class="pt">${p}</span>`:p?`<span class="pt part">${p}</span>`:'<span class="muted">·</span>')}).join('')
       +cell(t+'tot',total(t),'tot',total(t))+'</tr>';
   }
@@ -530,7 +567,9 @@ function studentHome(){
   </div>
   <div class="flow4"><span>① 워밍업 게임<small>언제든 자유롭게</small></span><span>② 강사님 설명 듣기</span><span>③ 조원과 토론 · 검색</span><span>④ 활동지 쓰기<small>강사님이 열면 시작</small></span></div>
   <div id="units"></div>
-  ${sheetDownloads(false)}`;
+  ${sheetDownloads(false)}
+  <p class="note" style="margin-top:14px">나: ${teamLabel(ME)} · ${esc(PNAME)} · <a href="#" id="switchMe">다른 조 · 다른 사람으로 바꾸기</a></p>`;
+  $('#switchMe').onclick=e=>{e.preventDefault();LS.del('popup-team');location.href=location.pathname};
   $('#tnameBtn').onclick=saveName;$('#tname').onkeydown=e=>{if(e.key==='Enter')saveName()};
   drawUnits();
 }
@@ -571,6 +610,7 @@ async function reportGame(g,pts,quiet){
 }
 function head(t,sub,step){return `<div class="screen-head"><button class="back" onclick="go('home')">← 게임 목록</button><div><p class="step">${step}</p><h2>${t}</h2></div><p class="sub">${sub}</p></div>`}
 function go(id){
+  if(JOIN){joinPage();return}
   if(STUDENT){
     if(id==='teacher'||id==='cmp')id='home';
     else if(id==='ws'){if(!isOpen(W.cur)){const f=UNITS.find(u=>u.k==='ws'&&isOpen(u.id));if(f)W.cur=f.id;else{toast('아직 열린 실습지가 없습니다');id='home'}}}
@@ -867,7 +907,7 @@ function teacherPage(){
 function qrSvg(u){try{const q=qrcode(0,'M');q.addData(u);q.make();return q.createSvgTag({cellSize:6,margin:2,scalable:true,alt:'QR'})}catch(e){return '<p class="note">QR을 만들 수 없습니다. 아래 주소를 직접 입력하세요.</p>'}}
 function tQr(){
   const base=location.origin+location.pathname;
-  $('#tbody').innerHTML=`<div class="bar noprint"><button class="btn" id="qrPrint">QR 인쇄하기</button><span class="note">조마다 기기 한 대로 자기 조 QR을 찍으면 그 조 화면이 열립니다. 첫 화면에서 조 이름을 정하고 시작합니다. 조 수는 위쪽 "조 수"에서 바꿉니다.</span></div>
+  $('#tbody').innerHTML=`<div class="bar noprint"><button class="btn" id="qrPrint">QR 인쇄하기</button><span class="note">QR 없이 주소만 알려 줘도 됩니다. 주소를 열면 "몇 조 · 내 이름"을 고르고 시작합니다. QR을 찍으면 조가 미리 골라져 있습니다. 실습지는 사람마다 따로 저장되고, 다른 사람 · 다른 조 기록은 보이지 않습니다.</span></div>
    <div class="qrgrid" id="qrgrid">${[...Array(S.teams).keys()].map(i=>{const u=`${base}?team=${i+1}`;return `<div class="qrcard"><h3>${teamLabel(i)}</h3>${qrSvg(u)}<p class="url">${esc(u)}</p></div>`}).join('')}</div>`;
   $('#qrPrint').onclick=()=>window.print();
 }
@@ -876,7 +916,7 @@ function tFlow(){
    ${FLOW.map(r=>`<tr><td class="num c">${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table></div>
    <div class="calcbox"><b>수업 전 체크</b>
     <div class="calcrow"><span>1. 페이지 공유 메뉴에서 교육생에게 "사용 가능(Can interact)" 권한 주기</span></div>
-    <div class="calcrow"><span>2. ⑤ 조별 QR 코드를 띄우고 조별 기기 한 대씩 자기 조 QR 찍기 → 조 이름 정하기</span></div>
+    <div class="calcrow"><span>2. 교육생에게 주소를 알려 주고 "몇 조 · 내 이름"을 골라 시작하게 하기 (QR은 ⑤에서 선택)</span></div>
     <div class="calcrow"><span>3. 강사 화면(이 화면)은 강사 노트북에서만. 프로젝터에는 게임 · 조별 모아보기만 띄우기</span></div>
     <div class="calcrow"><span>4. 담당자 방침: RFM 계산은 시범 + 3~4명, 발표 없음, 원페이퍼까지</span></div></div>
    ${W.mode==='server'?`<div class="panel" style="margin-top:12px"><b>수업 데이터 초기화</b><p class="note">다음 반 수업 전에 모든 조의 실습지와 점수를 지웁니다. 지운 기록은 되돌릴 수 없습니다.</p><div class="bar"><button class="btn ghost" id="rbtn">모두 지우기</button></div></div>`:''}`;
@@ -1195,7 +1235,7 @@ const WS=[
           ['7. 신규 획득과 기존 유지의 연결',T('r7','기존 회원의 팝업 구매는 같은 고객 기록에 연결합니다. 신규 구매자는 필요한 동의 후 첫 구매 30일 안에 식품관 두 번째 구매가 있는지 확인하고, 없으면 구매 목적에 맞는 다음 제안을 합니다. 성과 = 첫 구매자 중 30일 내 두 번째 구매자 비율과 실제 안내 비용.','area'),'전체']]}],
   tip:'채점은 7번 한 칸에서만 합니다. 대상 · 기간 · 행동 · 성과 지표가 있어야 합니다. 점수와 문장을 옮긴 뒤 앞뒤가 서로 모순되는 부분을 고칩니다.'}];
 
-const W={db:null,mode:'local',vals:{},demo:{},myteam:0,showAns:false,showEx:false,cur:'w1',timers:{},unsub:null,sync:'이 기기에만 저장 중'};
+const W={db:null,mode:'local',vals:{},pvals:{},cmpTeam:0,demo:{},myteam:0,showAns:false,showEx:false,cur:'w1',timers:{},unsub:null,sync:'이 기기에만 저장 중'};
 try{W.myteam=+(localStorage.getItem('dalkom-myteam')||0)}catch(e){}
 function teamKey(i){return 'team'+(i+1)}
 function localLoad(){try{return JSON.parse(localStorage.getItem('popup-ws')||'{}')}catch(e){return{}}}
@@ -1204,9 +1244,10 @@ W.vals=localLoad();
 function getV(t,ws,k){return ((W.vals[teamKey(t)]||{})[ws]||{})[k]??''}
 function setV(t,ws,k,v){const tk=teamKey(t);W.vals[tk]=W.vals[tk]||{};W.vals[tk][ws]=W.vals[tk][ws]||{};W.vals[tk][ws][k]=v;localSave();queueSave(t,ws,k,v)}
 function queueSave(t,ws,k,v){
+  if(W.mode==='server'&&!STUDENT){setSync('강사 시연용 · 조 실습지에는 저장되지 않습니다');return}
   if(W.mode==='server'){const id=t+'|'+ws+'|'+k;clearTimeout(W.timers[id]);W.pending.add(id);
-    W.timers[id]=setTimeout(async()=>{try{const r=await fetch('/api/sheet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:teamKey(t),ws,k,v})});
-      if(!r.ok)throw 0;setSync('모든 조와 실시간 공유 중')}catch(e){setSync('저장이 늦어지고 있습니다 · 이 기기에는 남아 있습니다')}finally{W.pending.delete(id)}},600);return}
+    W.timers[id]=setTimeout(async()=>{try{const r=await fetch('/api/sheet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:teamKey(t),person:PID,ws,k,v})});
+      if(!r.ok)throw 0;setSync('내 실습지 · 자동 저장 중')}catch(e){setSync('저장이 늦어지고 있습니다 · 이 기기에는 남아 있습니다')}finally{W.pending.delete(id)}},600);return}
   if(!W.db)return;
   const id=t+'|'+ws+'|'+k;clearTimeout(W.timers[id]);
   W.timers[id]=setTimeout(async()=>{
@@ -1232,9 +1273,11 @@ function setSync(t){W.sync=t;const el=document.getElementById('syncState');if(el
   db.doc('board/scores').onSnapshot(s=>{if(s.exists){const d=s.data();if(Array.isArray(d.s)){S.scores=[...d.s];if(d.teams)S.teams=d.teams;save();renderTeams()}}},()=>{});
 })();
 W.pending=new Set();W.ver=-1;
+const STATE_Q=STUDENT?`?team=team${ME+1}&person=${PID}`:'';
 async function startServerSync(){
-  try{const r=await fetch('/api/state');if(!r.ok){goOffline();return}W.mode='server';setSync('모든 조와 실시간 공유 중');applyServer(await r.json())}catch(e){goOffline();return}
-  setInterval(async()=>{try{const r=await fetch('/api/state?v='+W.ver);if(r.status===204)return;if(!r.ok)throw 0;applyServer(await r.json());setSync('모든 조와 실시간 공유 중')}catch(e){setSync('서버 연결이 끊겼습니다 · 이 기기에만 저장 중')}},2500);
+  if(JOIN)return;
+  try{const r=await fetch('/api/state'+STATE_Q);if(!r.ok){goOffline();return}W.mode='server';setSync(STUDENT?'내 실습지 · 자동 저장 중':'모든 조와 실시간 공유 중');applyServer(await r.json());if(STUDENT)fetch('/api/person',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:teamKey(ME),person:PID,name:PNAME})}).catch(()=>{})}catch(e){goOffline();return}
+  setInterval(async()=>{try{const r=await fetch('/api/state'+(STATE_Q?STATE_Q+'&':'?')+'v='+W.ver);if(r.status===204)return;if(!r.ok)throw 0;applyServer(await r.json());setSync('모든 조와 실시간 공유 중')}catch(e){setSync('서버 연결이 끊겼습니다 · 이 기기에만 저장 중')}},2500);
 }
 function goOffline(){R.offline=true;R.ready=true;liveRefresh()}
 function liveRefresh(){renderTeams();drawBoard();drawUnits()}
@@ -1248,7 +1291,8 @@ function applyServer(st){
   if(STUDENT&&was){const added=R.open.filter(x=>!before.includes(x));if(added.length)toast(`새 활동이 열렸습니다 · ${unitName(added[added.length-1])}`);
     if(added.length||R.open.length!==before.length){if($('#wstabs')&&$('#wsbody'))drawTabs(false)}}
   const sh=st.sheets||{};
-  for(const tk in sh){const ti=+tk.replace('team','')-1;W.vals[tk]=W.vals[tk]||{};
+  if(!STUDENT){W.pvals=sh;R.people=st.people||{}}
+  else for(const tk in sh){const ti=+tk.replace('team','')-1;W.vals[tk]=W.vals[tk]||{};
     for(const ws in sh[tk]){W.vals[tk][ws]=W.vals[tk][ws]||{};for(const k in sh[tk][ws]){if(W.pending.has(ti+'|'+ws+'|'+k))continue;W.vals[tk][ws][k]=sh[tk][ws][k]}}}
   localSave();refreshWsView(true);
   if(st.scores&&Array.isArray(st.scores.s)&&!W.scorePending){S.scores=[...st.scores.s];if(st.scores.teams)S.teams=st.scores.teams;save()}
@@ -1310,7 +1354,7 @@ function wsPage(){
    <div class="wsbar"><span class="lab">우리 조</span><div class="seg" id="myteam"></div><span class="sync" id="syncState">${W.sync}</span></div>
    <nav class="wstabs" id="wstabs"></nav><section id="wsbody"></section>`;
   if(STUDENT){W.myteam=ME;W.showEx=false;$('#myteam').innerHTML=`<span class="sopt on">${teamLabel(ME)}</span>`;drawTabs(false);drawWs(false);return}
-  const mt=$('#myteam');for(let i=0;i<S.teams;i++){const b=document.createElement('button');b.className='sopt'+(W.myteam===i?' on':'');b.textContent=(i+1)+'조';b.onclick=()=>{W.myteam=i;try{localStorage.setItem('dalkom-myteam',i)}catch(e){}wsPage()};mt.appendChild(b)}
+  W.myteam=6;$('#myteam').innerHTML=`<span class="sopt on">강사 시연용</span><span class="note" style="margin-left:8px">여기서 쓴 내용은 조 실습지에 저장되지 않습니다. 조별 · 사람별로 쓴 내용은 <a href="#" onclick="go('cmp');return false">조별 모아보기</a>에서 봅니다.</span>`;
   drawTabs(false);drawWs(false);
 }
 function drawTabs(ro){
@@ -1340,7 +1384,7 @@ function drawWs(){
   $('#fillEx').onclick=()=>{
     if(demo.length){demo.forEach(([k])=>setV(t,w.id,k,''));drawWs();toast(`시연 예시 ${demo.length}칸을 지웠습니다 · 다시 누르면 채워집니다`);return}
     const filled=[];w.blocks.forEach(b=>{if(b.rows)b.rows.forEach(r=>r.forEach(c=>{if(c&&c.k&&c.a&&!String(getV(t,w.id,c.k)).trim()){setV(t,w.id,c.k,c.a);filled.push([c.k,c.a])}}));if((b.type==='field'||b.type==='choice')&&b.a&&!String(getV(t,w.id,b.k)).trim()){setV(t,w.id,b.k,b.a);filled.push([b.k,b.a])}});
-    drawWs();toast(filled.length?`${t+1}조 실습지에 예시 ${filled.length}칸을 채웠습니다 · 다시 누르면 지워집니다`:'빈칸이 없습니다')};
+    drawWs();toast(filled.length?`시연용 실습지에 예시 ${filled.length}칸을 채웠습니다 · 다시 누르면 지워집니다`:'빈칸이 없습니다')};
   computeCalcs(body,w,t);
 }
 function drawTabsSoft(){document.querySelectorAll('#wstabs .wtab').forEach(b=>{const p=b.querySelector('.prog');if(p){const w=WS.find(x=>x.id===b.dataset.ws);const tmp=document.createElement('span');tmp.innerHTML=progress(W.myteam,w);p.replaceWith(tmp.firstElementChild)}})}
@@ -1372,8 +1416,9 @@ function doImport(t){
 /* ---- instructor compare ---- */
 function comparePage(){
   $('#app').innerHTML=`<div class="screen-head"><button class="back" onclick="go('teacher')">← 강사 화면</button><div><p class="step">강사 화면 · ③ 조별 모아보기</p><h2>조별 모아보기</h2></div>
-   <p class="sub">실습지를 고르면 ${S.teams}개 조가 쓴 내용이 칸별로 나란히 뜹니다. 쓰는 대로 실시간으로 바뀝니다. 예시 답안은 필요할 때만 켜세요.</p></div>
+   <p class="sub">조를 고르면 그 조 사람들이 각자 쓴 내용이 칸별로 나란히 뜹니다. 쓰는 대로 실시간으로 바뀝니다. 예시 답안은 필요할 때만 켜세요.</p></div>
    <div class="wsbar"><label class="tog"><input type="checkbox" id="ansTog" ${W.showAns?'checked':''}> 예시 답안 열 보이기</label><span class="sync" id="syncState">${W.sync}</span></div>
+   <div class="seg" id="cmpTeams" style="margin-bottom:10px"></div>
    <nav class="wstabs" id="wstabs"></nav><section id="compareBody"></section>`;
   $('#ansTog').onchange=e=>{W.showAns=e.target.checked;compareDraw()};
   drawTabs(true);compareDraw();
@@ -1386,10 +1431,15 @@ function compareDraw(){
     if(b.type==='table')b.rows.forEach(r=>r.forEach((c,ci)=>{if(c&&c.k)rows.push({label:`${typeof r[0]==='string'?r[0]:''} · ${b.head[ci]}`,k:c.k,a:c.a,num:c.t==='num'})}));
     if(b.type==='field'||b.type==='choice')rows.push({label:b.label,k:b.k,a:b.a});
   });
-  const cols=[...Array(S.teams).keys()];
-  let h=`<div class="tscroll"><table class="ct"><thead><tr><th style="width:16%">칸</th>${cols.map(i=>`<th style="width:${((W.showAns?60:84)/S.teams).toFixed(1)}%">${i+1}조 ${progress(i,w)}</th>`).join('')}${W.showAns?'<th class="ansh" style="width:24%">예시 답안</th>':''}</tr></thead><tbody>`;
-  rows.forEach(r=>{h+=`<tr><td class="fx">${r.label}</td>${cols.map(i=>{const v=getV(i,w.id,r.k);return `<td class="${r.num?'num':''}">${esc(v)||'<span class="muted">—</span>'}</td>`}).join('')}${W.showAns?`<td class="ansc">${esc(r.a)}</td>`:''}</tr>`});
-  box.innerHTML=`<div class="wshead"><div><h3>${w.no} · ${w.t}</h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>`+h+'</tbody></table></div>';
+  const ct=$('#cmpTeams');if(ct){ct.innerHTML=[...Array(S.teams).keys()].map(i=>`<button class="sopt ${i===W.cmpTeam?'on':''}" data-t="${i}">${teamLabel(i)} · ${Object.keys(R.people[teamKey(i)]||{}).length}명</button>`).join('');ct.querySelectorAll('[data-t]').forEach(x=>x.onclick=()=>{W.cmpTeam=+x.dataset.t;compareDraw()})}
+  const tk=teamKey(W.cmpTeam),m=W.pvals[tk]||{},ppl=R.people[tk]||{};
+  const ids=[...new Set([...Object.keys(ppl),...Object.keys(m)])];
+  const val=(p,k)=>(((m[p]||{})[w.id]||{})[k]??'');
+  const cnt=p=>{const ks=keysOf(w);const f=ks.filter(k=>String(val(p,k)).trim()).length;return ` <span class="prog ${f===ks.length?'full':''}">${f}/${ks.length}</span>`};
+  const cw=((W.showAns?60:84)/Math.max(1,ids.length)).toFixed(1);
+  let h=`<div class="tscroll"><table class="ct"><thead><tr><th style="width:16%">칸</th>${ids.map(p=>`<th style="width:${cw}%">${esc(ppl[p]||'이름 없음')}${cnt(p)}</th>`).join('')}${W.showAns?'<th class="ansh" style="width:24%">예시 답안</th>':''}</tr></thead><tbody>`;
+  rows.forEach(r=>{h+=`<tr><td class="fx">${r.label}</td>${ids.map(p=>{const v=val(p,r.k);return `<td class="${r.num?'num':''}">${esc(v)||'<span class="muted">—</span>'}</td>`}).join('')}${W.showAns?`<td class="ansc">${esc(r.a)}</td>`:''}</tr>`});
+  box.innerHTML=`<div class="wshead"><div><h3>${teamLabel(W.cmpTeam)} · ${w.no} · ${w.t}</h3><p class="muted">${w.sub}</p></div><span class="pill">${w.time}</span></div>`+(ids.length?h+'</tbody></table></div>':'<p class="note">아직 이 조로 들어온 사람이 없습니다.</p>');
 }
 
 renderTeams();home();startCheer();

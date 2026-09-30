@@ -1,4 +1,4 @@
-// 달콤상점 마케팅 게임 · Railway 서버 (외부 패키지 없이 Node 기본 기능만 사용)
+// 샌드위치 팝업 마케팅 게임 · Railway 서버 (외부 패키지 없이 Node 기본 기능만 사용)
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -8,12 +8,20 @@ fs.mkdirSync(DATA_DIR, { recursive: true });
 const FILE = path.join(DATA_DIR, 'state.json');
 const INDEX = path.join(__dirname, 'public', 'index.html');
 
-const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, prog: {}, open: [], cur: '', insight: [], content: 2 });
+const empty = () => ({ v: 1, sheets: {}, scores: { s: [0, 0, 0, 0, 0, 0], teams: 4 }, names: {}, people: {}, prog: {}, open: [], cur: '', insight: [], content: 3 });
 let state = empty();
 try { const saved = JSON.parse(fs.readFileSync(FILE, 'utf8')); state = Object.assign(empty(), saved); state.content = saved.content || 1; } catch (e) { /* first run */ }
-// 교안이 샌드위치 팝업(PPT 원본) 실습지로 바뀌었으므로, 예전 실습지 답은 한 번 비웁니다.
-if ((state.content || 1) < 2) { state.sheets = {}; state.open = []; state.cur = ''; state.insight = []; state.content = 2; state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('worksheets reset for new course content'); }
+// 교안 교체(2) · 개인별 실습지 저장 방식 변경(3) 때 예전 실습지 답을 한 번 비웁니다.
+if ((state.content || 1) < 3) { state.sheets = {}; state.open = []; state.cur = ''; state.insight = []; state.people = {}; state.content = 3; state.v++; fs.writeFileSync(FILE, JSON.stringify(state)); console.log('worksheets reset for new course content'); }
 const TEAM = /^team[1-6]$/;
+const PERSON = /^p[a-z0-9]{6,16}$/;
+// 실습지는 사람마다 따로 저장합니다: sheets[조][사람][실습지][칸].
+// 교육생 기기에는 자기 실습지만 보냅니다. 같은 조 다른 사람 · 다른 조 기록은 보내지 않습니다.
+function personView(team, person) {
+  const { sheets, people, ...rest } = state;
+  const mine = (sheets[team] || {})[person];
+  return { ...rest, sheets: mine ? { [team]: mine } : {} };
+}
 const UNIT = /^(w[0-9]{1,2}|g[1-5]|rfm)$/;
 const STATIC = {
   '/popup.jpg': ['popup.jpg', 'image/jpeg'],
@@ -58,16 +66,19 @@ const server = http.createServer(async (req, res) => {
   const p = url.pathname;
 
   if (req.method === 'GET' && p === '/api/state') {
+    const team = url.searchParams.get('team'), person = url.searchParams.get('person');
+    if (team && (!TEAM.test(team) || !PERSON.test(person || ''))) return send(res, 400, { error: 'bad team' });
     if (url.searchParams.get('v') === String(state.v)) { res.writeHead(204); return res.end(); }
-    return send(res, 200, state);
+    return send(res, 200, team ? personView(team, person) : state);
   }
   if (req.method === 'POST' && p === '/api/sheet') {
     const b = await readBody(req) || {};
-    if (!/^team[1-6]$/.test(b.team) || !/^w[0-9]{1,3}$/.test(b.ws || '') || !/^[a-z0-9_]{1,20}$/i.test(b.k || '')) {
+    if (!TEAM.test(b.team) || !PERSON.test(b.person || '') || !/^w[0-9]{1,3}$/.test(b.ws || '') || !/^[a-z0-9_]{1,20}$/i.test(b.k || '')) {
       return send(res, 400, { error: 'bad request' });
     }
     const t = (state.sheets[b.team] = state.sheets[b.team] || {});
-    const w = (t[b.ws] = t[b.ws] || {});
+    const me = (t[b.person] = t[b.person] || {});
+    const w = (me[b.ws] = me[b.ws] || {});
     w[b.k] = String(b.v ?? '').slice(0, 4000);
     state.v++; persist();
     return send(res, 200, { ok: true, v: state.v });
@@ -84,6 +95,14 @@ const server = http.createServer(async (req, res) => {
     if (!TEAM.test(b.team)) return send(res, 400, { error: 'bad request' });
     state.names[b.team] = String(b.name ?? '').trim().slice(0, 16);
     state.v++; persist();
+    return send(res, 200, { ok: true });
+  }
+  if (req.method === 'POST' && p === '/api/person') {
+    const b = await readBody(req) || {};
+    if (!TEAM.test(b.team) || !PERSON.test(b.person || '')) return send(res, 400, { error: 'bad request' });
+    const name = String(b.name ?? '').trim().slice(0, 12);
+    const t = (state.people[b.team] = state.people[b.team] || {});
+    if (t[b.person] !== name) { t[b.person] = name; state.v++; persist(); }
     return send(res, 200, { ok: true });
   }
   if (req.method === 'POST' && p === '/api/progress') {
